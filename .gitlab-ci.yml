@@ -1,0 +1,52 @@
+
+
+stages:
+  - build
+  - test
+  - deploy
+  - finish
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH && $CI_MERGE_REQUEST_TARGET_BRANCH_SHA
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+# dev push only build
+job-build:
+  stage: build
+  image: maven:3.8.3-openjdk-17
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+  script:
+    - echo "Hello, this is build."
+
+# merge should test
+job-test:
+  stage: test
+  image: maven:3.8.3-openjdk-17
+  only:
+    - merge_requests
+  script:
+    - echo "Hello, this is test."
+
+# approve merge should deploy
+job-deploy:
+  stage: deploy
+  image: maven:3.8.3-openjdk-17
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_SHA && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "pre-master"
+      when: always
+    - when: never
+  script:
+    - echo "Hello, this is deploy."
+
+
+job-finish:
+  stage: finish
+  image: maven:3.8.3-openjdk-17
+  script:
+    - echo "Hello, this is finish."
