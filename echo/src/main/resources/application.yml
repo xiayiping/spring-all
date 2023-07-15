@@ -1,0 +1,14 @@
+
+server.port: 8082
+#docker run -d -p 9411:9411 openzipkin/zipkin
+
+management:
+  tracing.sampling.probability: 1.0
+  endpoints.web.exposure.include: prometheus
+  metrics.distribution.percentiles-histogram.http.server.requests: true
+
+logging:
+  level:
+    root: info
+  pattern:
+    console: "%d{HH:mm:ss} echo [%X{traceId:-},%X{spanId:-}] - %msg%n"
