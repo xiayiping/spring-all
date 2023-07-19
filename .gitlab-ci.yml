@@ -15,7 +15,7 @@ workflow:
       when: never
     - if: $CI_COMMIT_BRANCH
 
-job-preCheck:
+job-preMergeCheck:
   stage: preMergeCheck
   image: maven:3.8.3-openjdk-17
   only:
@@ -28,7 +28,9 @@ job-preCheck:
     - git --version
     - git log $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME ^$CI_MERGE_REQUEST_TARGET_BRANCH_NAME --pretty='%h %cd %aN %s %d' --no-merges --graph --date=relative --date-order
     - git log $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME ^$CI_MERGE_REQUEST_TARGET_BRANCH_NAME --pretty=%s --no-merges | grep -Pv '^([a-z/]+)?/[A-Za-z]+-\d+.*$' | wc -l
+    - echo 1
     - noJiraCt=$(git log $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME ^$CI_MERGE_REQUEST_TARGET_BRANCH_NAME --pretty=%s --no-merges | grep -Pv '^([a-z/]+)?/[A-Za-z]+-\d+.*$' | wc -l)
+    - echo 2
     - if [ "${noJiraCt}" != "0" ]; then 
         echo "发现没有写Jira号提交历史，数量 [ $noJiraCt ] " ; 
         exit 1; 
