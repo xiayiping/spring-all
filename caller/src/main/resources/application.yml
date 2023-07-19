@@ -1,14 +1,31 @@
-
-server.port: 8081
+server.port: 8091
 #docker run -d -p 9411:9411 openzipkin/zipkin
 
 management:
   tracing.sampling.probability: 1.0
-  endpoints.web.exposure.include: prometheus
   metrics.distribution.percentiles-histogram.http.server.requests: true
 
 logging:
   level:
     root: info
   pattern:
-    console: "%d{HH:mm:ss} call [%X{traceId:-},%X{spanId:-}] - %msg%n"
+    console: "%d{HH:mm:ss} call [%X{traceId:-},%X{spanId:-}] - %msg [%logger]%n"
+
+spring:
+  ssl:
+    bundle:
+      jks:
+        clientStoreJks:
+          key:
+            alias: "client-cert"
+          keystore:
+            location: "classpath:keystore/client.keystore"
+            password: "123456"
+          truststore:
+            location: "classpath:keystore/client.truststore"
+            password: "123456"
+
+server:
+  ssl:
+    enabled: true
+    bundle: "clientStoreJks"

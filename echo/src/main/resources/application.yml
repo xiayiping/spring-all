@@ -1,5 +1,4 @@
-
-server.port: 8082
+server.port: 8092
 #docker run -d -p 9411:9411 openzipkin/zipkin
 
 management:
@@ -11,4 +10,30 @@ logging:
   level:
     root: info
   pattern:
-    console: "%d{HH:mm:ss} echo [%X{traceId:-},%X{spanId:-}] - %msg%n"
+    console: "%d{HH:mm:ss} echo [%X{traceId:-},%X{spanId:-}] - %msg [%logger]%n"
+
+
+spring.ssl.bundle:
+  jks:
+    web-server:
+      keystore:
+        location: "classpath:keystore/server.keystore"
+        password: "123456"
+      truststore:
+        location: "classpath:keystore/server.truststore"
+        password: "123456"
+
+server:
+  ssl:
+    enabled: true
+    bundle: "web-server"
+    client-auth: NEED
+
+spring.datasource:
+  url: jdbc:mysql://localhost:3306/companyproj
+  username: matt.xia
+  password: Q1w2e3r4
+  driver-class-name: com.mysql.cj.jdbc.Driver
+spring.jpa:
+  hibernate.ddl-auto: update
+  show-sql: true
