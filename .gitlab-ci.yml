@@ -46,6 +46,7 @@ job-build:
   script:
     - echo "Hello, this is build."
     - printenv
+    - git log --graph --pretty='%h %cd %aN %s %d'
     - git log -5 --author="$CI_COMMIT_AUTHOR" --pretty='%h %cd %aN %s %d' --no-merges --graph --date=relative --date-order
     - noJiraCt=$(git log -5 --pretty=%s --author="$CI_COMMIT_AUTHOR" --no-merges | grep -Pv '^([a-z/]+)?/[A-Za-z]+-\d+.*$' | wc -l )
     - if [ "${noJiraCt}" != "0" ]; then
