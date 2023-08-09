@@ -1,31 +1,35 @@
-server.port: 8091
+server.port: 8093
 #docker run -d -p 9411:9411 openzipkin/zipkin
 
 management:
   tracing.sampling.probability: 1.0
-  metrics.distribution.percentiles-histogram.http.server.requests: true
+  endpoints.web.exposure.include: prometheus
 
-logging:
-  level:
-    root: info
-  pattern:
-    console: "%d{HH:mm:ss} call [%X{traceId:-},%X{spanId:-}] - %msg [%logger]%n"
-
-spring:
-  ssl:
-    bundle:
-      jks:
-        clientStoreJks:
-          key:
-            alias: "client-cert"
-          keystore:
-            location: "classpath:keystore/client.keystore"
-            password: "123456"
-          truststore:
-            location: "classpath:keystore/client.truststore"
-            password: "123456"
+spring.ssl.bundle:
+  jks:
+    clientStoreJks:
+      keystore:
+        location: "classpath:keystore/keystore.p12"
+        password: "123456"
+      truststore:
+        location: "classpath:keystore/certstore.p12"
+        password: "123456"
+# No need to provide a trust store if server doesn't accept client ssl authentication.
+# But need trust store if ssl call to another server
 
 server:
   ssl:
     enabled: true
     bundle: "clientStoreJks"
+
+
+spring.datasource:
+  url: jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true #
+  #  username: matt.xia
+  #  password: Q1w2e3r4
+  username: yipingx
+  password: Xyp54250
+  driver-class-name: com.mysql.cj.jdbc.Driver
+
+logging.config: classpath:log4j2.xml
+
