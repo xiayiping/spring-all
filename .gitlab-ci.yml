@@ -27,8 +27,6 @@ job-test:
   #  tags:
   #    - maven3.8-java17
   image: maven:3.8.3-openjdk-17
-  only:
-    - merge_requests
   script:
     - echo "Hello, this is test."
     - mvn compile test
