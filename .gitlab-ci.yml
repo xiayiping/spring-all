@@ -29,7 +29,7 @@ job-test:
   image: maven:3.8.3-openjdk-17
   script:
     - echo "Hello, this is test."
-    - mvn compile test
+    - mvn compile test -Dspring.profiles.active=test
 
 # merge should test
 job-mergeTest:
@@ -41,7 +41,7 @@ job-mergeTest:
     - merge_requests
   script:
     - echo "Hello, this is test."
-    - mvn compile test
+    - mvn compile test -Dspring.profiles.active=test
 
 # approve merge should deploy
 job-deploy:
