@@ -21,7 +21,7 @@ import org.xyp.demo.echo.pojo.User;
 @Repository
 public interface UserRepository extends ListCrudRepository<User, Long> {
 
-    @Query(value = "select id as id, name as name from user where id = :id", nativeQuery = true)
+    @Query(value = "select id as id, name as name from platform_user where id = :id", nativeQuery = true)
     public User abcabc(@Param("id") Long id);
 
     public User abcabc2(@Param("id") Long name);

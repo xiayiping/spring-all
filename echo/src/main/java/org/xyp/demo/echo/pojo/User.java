@@ -43,9 +43,9 @@ import static org.xyp.demo.echo.pojo.User.*;
         )
     }
 )
-@NamedNativeQuery(name = "User.abcabc2", query = "select id as pp, name as nn from user where id = :id",
+@NamedNativeQuery(name = "User.abcabc2", query = "select id as pp, name as nn from platform_user where id = :id",
     resultSetMapping = MAPPER_FIELD)
-@Entity
+@Entity(name = "PlatformUser")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
