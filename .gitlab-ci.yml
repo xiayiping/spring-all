@@ -1,8 +1,8 @@
 
 stages:
   - preMergeCheck
-  - build
   - test
+  - mergeTest
   - deploy
   - finish
 
