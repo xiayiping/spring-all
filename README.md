@@ -1,20 +1,23 @@
-- [spring-all](#spring-all)
-  - [Getting started](#getting-started)
-  - [Add your files](#add-your-files)
-  - [Collaborate with your team](#collaborate-with-your-team)
-  - [SSL](#ssl)
-    - [generate key](#generate-key)
-  - [Gradle](#gradle)
-    - [proxy:](#proxy)
-  - [About AQS](#about-aqs)
-  - [About Observation](#about-observation)
-    - [spring micrometer grafana](#spring-micrometer-grafana)
-    - [Tracing](#tracing)
-  - [Java Optimize](#java-optimize)
-  - [PDF generator](#pdf-generator)
-  - [AOP](#aop)
-  - [Hibernate](#hibernate)
-  - [Authenticate with JWT](#authenticate-with-jwt)
+<!-- TOC -->
+* [spring-all](#spring-all)
+  * [Getting started](#getting-started)
+  * [Add your files](#add-your-files)
+  * [Collaborate with your team](#collaborate-with-your-team)
+  * [SSL](#ssl)
+    * [generate key](#generate-key)
+  * [Gradle](#gradle)
+    * [proxy:](#proxy)
+  * [About AQS](#about-aqs)
+  * [About Observation](#about-observation)
+    * [spring micrometer grafana](#spring-micrometer-grafana)
+    * [Tracing](#tracing)
+  * [Java Optimize](#java-optimize-)
+  * [PDF generator](#pdf-generator)
+  * [AOP](#aop)
+  * [Hibernate](#hibernate)
+  * [Security](#security)
+    * [Authenticate with JWT](#authenticate-with-jwt)
+<!-- TOC -->
 
 # spring-all
 
@@ -100,7 +103,7 @@ openssl req -in ./cert.csr -text -noout
 
 echo "subjectAltName=DNS:your.dns.record,DNS:req1.com,DNS:localhost,IP:10.10.10.1" > extfile.cnf
 # Alias name
-this step it's not the config file in step 1
+this step it is not the config file in step 1
 optional used.
 # see details below
 openssl x509 -req -sha256 -days 365 -in ./cert.csr -CA ./ca.pem -CAkey ./ca-key.pem -out ./cert.pem \
@@ -109,13 +112,10 @@ openssl x509 -req -sha256 -days 365 -in ./cert.csr -CA ./ca.pem -CAkey ./ca-key.
 #     - -clrext Do not take over any extensions from the source certificate or request 
 #             Used when extension name also exists in CA's config
 
-#     - or give another extension name in conf file. req_extensions=v3_req2
-then can eliminate clrest
+#     - or give another extension name in conf file. req_extensions=v3_req2 then can eliminate clrest
 #     - or echo "subjectAltName=DNS:your.dns.record,DNS:req1.com,DNS:localhost,IP:10.10.10.1" > extfile.cnf
-#          then use the extfile.cnf
-without -clrext
-# -CAcreateserial will create a serial number
-which is used when you create multiple certificate
+#          then use the extfile.cnf without -clrext
+# -CAcreateserial will create a serial number which is used when you create multiple certificate
 
 # Still the prompt will ask for the pass phrase for ca-key.pem
 
@@ -493,7 +493,12 @@ https://www.baeldung.com/jpa-hibernate-batch-insert-update
 This is a good doc
 also teach you how to add method proxy for methods in dataSource
 
-## Authenticate with JWT
+## Security
+
+check https://docs.spring.io/spring-security-kerberos/reference/ssk.html
+to have better understand of AuthenticateProvider, AuthenticateManager, Filter
+
+### Authenticate with JWT
 
 https://www.youtube.com/watch?v=KxqlJblhzfI&t=5549s
 
@@ -502,9 +507,8 @@ this is a hash encryption algo.
 
 ![Jwt work flow](jwt.png "jwt")
 
-```java
 
-```
+```text
 
 19:12:36.388 [  restartedMain] INFO  s.s.w.DefaultSecurityFilterChain - {{{{
 Will secure any request with [
@@ -538,3 +542,5 @@ org.springframework.security.web.savedrequest.RequestCacheAwareFilter@72bb7065
 org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@50e88287
 org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1db9e646
 org.springframework.security.web.access.ExceptionTranslationFilter@3b636735]}}}}
+
+```

@@ -33,3 +33,6 @@ spring.datasource:
 
 logging.config: classpath:log4j2.xml
 
+app:
+  service-principal: 111
+  keytab-location: 111
