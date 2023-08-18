@@ -3,6 +3,7 @@ stages:
   - preMergeCheck
   - test
   - mergeTest
+  - qodana
   - deploy
   - finish
 
@@ -12,6 +13,21 @@ workflow:
     - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
       when: never
     - if: $CI_COMMIT_BRANCH
+
+qodana:
+  only:
+    - main
+    - dev
+    - home
+    - merge_requests
+  image:
+    name: jetbrains/qodana-jvm
+    entrypoint: [""]
+  variables:
+    QODANA_TOKEN: $qodana_token
+  script:
+    - qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana
+
 
 job-preMergeCheck:
   stage: preMergeCheck
