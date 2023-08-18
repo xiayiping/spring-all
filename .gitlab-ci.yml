@@ -24,7 +24,7 @@ qodana:
     name: jetbrains/qodana-jvm
     entrypoint: [""]
   variables:
-    QODANA_TOKEN: $qodana_token
+    QODANA_TOKEN: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvcmdhbml6YXRpb24iOiJwbm9rOSIsInByb2plY3QiOiIzeVBhTSIsInRva2VuIjoiQUdxWXIifQ.FEZ0QDLnKyzKf-ox6ptGwDKeJLl-jWoX2qfbpDwYZms"
   script:
     - qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana
 
