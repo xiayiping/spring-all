@@ -4,6 +4,7 @@ package org.xyp.demo.call.auth;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -36,21 +37,26 @@ public class SecurityConfig {
     @Value("${app.keytab-location}")
     private String keytabLocation;
 
-    @Autowired
     private AuthenticationFilter authenticationFilter;
+
+    SecurityConfig(AuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain getSecurityFilterChain(HttpSecurity http) throws Exception {
 
 
-//        KerberosAuthenticationProvider kerberosAuthenticationProvider = kerberosAuthenticationProvider();
-//        KerberosServiceAuthenticationProvider kerberosServiceAuthenticationProvider = kerberosServiceAuthenticationProvider();
+//        KerberosAuthenticationProvider kerberosAuthenticationProvider =
+//        kerberosAuthenticationProvider();
+//        KerberosServiceAuthenticationProvider kerberosServiceAuthenticationProvider =
+//        kerberosServiceAuthenticationProvider();
 //        ProviderManager providerManager = new ProviderManager(kerberosAuthenticationProvider,
 //            kerberosServiceAuthenticationProvider);
 
         /////////////////////////////////////////////////////////
         http.csrf(AbstractHttpConfigurer::disable);
-
+        val aaa = "";
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         StringUtils.hasText(null);
         /*http
@@ -91,9 +97,8 @@ public class SecurityConfig {
         return new SpnegoEntryPoint("/login");
     }
 
-    public SpnegoAuthenticationProcessingFilter spnegoAuthenticationProcessingFilter(
-        AuthenticationManager authenticationManager) {
-        log.info("-------- {} " , authenticationManager.getClass());
+    public SpnegoAuthenticationProcessingFilter spnegoAuthenticationProcessingFilter(AuthenticationManager authenticationManager) {
+        log.info("-------- {} ", authenticationManager.getClass());
         SpnegoAuthenticationProcessingFilter filter = new SpnegoAuthenticationProcessingFilter();
         filter.setAuthenticationManager(authenticationManager);
         return filter;
@@ -101,7 +106,8 @@ public class SecurityConfig {
 
 //    @Bean
 //    public KerberosServiceAuthenticationProvider kerberosServiceAuthenticationProvider() {
-//        KerberosServiceAuthenticationProvider provider = new KerberosServiceAuthenticationProvider();
+//        KerberosServiceAuthenticationProvider provider = new
+//        KerberosServiceAuthenticationProvider();
 //        provider.setTicketValidator(sunJaasKerberosTicketValidator());
 //        provider.setUserDetailsService(dummyUserDetailsService());
 //        return provider;

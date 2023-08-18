@@ -26,8 +26,6 @@
 To make it easy for you to get started with GitLab
 here's a list of recommended next steps.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
 ## Add your files
 
 - [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
@@ -96,8 +94,8 @@ openssl req -new -sha256                      -key cert-key.pem -out cert.csr \
   -config ./req2.conf -extensions v3_req 
 # again create certificate
 # Here you can put your subject
-Organization name
-Common name... 2
+# Organization name
+# Common name... 2
 openssl req -in ./cert.csr -text -noout
 # Check csr file
 
@@ -256,28 +254,33 @@ gradlew -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=3128 -Dhttps.proxyHost=127.0
 
 
 ## About AQS
+
+```mermaid
+classDiagram
+
+  AbstractOwnableSynchronizer <|-- AbstractQueuedSynchronizer
+  AbstractQueuedSynchronizer  <|-- Sync
+  Sync  <|-- FairSync
+  Sync  <|-- NonfairSync
+  
+  Node <|-- ConditionNode
+  Node <|-- ExclusiveNode
+  Node <|-- SharedNode
+```
+
 in aquire:
 
 Try to acquire before each of below ordered steps (only if isFirst || pred == null)
-1. create node
-line 692
-2. set node.wait = current
- node.prev = tail( = null).  line 701 (tail is null)
+1. create node line 692
+2. set node.wait = current node.prev = tail( = null).  line 701 (tail is null)
    - [head = new node] -> tail = head  ( ```tryInitializeHead();``` )
-3. **node.prev = tail (!= null)** 
-t = the_old_tail
-   - [tail = node] -> the_old_tail.next = node  ( ```(!casTail(t
-node))``` )
-   - if casTail failed
-set **node.prev = null**
-so next loop still step 3 
-4. pred != null now
-because ```(pred = (node == null) ? null : node.prev)``` at the beginning of loop
+3. **node.prev = tail (!= null)** t = the_old_tail
+   - [tail = node] -> the_old_tail.next = node  ( ```(!casTail(t node))``` )
+   - if casTail failed set **node.prev = null** so next loop still step 3 
+4. pred != null now because ```(pred = (node == null) ? null : node.prev)``` at the beginning of loop 
    - node.status = WAITING
-5. first is true
-because head == pred
-   - park 
-or parkNanos (if timed) or break (timeout)
+5. first is true because head == pred
+   - park or parkNanos (if timed) or break (timeout)
 
 ## About Observation
 
@@ -295,8 +298,7 @@ for flexible init.
 
 ```java
 @AutoConfiguration(
-    after = {CompositeMeterRegistryAutoConfiguration.class
-MicrometerTracingAutoConfiguration.class}
+    after = {CompositeMeterRegistryAutoConfiguration.class, MicrometerTracingAutoConfiguration.class}
 )
 @ConditionalOnClass({ObservationRegistry.class})
 @EnableConfigurationProperties({ObservationProperties.class})
@@ -361,45 +363,25 @@ https://www.youtube.com/watch?v=SNCXp5ilYaA
 ## PDF generator
 
 - puppeteer
-  - Puppeteer is designed to work on headless environments
-including Linux servers without graphics enabled. In a headless environment
-there is no graphical user interface
-which means there's no desktop environment
-window manager
-or display server running. However
-Puppeteer can still operate in this mode because it uses a headless browser (like Chromium in headless mode) to perform its tasks. 
+  - Puppeteer is designed to work on headless environments including Linux servers without graphics enabled. In a headless environment there is no graphical user interface which means there's no desktop environment window manager or display server running. However Puppeteer can still operate in this mode because it uses a headless browser (like Chromium in headless mode) to perform its tasks. 
   - Puppeteer is not designed to run directly in the client-side browser. Puppeteer is a Node.js library that allows you to control and interact with a headless browser (such as Chromium or Chrome) on the server-side.
 
-- other than puppeteer
-there are several other libraries available for converting HTML to PDF programmatically in Node.js. 
-  While Puppeteer is a popular and powerful choice
-there are alternatives that you can consider based on your specific 
-  requirements:
+- other than puppeteer there are several other libraries available for converting HTML to PDF programmatically in Node.js. While Puppeteer is a popular and powerful choice there are alternatives that you can consider based on your specific requirements:
 
-- pdfmake: pdfmake is a client and server-side library for creating PDFs in JavaScript. It allows you to define the PDF content using JSON-like objects. Unlike Puppeteer
-pdfmake doesn't rely on a browser
-making it potentially faster for generating simple PDFs.
+- pdfmake: pdfmake is a client and server-side library for creating PDFs in JavaScript. It allows you to define the PDF content using JSON-like objects. Unlike Puppeteer pdfmake doesn't rely on a browser making it potentially faster for generating simple PDFs.
   - Website: https://pdfmake.github.io/docs/
 
-- wkhtmltopdf: wkhtmltopdf is a command-line tool that converts HTML and CSS to PDF using the WebKit rendering engine. While it's not a Node.js library per se
-you can execute it from Node.js using the child_process module or libraries like wkhtmltopdf
-which provides a Node.js wrapper for wkhtmltopdf.
+- wkhtmltopdf: wkhtmltopdf is a command-line tool that converts HTML and CSS to PDF using the WebKit rendering engine. While it's not a Node.js library per se you can execute it from Node.js using the child_process module or libraries like wkhtmltopdf which provides a Node.js wrapper for wkhtmltopdf.
    - Website: https://wkhtmltopdf.org/
 
 - html-pdf: html-pdf is a Node.js library that uses PhantomJS (a headless browser) under the hood to convert HTML to PDF. It's relatively easy to use and suitable for simpler HTML-to-PDF conversions.
-   - Website: https://www.npmjs.com/package/html-pdf
+- - Website: https://www.npmjs.com/package/html-pdf
    - deprecated
   
-- jsPDF: jsPDF is a client-side library that allows you to generate PDFs directly in the browser. While it's not as feature-rich as some server-side solutions
-it might be useful for scenarios where you want to generate PDFs on the client-side.
+- jsPDF: jsPDF is a client-side library that allows you to generate PDFs directly in the browser. While it's not as feature-rich as some server-side solutions it might be useful for scenarios where you want to generate PDFs on the client-side.
    - Website: https://parall.ax/products/jspdf
 
-- Each of these libraries has its strengths and weaknesses
-so the choice depends on your project requirements and preferences. If you need more control
-support for complex HTML
-or advanced features like headless browsing
-Puppeteer or wkhtmltopdf could be a better fit. If you prefer simplicity and ease of use
-you might find libraries like pdfmake or html-pdf more suitable.
+- Each of these libraries has its strengths and weaknesses so the choice depends on your project requirements and preferences. If you need more control support for complex HTML or advanced features like headless browsing Puppeteer or wkhtmltopdf could be a better fit. If you prefer simplicity and ease of use you might find libraries like pdfmake or html-pdf more suitable.
 
 
 ```html
@@ -505,8 +487,7 @@ https://www.youtube.com/watch?v=KxqlJblhzfI&t=5549s
 Password normally encrypted with https://en.wikipedia.org/wiki/Bcrypt 
 this is a hash encryption algo.
 
-![Jwt work flow](jwt.png "jwt")
-
+![](jwt.png)
 
 ```text
 
@@ -544,3 +525,5 @@ org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1d
 org.springframework.security.web.access.ExceptionTranslationFilter@3b636735]}}}}
 
 ```
+When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are
+$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$

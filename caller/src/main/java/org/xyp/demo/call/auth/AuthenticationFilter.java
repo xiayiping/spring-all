@@ -17,34 +17,37 @@ import java.util.List;
 // difference between GenericFilterBean and OncePerRequestFilter
 @Component
 public class AuthenticationFilter extends OncePerRequestFilter {
-//    @Override
+    //    @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain)
-        throws ServletException, IOException {
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
         String token = request.getHeader("token");
         if (token == null || token.isEmpty()) {
             logger.warn("not authorized 11");
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(new Object(),
-            List.of());
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(new Object(),
+                List.of());
         authenticationToken.setDetails(
-            new WebAuthenticationDetailsSource().buildDetails(request)
+                new WebAuthenticationDetailsSource().buildDetails(request)
         );
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
     }
 
 //    @Override
-//    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+//    public void doFilter(ServletRequest request, ServletResponse response, FilterChain
+//    filterChain) throws IOException, ServletException {
 //        String token = "token";
 //        if (token == null || token.isEmpty()) {
 //            logger.warn("not authorized 22");
 //        }
 //
 //        logger.warn("not authorized 22");
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(new Object(),
+//        UsernamePasswordAuthenticationToken authenticationToken = new
+//        UsernamePasswordAuthenticationToken(new Object(),
 //            List.of());
 //        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 //        filterChain.doFilter(request, response);

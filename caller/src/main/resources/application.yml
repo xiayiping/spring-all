@@ -19,7 +19,7 @@ spring.ssl.bundle:
 
 server:
   ssl:
-    enabled: true
+    enabled: false
     bundle: "clientStoreJks"
 
 
@@ -36,3 +36,12 @@ logging.config: classpath:log4j2.xml
 app:
   service-principal: 111
   keytab-location: 111
+
+springdoc:
+  api-docs:
+    path: "/api-docs"
+  swagger-ui:
+    path: "swagger-ui-custom.html"
+
+echo:
+  url: "https://localhost:8094/echo"

@@ -25,6 +25,8 @@
         <log4j.version>2.20.0</log4j.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH.mm.ss</maven.build.timestamp.format>
         <kerberos.extension.version>2.0.0</kerberos.extension.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
+        <spring.openapi.version>2.1.0</spring.openapi.version>
     </properties>
 
     <dependencies>
@@ -110,7 +112,43 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${spring.openapi.version}</version>
+        </dependency>
+
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-core</artifactId>
+                <version>${kerberos.extension.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-web</artifactId>
+                <version>${kerberos.extension.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-client</artifactId>
+                <version>${kerberos.extension.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
 
     <build>
         <plugins>

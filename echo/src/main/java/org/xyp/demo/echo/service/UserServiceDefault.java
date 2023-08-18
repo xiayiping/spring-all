@@ -10,8 +10,11 @@ import java.util.Collection;
 @Service
 public class UserServiceDefault implements UserService {
 
-    @Autowired
     private UserRepository userRepository;
+
+    public UserServiceDefault(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional
