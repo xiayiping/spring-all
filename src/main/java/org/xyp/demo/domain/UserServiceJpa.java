@@ -12,7 +12,6 @@ public class UserServiceJpa implements UserService {
 
     @Override
     public DummyUser save(DummyUser user) {
-        DummyUser us = userDao.save(user);
-        return us;
+        return userDao.save(user);
     }
 }

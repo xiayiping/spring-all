@@ -55,10 +55,8 @@ public class SecurityConfig {
 //            kerberosServiceAuthenticationProvider);
 
         /////////////////////////////////////////////////////////
-        http.csrf(AbstractHttpConfigurer::disable);
-        val aaa = "";
-        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        StringUtils.hasText(null);
+//        http.csrf(AbstractHttpConfigurer::disable);
+//        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         /*http
             .authorizeHttpRequests((authz) -> authz
                 .requestMatchers("/", "/home").permitAll()

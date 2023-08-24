@@ -1,5 +1,6 @@
 package org.xyp.demo.call;
 
+import io.netty.handler.codec.base64.Base64Encoder;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.net.URLEncoder;
+import java.util.Base64;
 
 @Slf4j
 @AllArgsConstructor
@@ -60,4 +64,10 @@ public class CallerController {
         return "hello " + title;
     }
 
+
+    @Operation
+    @GetMapping("/getBytes")
+    public String getBytes() {
+        return Base64.getEncoder().encodeToString(new byte[]{1, 2, 4, 4, 5});
+    }
 }

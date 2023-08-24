@@ -19,10 +19,12 @@ public class EchoController {
         log.info("EchoController created");
     }
 
+    private Random random = new Random();
+
     @GetMapping("/echo")
     public String call() {
         log.info("echo from echo");
-        return "echo " + new Random().nextInt(100);
+        return "echo " + random.nextInt(100);
     }
 
     @GetMapping("/nullcheck")

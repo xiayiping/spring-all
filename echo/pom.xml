@@ -7,7 +7,6 @@
         <groupId>org.xyp</groupId>
         <artifactId>demo-all</artifactId>
         <version>0.0.1</version>
-<!--        <relativePath/>-->
     </parent>
 
     <artifactId>demo-echo</artifactId>

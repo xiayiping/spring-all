@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @SpringBootApplication
@@ -33,15 +34,14 @@ public class CallerMainApp {
 
     @Bean
     public RestTemplate getRestTemplate(RestTemplateBuilder builder, SslBundles sslBundles) {
-        return Stream.of(builder)
-            .map(b -> b.rootUri(echoUrl))
-            .map(b -> {
-                if (isHttps()) return b.setSslBundle(sslBundles.getBundle(sslBundleKey));
-                else return b;
-            })
-            .map(RestTemplateBuilder::build)
-            .findFirst().get();
-
+        return Optional.of(isHttps()).filter(i -> i)
+            .map(i -> builder
+                .rootUri(echoUrl)
+                .setSslBundle(sslBundles.getBundle(sslBundleKey))
+                .build())
+            .orElseGet(() -> builder
+                .rootUri(echoUrl)
+                .build());
     }
 
     @Bean

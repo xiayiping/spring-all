@@ -20,11 +20,11 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
-        if (bean instanceof DataSource && !(bean instanceof ProxyDataSource)) {
+        if (bean instanceof DataSource dataSource && !(bean instanceof ProxyDataSource)) {
             log.info("DataSource bean has been found: " + bean);
             final ProxyFactory factory = new ProxyFactory(bean);
             factory.setProxyTargetClass(true);
-            factory.addAdvice(new ProxyDataSourceInterceptor((DataSource) bean));
+            factory.addAdvice(new ProxyDataSourceInterceptor(dataSource));
             return factory.getProxy();
         }
         return bean;
