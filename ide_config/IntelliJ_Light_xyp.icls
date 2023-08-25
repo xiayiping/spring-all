@@ -1,9 +1,9 @@
 <scheme name="IntelliJ Light xyp" version="142" parent_scheme="Default">
   <metaInfo>
-    <property name="created">2023-08-25T08:52:34</property>
+    <property name="created">2023-08-25T10:46:08</property>
     <property name="ide">idea</property>
     <property name="ideVersion">2023.2.1.0.0</property>
-    <property name="modified">2023-08-25T08:52:51</property>
+    <property name="modified">2023-08-25T10:46:20</property>
     <property name="originalScheme">IntelliJ Light xyp</property>
   </metaInfo>
   <colors>
@@ -306,7 +306,7 @@
     </option>
     <option name="JAVA_STRING">
       <value>
-        <option name="FOREGROUND" value="965b02" />
+        <option name="FOREGROUND" value="7e7715" />
       </value>
     </option>
     <option name="JS.GLOBAL_VARIABLE">
@@ -347,7 +347,7 @@
     </option>
     <option name="METHOD_DECLARATION_ATTRIBUTES">
       <value>
-        <option name="FOREGROUND" value="9f9200" />
+        <option name="FOREGROUND" value="918311" />
         <option name="FONT_TYPE" value="1" />
       </value>
     </option>
@@ -387,7 +387,7 @@
     <option name="STATIC_FINAL_FIELD_ATTRIBUTES" baseAttributes="STATIC_FIELD_ATTRIBUTES" />
     <option name="STATIC_METHOD_ATTRIBUTES">
       <value>
-        <option name="FOREGROUND" value="9f9200" />
+        <option name="FOREGROUND" value="918311" />
         <option name="FONT_TYPE" value="3" />
       </value>
     </option>
