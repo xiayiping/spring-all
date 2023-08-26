@@ -22,7 +22,7 @@ spring.ssl.bundle:
 
 server:
   ssl:
-    enabled: false
+    enabled: true
     bundle: "web-server"
     client-auth: NONE
 

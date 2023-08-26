@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
-import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
+//import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
+//import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -35,11 +35,11 @@ public class FeignConfig {
         log.info("FeignConfig -------------");
     }
 
-    // add this the load balancer won't work
-//    @Bean
-//    public Client feignClient(SslBundles sslBundles) {
-//        log.info("Feign client create -------------");
-//        val sslContext = sslBundles.getBundle(sslBundle).createSslContext();
-//        return new Client.Default(sslContext.getSocketFactory(), new NoopHostnameVerifier());
-//    }
+    @Bean
+    public Client feignClient(SslBundles sslBundles) {
+        // add this bean, the load balancer won't work
+        log.info("Feign client create -------------");
+        val sslContext = sslBundles.getBundle(sslBundle).createSslContext();
+        return new Client.Default(sslContext.getSocketFactory(), new NoopHostnameVerifier());
+    }
 }
