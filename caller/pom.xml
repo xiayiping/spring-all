@@ -28,16 +28,20 @@
         </dependency>
 
         <!-- needed even for feigh client loadbalancer -->
-        <!-- no need discovery if not using discovery -->
-<!--        <dependency>
+        <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>-->
-        <!-- this step use https directly -->
-<!--        <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-        </dependency>-->
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-hc5</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.security.kerberos</groupId>

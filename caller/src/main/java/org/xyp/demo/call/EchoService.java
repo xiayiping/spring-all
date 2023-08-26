@@ -6,8 +6,8 @@ import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "echoServer1"
-    , url="https://localhost:8094/"
+@FeignClient(name = "echoServer"
+//    , url="https://localhost:8094/"
 //    , configuration = {FeignAutoConfiguration.class, FeignConfig.class}
 )
 public interface EchoService {

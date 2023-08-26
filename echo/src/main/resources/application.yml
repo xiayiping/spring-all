@@ -22,7 +22,7 @@ spring.ssl.bundle:
 
 server:
   ssl:
-    enabled: true
+    enabled: false
     bundle: "web-server"
     client-auth: NONE
 
@@ -53,6 +53,6 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: "127.0.0.1:8848"
+        server-addr: "172.19.83.237:8848/"
   application:
     name: echoServer

@@ -28,6 +28,7 @@
         <spring-cloud.version>2022.0.4</spring-cloud.version>
         <spring.openapi.version>2.1.0</spring.openapi.version>
         <spring.cloud.alibaba.version>2022.0.0.0</spring.cloud.alibaba.version>
+        <feign.hc5.version>12.4</feign.hc5.version>
     </properties>
 
     <dependencies>
@@ -138,7 +139,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-hc5</artifactId>
+                <version>${feign.hc5.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.security.kerberos</groupId>
                 <artifactId>spring-security-kerberos-core</artifactId>

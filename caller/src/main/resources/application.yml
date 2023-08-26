@@ -48,12 +48,18 @@ echo:
 
 
 spring:
-#  cloud:
-#    nacos:
-#      discovery:
-#        server-addr: "127.0.0.1:8848"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: "172.19.83.237:8848"
+#    openfeign:
+#      client:
+#        config:
+#          echoServer:
+#            url: "https://echoServer"
   application:
     name: callerServer
 
 # if not provide below, still work:
 #spring.cloud.loadbalancer.nacos.enabled: true
+
