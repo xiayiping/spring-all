@@ -4,8 +4,11 @@ import io.netty.handler.codec.base64.Base64Encoder;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +20,9 @@ import java.net.URLEncoder;
 import java.util.Base64;
 
 @Slf4j
-@AllArgsConstructor
+@Data
 @RestController
+@AllArgsConstructor
 @RequestMapping("/caller")
 @Validated
 public class CallerController {

@@ -60,7 +60,7 @@ otherwise the client connection will have bad_certificate error.
 openssl genrsa -aes256 -out ca-key.pem 4096  # generate private key.
 # The mey is encrypted with aes with pass phrase. 
 # So the prompt will ask for a phrase input
-keep pass phrase in mind.
+# Keep pass phrase in mind.
 # The key will be output to ca-key.pem
 
 openssl req -new -x509 -sha256 -days 365 -key ca-key.pem -out ca.pem
@@ -70,8 +70,8 @@ openssl req -new -x509 -sha256 -days 365 -key ca-key.pem -out ca.pem \
 # The prompt will then ask you the phrase which you used to encrypt the private key 
 # in ca-key.pem.
 # Here you can put your subject
-Organization name
-Common name... 1
+# Organization name
+# Common name... 1
 
 
 cat ca.pem 
@@ -101,15 +101,14 @@ openssl req -in ./cert.csr -text -noout
 
 echo "subjectAltName=DNS:your.dns.record,DNS:req1.com,DNS:localhost,IP:10.10.10.1" > extfile.cnf
 # Alias name
-this step it is not the config file in step 1
-optional used.
+# this step it is not the config file in step 1 
+# optional used.
 # see details below
 openssl x509 -req -sha256 -days 365 -in ./cert.csr -CA ./ca.pem -CAkey ./ca-key.pem -out ./cert.pem \
   -extfile req2.conf -CAcreateserial -extensions v3_req2 -clrext
 # -extensions v3_req2
 #     - -clrext Do not take over any extensions from the source certificate or request 
 #             Used when extension name also exists in CA's config
-
 #     - or give another extension name in conf file. req_extensions=v3_req2 then can eliminate clrest
 #     - or echo "subjectAltName=DNS:your.dns.record,DNS:req1.com,DNS:localhost,IP:10.10.10.1" > extfile.cnf
 #          then use the extfile.cnf without -clrext
@@ -163,6 +162,11 @@ openssl ecparam -list_curves
 
 ```
 **No need to provide a trust store if server doesn't accept client ssl authentication.**
+
+to enable debug ssl:
+
+-Djavax.net.debug=all
+
 
 ```shell
 # MORE ABOUT I USE CONF FILE TO ADD MORE DNS NAMES

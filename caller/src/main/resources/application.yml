@@ -44,4 +44,16 @@ springdoc:
     path: "swagger-ui-custom.html"
 
 echo:
-  url: "https://localhost:8094/echo"
+  url: "http://localhost:8094/echo"
+
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: "127.0.0.1:8848"
+  application:
+    name: callerServer
+
+# if not provide below, still work:
+#spring.cloud.loadbalancer.nacos.enabled: true

@@ -1,10 +1,12 @@
+
+
 # https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.1.0-Configuration-Changelog
 server.port: 8094
 #docker run -d -p 9411:9411 openzipkin/zipkin
 
 management:
   tracing.sampling.probability: 1.0
-  endpoints.web.exposure.include: prometheus
+  endpoints.web.exposure.include: "*"
 
 # https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl
 spring.ssl.bundle:
@@ -13,15 +15,16 @@ spring.ssl.bundle:
       keystore:
         location: "classpath:keystore/keystore.p12"
         password: "123456"
-      truststore:
-        location: "classpath:keystore/certstore.p12"
-        password: "123456"
+#      truststore:
+#        location: "classpath:keystore/certstore.p12"
+#        password: "123456"
+
 
 server:
   ssl:
-    enabled: true
+    enabled: false
     bundle: "web-server"
-    client-auth: NEED
+    client-auth: NONE
 
 spring.datasource:
   url: jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true #
@@ -45,3 +48,11 @@ spring.jpa:
       generate_statistics: true
 
 logging.config: classpath:log4j2.xml
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: "127.0.0.1:8848"
+  application:
+    name: echoServer

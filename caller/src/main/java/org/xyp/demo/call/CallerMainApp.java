@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientSsl;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +19,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @SpringBootApplication
-@EnableFeignClients
+//@EnableFeignClients
+//@EnableDiscoveryClient
+//@LoadBalancerClients({
+//    @LoadBalancerClient("echoServer")
+//})
 public class CallerMainApp {
     public static void main(String[] args) {
         SpringApplication.run(CallerMainApp.class, args);
