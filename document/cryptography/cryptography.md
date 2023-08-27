@@ -52,7 +52,7 @@ flowchart TB
 How to exchange private key, 
 there's a way to exchange key in a non-security channel
 
-![exchange key](cryptography-img/exchange-key.png "algorithm to exchange key")
+![exchange key](exchange-key.png "algorithm to exchange key")
 
 
 ### Asymmetric 
@@ -72,4 +72,4 @@ public key algos:
 
 **used to solve the problem is confidentially...**,  not integrity.
 
-![HMAC](cryptography-img/hmac.png "HMAC")
+![HMAC](hmac.png "HMAC")
