@@ -54,7 +54,7 @@ springdoc:
     path: "swagger-ui-custom.html"
 
 echo:
-  url: "https://localhost:8192"
+  url: "https://localhost:8094"
 
 
 # if not provide below, still work:

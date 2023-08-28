@@ -30,10 +30,10 @@ spring:
 #        password: "123456" ff
   datasource:
     url: "jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true" #
-    #  username: matt.xia
-    #  password: Q1w2e3r4
-    username: "matt.xia"
-    password: "matt.xia.1234"
+    username: yipingx
+    password: Xyp54250
+#    username: "matt.xia"
+#    password: "matt.xia.1234"
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect

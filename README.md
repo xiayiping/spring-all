@@ -260,6 +260,7 @@ gradlew -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=3128 -Dhttps.proxyHost=127.0
 ## About AQS
 
 ```mermaid
+%%{init: {'theme': 'forest', "flowchart" : { "curve" : "basis" } } }%%
 classDiagram
 
   AbstractOwnableSynchronizer <|-- AbstractQueuedSynchronizer

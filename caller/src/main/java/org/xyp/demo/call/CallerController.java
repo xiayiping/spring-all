@@ -35,7 +35,7 @@ public class CallerController {
     @GetMapping("/echo")
     public String echo() {
         log.info("call from caller");
-        val echo = restTemplate.getForObject("/echo", String.class);
+        val echo = restTemplate.getForObject("/echo/echo", String.class);
         return "echo RestTemplate " + echo;
     }
 
@@ -43,7 +43,7 @@ public class CallerController {
     @GetMapping("/echoAsync")
     public String echoAsync() {
         log.info("call from caller");
-        val echo = webClient.get().uri("/echo").retrieve().bodyToMono(String.class).block();
+        val echo = webClient.get().uri("/echo/echo").retrieve().bodyToMono(String.class).block();
         return "echo webClient " + echo;
     }
 
