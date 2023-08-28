@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @SpringBootApplication
-//@EnableDiscoveryClient
 //@LoadBalancerClients({
 //    @LoadBalancerClient("echoServer")
 //})

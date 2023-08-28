@@ -36,3 +36,6 @@ build/
 
 ### local dev
 */src/**/local/
+local/
+newDemo/
+debug/
