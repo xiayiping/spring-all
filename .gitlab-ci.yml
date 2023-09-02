@@ -63,7 +63,7 @@ job-test:
     - cat ./echo/pom.xml
     - printenv
     - [ -d .m2/repository ] && ls .m2/repository
-    - mvn compile test -Dspring.profiles.active=test $mvn_opts
+    - mvn compile test -Dmaven.repo.local=.m2/repository -Dspring.profiles.active=test
     - ls -l ./.m2/repository
 
 # merge should test
