@@ -1,9 +1,9 @@
 variables:
-  mvn_opts: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  mvn_opts: "-Dmaven.repo.local=.m2/repository"
 
 cache:
   paths:
-    - $CI_PROJECT_DIR/.m2/repository/
+    - .m2/repository/
 
 stages:
   - preMergeCheck
