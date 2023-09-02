@@ -65,6 +65,8 @@ job-mergeTest:
 # approve merge should deploy
 job-deploy:
   stage: deploy
+  tags:
+    - maven3.8-java17-yipingx
 #  tags:
 #    - maven3.8-java17
   #  image: maven:3.8.3-openjdk-17
