@@ -2,6 +2,7 @@ variables:
   mvn_opts: "-Dmaven.repo.local=.m2/repository"
 
 cache:
+  key: yipingx_java
   paths:
     - .m2/repository/
 
