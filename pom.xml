@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.xyp</groupId>
     <artifactId>demo-all</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.4</version>
     <packaging>pom</packaging>
     <name>demo-all</name>
     <description>Demo project for Spring Boot</description>
