@@ -1,3 +1,6 @@
+variables:
+  mvn_opts: localRepository=.m2/repository/
+
 cache:
   paths:
     - .m2/repository/
@@ -49,7 +52,7 @@ job-test:
 #  image: maven:3.8.3-openjdk-17
   script:
     - echo "Hello, this is test."
-    - mvn compile test -Dspring.profiles.active=test
+    - mvn compile test -Dspring.profiles.active=test $mvn_opts
 
 # merge should test
 job-mergeTest:

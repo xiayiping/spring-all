@@ -5,7 +5,8 @@
     <parent>
         <groupId>org.xyp</groupId>
         <artifactId>demo-all</artifactId>
-        <version>${revision}${sha1}${changelist}</version>
+        <version>1.0.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>demo-caller</artifactId>
