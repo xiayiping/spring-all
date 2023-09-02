@@ -2,3 +2,4 @@
 - TASK-101 feign client with HTTPS
 - TASK-102 feign client with nacos + server SSL enabled
 - TASK-103 feign client with nacos + mTLS
+- TASK-104 clear up pom, use dependencyManagement

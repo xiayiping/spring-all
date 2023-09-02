@@ -29,6 +29,9 @@
         <spring.openapi.version>2.1.0</spring.openapi.version>
         <spring.cloud.alibaba.version>2022.0.0.0</spring.cloud.alibaba.version>
         <feign.hc5.version>12.4</feign.hc5.version>
+        <httpclient5.version>5.2.1</httpclient5.version>
+        <net.ttddyy.datasource-proxy>1.9</net.ttddyy.datasource-proxy>
+        <snakeyaml.version>2.0</snakeyaml.version>
     </properties>
 
     <dependencies>
@@ -40,7 +43,16 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
         </dependency>
 
         <dependency>
@@ -117,9 +129,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${spring.openapi.version}</version>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>
@@ -159,9 +169,39 @@
                 <artifactId>spring-security-kerberos-client</artifactId>
                 <version>${kerberos.extension.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>net.ttddyy</groupId>
+                <artifactId>datasource-proxy</artifactId>
+                <version>${net.ttddyy.datasource-proxy}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient5.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${spring.openapi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <scope>runtime</scope>
+                <version>2.1.214</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
 
     <build>
         <plugins>

@@ -3,7 +3,7 @@ server:
   ssl:
     enabled: true
     bundle: "web-server"
-    client-auth: NONE
+    client-auth: NEED
     key-store: "classpath:keystore/keystore.p12"
     key-store-password: "123456"
 
@@ -25,15 +25,15 @@ spring:
         keystore:
           location: "classpath:keystore/keystore.p12"
           password: "123456"
-#      truststore:
-#        location: "classpath:keystore/certstore.p12"
-#        password: "123456" ff
+        truststore:
+          location: "classpath:keystore/certstore.p12"
+          password: "123456"
   datasource:
     url: "jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true" #
-    username: yipingx
-    password: Xyp54250
-#    username: "matt.xia"
-#    password: "matt.xia.1234"
+#    username: yipingx
+#    password: Xyp54250
+    username: "matt.xia"
+    password: "matt.xia.1234"
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect

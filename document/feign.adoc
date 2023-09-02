@@ -19,6 +19,6 @@ https://www.baeldung.com/java-trustanchors-parameter-must-be-non-empty
 The client for LoadBalancer is a ```FeignBlockingLoadBalancerClient```,
 which wraps a normal HttpClient, here I'll use ApacheHttp5Client
 
-according to ```HttpClient5FeighConfiguration```,
+according to ```HttpClient5FeignConfiguration```,
 we should override```ClosableHttpClient```,
 so that the underlying client of LB client will be overridden.
