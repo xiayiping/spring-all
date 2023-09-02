@@ -54,6 +54,9 @@ job-test:
 #  image: maven:3.8.3-openjdk-17
   script:
     - echo "Hello, this is test."
+    - cat ./pom.xml
+    - cat ./caller/pom.xml
+    - cat ./echo/pom.xml
     - mvn compile test -Dspring.profiles.active=test $mvn_opts
 
 # merge should test
@@ -80,7 +83,13 @@ job-deploy:
     - echo "Hello, this is deploy. 1 $CI_MERGE_REQUEST_TARGET_BRANCH_SHA"
     - echo "Hello, this is deploy. 1 $CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - printenv
+    - cat ./pom.xml
+    - cat ./caller/pom.xml
+    - cat ./echo/pom.xml
     - npx semantic-release
+    - cat ./pom.xml
+    - cat ./caller/pom.xml
+    - cat ./echo/pom.xml
 
 job-finish:
   stage: finish
