@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.xyp</groupId>
     <artifactId>demo-all</artifactId>
-    <version>1.0.0</version>
+    <version>${revision}${sha1}${changelist}</version>
     <packaging>pom</packaging>
     <name>demo-all</name>
     <description>Demo project for Spring Boot</description>
@@ -21,6 +21,9 @@
     </modules>
 
     <properties>
+        <revision>1.0.0</revision>
+        <changelist></changelist>
+        <sha1/>
         <java.version>17</java.version>
         <log4j.version>2.20.0</log4j.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH.mm.ss</maven.build.timestamp.format>
