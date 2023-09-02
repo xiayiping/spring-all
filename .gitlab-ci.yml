@@ -1,5 +1,5 @@
 variables:
-  mvn_opts: "-DlocalRepository=.m2/repository/"
+  mvn_opts: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
 cache:
   paths:
@@ -33,7 +33,9 @@ qodana:
     QODANA_TOKEN: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvcmdhbml6YXRpb24iOiJwbm9rOSIsInByb2plY3QiOiIzeVBhTSIsInRva2VuIjoiQUdxWXIifQ.FEZ0QDLnKyzKf-ox6ptGwDKeJLl-jWoX2qfbpDwYZms"
   script:
     #- qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana
+    - pwd
     - echo "fake"
+    - printenv
 
 
 job-preMergeCheck:
