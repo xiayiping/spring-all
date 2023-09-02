@@ -39,3 +39,7 @@ build/
 local/
 newDemo/
 debug/
+*.json
+*.js
+node_modules/
+.husky/
