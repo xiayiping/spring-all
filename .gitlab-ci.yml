@@ -62,7 +62,7 @@ job-test:
     - cat ./caller/pom.xml
     - cat ./echo/pom.xml
     - printenv
-    - ls .m2/repository
+    - [ -d .m2/repository ] && ls .m2/repository
     - mvn compile test -Dspring.profiles.active=test $mvn_opts
     - ls -l ./.m2/repository
 
