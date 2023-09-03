@@ -1,14 +1,11 @@
 package org.xyp.demo.call;
 
-import io.netty.handler.codec.base64.Base64Encoder;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.net.URLEncoder;
 import java.util.Base64;
 
 @Slf4j
@@ -59,7 +55,7 @@ public class CallerController {
     @GetMapping("/hello")
     public String hello() {
         log.info("call from hello");
-        return "hello ";
+        return "hello fff";
     }
 
     @Operation
