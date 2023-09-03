@@ -3,11 +3,13 @@
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2"
+  #MAVEN_OPTS: "-Dmaven.repo.local=.m2"
   #MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
 
 cache:
   key: yipingx_java
   paths:
+  #- .m2/
     - /cache/.m2/
 
 stages:
