@@ -16,4 +16,5 @@ branches:
   - "home"
   - "office"
   - "dev"
+  - "pre-master"
   - "+([0-9])?(.{+([0-9]),x}).x"
