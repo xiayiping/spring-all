@@ -69,7 +69,7 @@ job-test:
     - ls -la ..
     - printenv
     - mvn compile  $MAVEN_OPTS -Dspring.profiles.active=test
-    - ls -l ./.m2/repository
+#    - ls -l ./.m2/repository
 
 # merge should test
 job-mergeTest:
