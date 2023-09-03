@@ -62,9 +62,6 @@ job-test:
     - pwd
 #    - cat /home/gitlab-runner/cache/aaa.txt
 #    - echo "aaaa" >> /home/gitlab-runner/cache/bbb.txt
-    - cat ./pom.xml
-    - cat ./caller/pom.xml
-    - cat ./echo/pom.xml
     - ls -la
     - ls -la ..
     - printenv
@@ -96,13 +93,7 @@ job-deploy:
     - echo "Hello, this is deploy. 1 $CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - pwd
     - printenv
-    - cat ./pom.xml
-    - cat ./caller/pom.xml
-    - cat ./echo/pom.xml
     - npx semantic-release
-    - cat ./pom.xml
-    - cat ./caller/pom.xml
-    - cat ./echo/pom.xml
 
 job-finish:
   stage: finish
