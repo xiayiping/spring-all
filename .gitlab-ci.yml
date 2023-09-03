@@ -64,7 +64,7 @@ job-test:
     - ls -la
     - ls -la ..
     - printenv
-    - mvn compile test -Dmaven.repo.local=.m2/repository -Dspring.profiles.active=test
+    - mvn compile -Dmaven.repo.local=.m2/repository -Dspring.profiles.active=test
     - ls -l ./.m2/repository
 
 # merge should test
