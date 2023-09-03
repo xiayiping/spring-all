@@ -2,19 +2,19 @@
 #  mvn_opts: "-Dmaven.repo.local=.m2/repository"
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=${CI_PROJECT_DIR}/.m2"
+  MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2"
   #MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
 
 cache:
   key: yipingx_java
   paths:
-    - .m2/
+    - /cache/.m2/
 
 stages:
   - preMergeCheck
   - test
   - mergeTest
-  - qodana
+#  - qodana
   - deploy
   - finish
 
@@ -25,22 +25,22 @@ workflow:
       when: never
     - if: $CI_COMMIT_BRANCH
 
-qodana:
-  only:
-    - main
-    - dev
-    - home
-    - merge_requests
-  image:
-    name: jetbrains/qodana-jvm
-    entrypoint: [""]
-  variables:
-    QODANA_TOKEN: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvcmdhbml6YXRpb24iOiJwbm9rOSIsInByb2plY3QiOiIzeVBhTSIsInRva2VuIjoiQUdxWXIifQ.FEZ0QDLnKyzKf-ox6ptGwDKeJLl-jWoX2qfbpDwYZms"
-  script:
-    #- qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana
-    - pwd
-    - echo "fake"
-    - printenv
+# qodana:
+#   only:
+#     - main
+#     - dev
+#     - home
+#     - merge_requests
+#   image:
+#     name: jetbrains/qodana-jvm
+#     entrypoint: [""]
+#   variables:
+#     QODANA_TOKEN: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvcmdhbml6YXRpb24iOiJwbm9rOSIsInByb2plY3QiOiIzeVBhTSIsInRva2VuIjoiQUdxWXIifQ.FEZ0QDLnKyzKf-ox6ptGwDKeJLl-jWoX2qfbpDwYZms"
+#   script:
+#     #- qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana
+#     - pwd
+#     - echo "fake"
+#     - printenv
 
 
 job-preMergeCheck:
@@ -68,7 +68,7 @@ job-test:
     - ls -la
     - ls -la ..
     - printenv
-    - mvn compile -Dmaven.repo.local=.m2/repository -Dspring.profiles.active=test
+    - mvn compile  $MAVEN_OPTS -Dspring.profiles.active=test
     - ls -l ./.m2/repository
 
 # merge should test
