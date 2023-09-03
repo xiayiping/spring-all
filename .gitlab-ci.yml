@@ -56,8 +56,8 @@ job-test:
   script:
     - echo "Hello, this is test."
     - pwd
-    - cat /home/gitlab-runner/cache/aaa.txt
-    - echo "aaaa" >> /home/gitlab-runner/cache/bbb.txt
+#    - cat /home/gitlab-runner/cache/aaa.txt
+#    - echo "aaaa" >> /home/gitlab-runner/cache/bbb.txt
     - cat ./pom.xml
     - cat ./caller/pom.xml
     - cat ./echo/pom.xml
