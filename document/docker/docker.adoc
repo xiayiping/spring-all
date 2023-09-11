@@ -1,0 +1,30 @@
+
+docker build --help
+
+[source,dockerfile]
+----
+FROM node:alpine
+COPY ./javascript /app
+WORKDIR /app
+CMD node app.js
+----
+
+[source,shell]
+----
+docker build --tag myname:latest .
+----
+
+#last '.' tells where is the Dockerfile#
+
+[source,shell]
+----
+docker build --tag myname:latest -f ./MyDockerfile
+----
+
+#-f will make you use your own docker file#
+
+[source,java]
+----
+class A{}
+----
+
