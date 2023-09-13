@@ -360,6 +360,13 @@ https://www.youtube.com/watch?v=fh3VbrPvAjg&t=1882s
 ### Tracing
 Otel is a newer framework than brave
 
+Remember add below, otherwise traceId won't propagate between remote service call.
+```xml
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
+        </dependency>
+```
 
 ## Java Optimize 
 https://www.youtube.com/watch?v=SNCXp5ilYaA

@@ -5,8 +5,7 @@
     <parent>
         <groupId>org.xyp</groupId>
         <artifactId>demo-all</artifactId>
-        <version>1.0.9</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>${revision}${sha1}${changelist}</version>
     </parent>
 
     <artifactId>demo-caller</artifactId>
@@ -26,6 +25,11 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
 
         <!-- needed even for feigh client loadbalancer -->
@@ -66,6 +70,11 @@
             <groupId>org.springframework.security.kerberos</groupId>
             <artifactId>spring-security-kerberos-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
+        </dependency>
+
 
     </dependencies>
 </project>

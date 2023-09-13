@@ -3,7 +3,7 @@ server:
   ssl:
     enabled: true
     bundle: "web-server"
-    client-auth: NEED
+    client-auth: none
     key-store: "classpath:keystore/keystore.p12"
     key-store-password: "123456"
 
@@ -19,6 +19,7 @@ spring:
         server-addr: "localhost:8848"
         ip: localhost
         secure: true
+        enabled: false
   ssl.bundle:
     jks: # https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl
       web-server:
@@ -49,7 +50,11 @@ spring:
         generate_statistics: true
 
 management:
-  tracing.sampling.probability: 1.0
-  endpoints.web.exposure.include: "*"
+  tracing:
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 logging.config: classpath:log4j2.xml

@@ -3,7 +3,7 @@
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout disableAnsi="false"
-                           pattern="%style{%d{HH:mm:ss.SSS}}{green} [%20.20thread{20}] %-5level %style{%40.40logger{1.}}{cyan} -
+                           pattern="%style{%d{HH:mm:ss.SSS}}{green} [%20.20thread{20}] %-5level %style{%40.40logger{1.}}{cyan} -[%X{traceId},%X{spanId}]
 %highlight{%msg}{FATAL=red bold, ERROR=bright_red bold, WARN=bright_yellow bold, INFO=normal, DEBUG=white, TRACE=blue}%n"/>
         </Console>
     </Appenders>

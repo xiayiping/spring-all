@@ -13,6 +13,7 @@ import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -34,13 +35,14 @@ public class FeignConfig {
     String sslBundle;
 
     public FeignConfig() {
-        log.info("FeignConfig -------------");
+        log.info("FeignConfig spring-all -------------");
     }
 
     @Bean
+    @ConditionalOnMissingBean(SSLContext.class)
     public SSLContext createSSLContext(SslBundles sslBundles) {
         // add this bean, the load balancer won't work
-        log.info("Feign client create -------------");
+        log.info("Feign client create spring-all -------------");
         val bundle = sslBundles.getBundle(sslBundle);
         val ctx = bundle.createSslContext();
         return ctx;
@@ -48,8 +50,9 @@ public class FeignConfig {
 
     @Bean("sslHttpClient")
     @ConditionalOnBean(value = SSLContext.class)
+//    @ConditionalOnMissingBean(CloseableHttpClient.class)
     public CloseableHttpClient fileServiceFeignClient(SSLContext sslContext) {
-        System.out.println("*-*-*-*-*-*-*-*-*-*- append SSL Context to http client 5");
+        log.info("*-*-*-*-*-*-*-*-*-*- spring-all append SSL Context to http client 5");
 
         Registry<ConnectionSocketFactory> socketRegistry =
             RegistryBuilder.<ConnectionSocketFactory>create()
