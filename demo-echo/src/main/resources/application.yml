@@ -1,0 +1,60 @@
+server:
+  port: 8094
+  ssl:
+    enabled: true
+    bundle: "web-server"
+    client-auth: none
+    key-store: "classpath:keystore/keystore.p12"
+    key-store-password: "123456"
+
+# https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.1.0-Configuration-Changelog
+# docker run -d -p 9411:9411 openzipkin/zipkin
+
+spring:
+  application:
+    name: echoServer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: "localhost:8848"
+        ip: localhost
+        secure: true
+        enabled: false
+  ssl.bundle:
+    jks: # https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl
+      web-server:
+        keystore:
+          location: "classpath:keystore/keystore.p12"
+          password: "123456"
+        truststore:
+          location: "classpath:keystore/certstore.p12"
+          password: "123456"
+  datasource:
+    url: "jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true" #
+    username: yipingx
+    password: Xyp54250
+#    username: "matt.xia"
+#    password: "matt.xia.1234"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update #create update
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc.batch_size: 10
+        order_inserts: true
+        order_updates: true
+        generate_statistics: true
+
+management:
+  tracing:
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging.config: classpath:log4j2.xml

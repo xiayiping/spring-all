@@ -1,0 +1,84 @@
+server:
+  port: 8093
+  ssl:
+    enabled: true
+    # explicit key store so intellij can recognize https
+    key-store: "classpath:keystore/keystore.p12"
+    key-store-password: "123456"
+    bundle: "clientStoreJks"
+
+spring:
+  application:
+    name: callerServer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: "localhost:8848"
+        enabled: false
+  ssl:
+    bundle:
+      jks:
+        clientStoreJks:
+          keystore:
+            location: "classpath:keystore/keystore.p12"
+            password: "123456"
+          truststore:
+            location: "classpath:keystore/certstore.p12"
+            password: "123456"
+        feignStore:
+          truststore:
+            location: "classpath:keystore/certstore.p12"
+            password: "123456"
+          keystore:
+            location: "classpath:keystore/keystore.p12"
+            password: "123456"
+  datasource:
+    url: jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true #
+    #  username: matt.xia
+    #  password: Q1w2e3r4
+    username: yipingx
+    password: Xyp54250
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update #create update
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc.batch_size: 10
+        order_inserts: true
+        order_updates: true
+        generate_statistics: true
+  web:
+    resources:
+      static-locations: "file:caller/src/main/resources/static"
+  freemarker:
+    suffix: ""
+    template-loader-path: "file:caller/src/main/resources/template"
+    cache: false
+
+logging:
+  config: classpath:log4j2.xml
+
+app:
+  service-principal: 111
+  keytab-location: 111
+
+springdoc:
+  api-docs:
+    path: "/api-docs"
+  swagger-ui:
+    path: "swagger-ui-custom.html"
+
+echo:
+  url: "https://localhost:8094"
+
+management:
+  tracing:
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
