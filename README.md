@@ -251,7 +251,12 @@ can read it.  They are bound to ```server.ssl```
 # HTTPS Only Proxy configuration
 gradlew -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=3129 "-Dhttp.nonProxyHosts=*.nonproxyrepos.com|localhost"
 # Both HTTP and HTTPS Proxy configuration
-gradlew -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=3128 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=3129 "-Dhttp.nonProxyHosts=*.nonproxyrepos.com|localhost"
+gradlew -Dhttp.proxyHost=127.0.0.1 \
+  -Dhttp.proxyPort=7890 \
+  -Dhttps.proxyHost=127.0.0.1 \
+  -Dhttps.proxyPort=7890 
+  
+  "-Dhttp.nonProxyHosts=*.nonproxyrepos.com|localhost"
 
 #ref: https://stackoverflow.com/questions/5991194/gradle-proxy-configuration
 ```

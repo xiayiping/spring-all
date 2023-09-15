@@ -44,3 +44,4 @@ debug/
 *.js
 node_modules/
 .husky/
+.flattened-pom.xml

@@ -99,7 +99,7 @@ job-deploy:
     - echo "Hello, this is deploy. 1 $CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - pwd
     - printenv
-    - npx semantic-release
+#    - npx semantic-release
 
 job-finish:
   stage: finish

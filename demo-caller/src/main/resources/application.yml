@@ -68,10 +68,9 @@ springdoc:
 echo:
   url: "https://localhost:8094"
 
-
-
 # if not provide below, still work:
 #spring.cloud.loadbalancer.nacos.enabled: true
+
 management:
   tracing:
     enabled: true
