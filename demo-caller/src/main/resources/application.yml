@@ -13,16 +13,8 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: false
-    openfeign:
-      client:
-        config:
-          FileService:
-            url:  "https://localhost:8081/"
-          echoServer:
-            url: "http://localhost:8094"
-            micrometer:
-              enabled: true
+        server-addr: "localhost:8848"
+        enabled: true
   ssl.bundle:
     jks:
       clientStoreJks:
