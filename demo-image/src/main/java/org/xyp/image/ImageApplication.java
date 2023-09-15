@@ -1,4 +1,4 @@
-package com.example.image;
+package org.xyp.image;
 
 import lombok.val;
 
@@ -15,12 +15,15 @@ import static java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE;
 
 public class ImageApplication {
 
-    public static void main(String[] args) throws IOException {
+    static String input = "main.jpg";
+    static String output = "d:/myImage.png";
+
+    public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("0000003");
-        readImage("test.jpg");
+        readImage(input);
     }
 
-    public static void readImage(String name) throws IOException {
+    public static void readImage(String name) throws IOException, InterruptedException {
         BufferedImage image = ImageIO.read(Path.of("d:", name).toUri().toURL());
         val width = image.getWidth();
         val height = image.getHeight();
@@ -83,7 +86,7 @@ public class ImageApplication {
         return result;
     }
 
-    public static void write(int[][] img) {
+    public static void write(int[][] img) throws InterruptedException {
 
         System.out.println(img.length);
         System.out.println(img[0].length);
@@ -105,19 +108,23 @@ public class ImageApplication {
             }
         }
 
-        File f = new File("d:/myImage.png");
-        if (f.exists()) {
-            f.delete();
-        }
+        File f = new File(output);
         try {
-            // javax.imageio.ImageIO:
-            ImageIO.write(bi, "png", new File("d:/myImage.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+//            f.deleteOnExit();
+            Thread.sleep(2000);
+        } finally {
+            try {
+                // javax.imageio.ImageIO:
+                ImageIO.write(bi, "png", f);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+
+                System.out.println(f.exists());
+
+            }
         }
 
-
-        System.out.println(f.exists());
 
     }
 }
