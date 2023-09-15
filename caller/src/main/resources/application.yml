@@ -2,10 +2,10 @@ server:
   port: 8093
   ssl:
     enabled: true
+    # explicit key store so intellij can recognize https
     key-store: "classpath:keystore/keystore.p12"
     key-store-password: "123456"
     bundle: "clientStoreJks"
-#docker run -d -p 9411:9411 openzipkin/zipkin
 
 spring:
   application:
@@ -14,23 +14,24 @@ spring:
     nacos:
       discovery:
         server-addr: "localhost:8848"
-        enabled: true
-  ssl.bundle:
-    jks:
-      clientStoreJks:
-        keystore:
-          location: "classpath:keystore/keystore.p12"
-          password: "123456"
-        truststore:
-          location: "classpath:keystore/certstore.p12"
-          password: "123456"
-      feignStore:
-        truststore:
-          location: "classpath:keystore/certstore.p12"
-          password: "123456"
-        keystore:
-          location: "classpath:keystore/keystore.p12"
-          password: "123456"
+        enabled: false
+  ssl:
+    bundle:
+      jks:
+        clientStoreJks:
+          keystore:
+            location: "classpath:keystore/keystore.p12"
+            password: "123456"
+          truststore:
+            location: "classpath:keystore/certstore.p12"
+            password: "123456"
+        feignStore:
+          truststore:
+            location: "classpath:keystore/certstore.p12"
+            password: "123456"
+          keystore:
+            location: "classpath:keystore/keystore.p12"
+            password: "123456"
   datasource:
     url: jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true #
     #  username: matt.xia
@@ -38,14 +39,28 @@ spring:
     username: yipingx
     password: Xyp54250
     driver-class-name: com.mysql.cj.jdbc.Driver
-# No need to provide a trust store if server doesn't accept client ssl authentication.
-# But need trust store if ssl call to another server
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update #create update
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc.batch_size: 10
+        order_inserts: true
+        order_updates: true
+        generate_statistics: true
+  web:
+    resources:
+      static-locations: "file:caller/src/main/resources/static"
+  freemarker:
+    suffix: ""
+    template-loader-path: "file:caller/src/main/resources/template"
+    cache: false
 
-#management:
-#  tracing.sampling.probability: 1.0
-#  endpoints.web.exposure.include: prometheus
-
-logging.config: classpath:log4j2.xml
+logging:
+  config: classpath:log4j2.xml
 
 app:
   service-principal: 111
@@ -61,6 +76,4 @@ echo:
   url: "https://localhost:8094"
 
 
-# if not provide below, still work:
-#spring.cloud.loadbalancer.nacos.enabled: true
 

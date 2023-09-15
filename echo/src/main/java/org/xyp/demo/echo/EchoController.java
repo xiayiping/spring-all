@@ -24,7 +24,7 @@ public class EchoController {
     @GetMapping("/echo")
     public String call() {
         log.info("echo from echo");
-        return "echo " + random.nextInt(100);
+        return "echo " + random.nextInt(100) + (3/0);
     }
 
     @GetMapping("/nullcheck")

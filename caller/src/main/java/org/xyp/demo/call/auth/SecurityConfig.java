@@ -39,6 +39,8 @@ public class SecurityConfig {
 
     private AuthenticationFilter authenticationFilter;
 
+
+
     SecurityConfig(AuthenticationFilter authenticationFilter) {
         this.authenticationFilter = authenticationFilter;
     }
@@ -55,27 +57,29 @@ public class SecurityConfig {
 //            kerberosServiceAuthenticationProvider);
 
         /////////////////////////////////////////////////////////
-//        http.csrf(AbstractHttpConfigurer::disable);
+        http.csrf(AbstractHttpConfigurer::disable);
 //        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        /*http
-            .authorizeHttpRequests((authz) -> authz
-                .requestMatchers("/", "/home").permitAll()
+
+        http.anonymous(an -> an.principal("anonymous_xyp"));
+        http
+            .authorizeHttpRequests(auth -> auth
+//                .requestMatchers("/", "/home").permitAll()
                 .anyRequest().authenticated()
             )
-            .exceptionHandling()
-            .authenticationEntryPoint(spnegoEntryPoint())
-            .and()
-            .formLogin()
-            .loginPage("/login").permitAll()
-            .and()
-            .logout()
-            .permitAll()
-            .and()
-            .authenticationProvider(kerberosAuthenticationProvider())
-            .authenticationProvider(kerberosServiceAuthenticationProvider())
-            .addFilterBefore(spnegoAuthenticationProcessingFilter(providerManager),
-                BasicAuthenticationFilter.class);
-        return http.build();*/
+//            .exceptionHandling()
+//            .authenticationEntryPoint(spnegoEntryPoint())
+//            .and()
+//            .formLogin()
+//            .loginPage("/login").permitAll()
+//            .and()
+//            .logout()
+//            .permitAll()
+//            .and()
+//            .authenticationProvider(kerberosAuthenticationProvider())
+//            .authenticationProvider(kerberosServiceAuthenticationProvider())
+//            .addFilterBefore(spnegoAuthenticationProcessingFilter(providerManager),
+//                BasicAuthenticationFilter.class)
+        ;
 
         return http.build();
     }
