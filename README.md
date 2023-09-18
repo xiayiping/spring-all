@@ -511,6 +511,9 @@ https://www.youtube.com/watch?v=her_7pa0vrg&t=16258s
 
 https://www.youtube.com/watch?v=KxqlJblhzfI&t=5549s
 
+https://www.youtube.com/watch?v=VVn9OG9nfH0&t=341s
+
+
 Password normally encrypted with https://en.wikipedia.org/wiki/Bcrypt 
 this is a hash encryption algo.
 

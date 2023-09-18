@@ -23,6 +23,7 @@
         <module>demo-image</module>
         <module>demo-jwt</module>
         <module>demo-oauth2-client</module>
+        <module>demo-nio-server</module>
     </modules>
 
     <properties>

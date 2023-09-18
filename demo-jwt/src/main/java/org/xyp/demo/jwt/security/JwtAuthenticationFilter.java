@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt = authHeader.substring(7);
         String userEmail = jwtService.extractUsername(jwt);
         if (null != userEmail
-                && null != SecurityContextHolder.getContext().getAuthentication()) {
+                && null == SecurityContextHolder.getContext().getAuthentication()) {
             val userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken token =
