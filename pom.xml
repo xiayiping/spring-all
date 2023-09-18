@@ -21,6 +21,7 @@
         <module>demo-echo</module>
         <module>demo-api</module>
         <module>demo-image</module>
+        <module>demo-auth</module>
     </modules>
 
     <properties>

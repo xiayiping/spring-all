@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false"
+                           pattern="%style{%d{HH:mm:ss.SSS}}{cyan} [%20.20thread{20}]
+%highlight{%-5level %30.30logger{1.}} - %msg%n"/>
+        </Console>
+    </Appenders>
+<!--    <Loggers>-->
+<!--        <Root level="info" additivity="false">-->
+<!--            <AppenderRef ref="Console"/>-->
+<!--        </Root>-->
+
+<!--        <Logger name="org.hibernate" level="info" additivity="false">-->
+<!--            <AppenderRef ref="Console"/>-->
+<!--        </Logger>-->
+<!--        <Logger name="org.springframework.jdbc.core" level="info" additivity="false">-->
+<!--            <AppenderRef ref="Console"/>-->
+<!--        </Logger>-->
+<!--        <Logger name="org.springframework" level="debug"/>-->
+<!--    </Loggers>-->
+</Configuration>

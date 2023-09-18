@@ -497,6 +497,16 @@ also teach you how to add method proxy for methods in dataSource
 check https://docs.spring.io/spring-security-kerberos/reference/ssk.html
 to have better understand of AuthenticateProvider, AuthenticateManager, Filter
 
+spring boot 3 security (migrate from spring boot 2)
+https://www.youtube.com/watch?v=1Mel8wn1HZs
+
+spring boot 3 oauth2
+https://www.youtube.com/watch?v=us0VjFiHogo
+
+###
+basic:
+https://www.youtube.com/watch?v=her_7pa0vrg&t=16258s
+
 ### Authenticate with JWT
 
 https://www.youtube.com/watch?v=KxqlJblhzfI&t=5549s
