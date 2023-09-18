@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.xyp</groupId>
-        <artifactId>demo-all</artifactId>
+        <artifactId>xyp-demo-all</artifactId>
         <version>${revision}${sha1}${changelist}</version>
     </parent>
 

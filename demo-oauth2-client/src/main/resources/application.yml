@@ -11,8 +11,8 @@ spring:
             client-id: "cc30276322adbf59445b"
             client-secret: "b79bc4c23ffc3c6c6699708b50d4991eb19d9fd1"
 
-#logging:
-#  config: "config/log4j2.xml"
+logging:
+  config: "config/log4j2.xml"
 #  level:
 #    root: info
 #    org:

@@ -7,17 +7,17 @@
 %highlight{%-5level %30.30logger{1.}} - %msg%n"/>
         </Console>
     </Appenders>
-<!--    <Loggers>-->
-<!--        <Root level="info" additivity="false">-->
-<!--            <AppenderRef ref="Console"/>-->
-<!--        </Root>-->
+    <Loggers>
+        <Root level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Root>
 
-<!--        <Logger name="org.hibernate" level="info" additivity="false">-->
-<!--            <AppenderRef ref="Console"/>-->
-<!--        </Logger>-->
-<!--        <Logger name="org.springframework.jdbc.core" level="info" additivity="false">-->
-<!--            <AppenderRef ref="Console"/>-->
-<!--        </Logger>-->
-<!--        <Logger name="org.springframework" level="debug"/>-->
-<!--    </Loggers>-->
+        <Logger name="org.hibernate" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="org.springframework.jdbc.core" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="org.springframework" level="info"/>
+    </Loggers>
 </Configuration>

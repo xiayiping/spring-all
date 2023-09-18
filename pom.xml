@@ -9,19 +9,20 @@
         <version>3.1.2</version>
         <relativePath/>
     </parent>
+
     <groupId>org.xyp</groupId>
-    <artifactId>demo-all</artifactId>
+    <artifactId>xyp-demo-all</artifactId>
     <version>${revision}${sha1}${changelist}</version>
     <packaging>pom</packaging>
-    <name>demo-all</name>
     <description>Demo project for Spring Boot</description>
 
     <modules>
+        <module>demo-api</module>
         <module>demo-caller</module>
         <module>demo-echo</module>
-        <module>demo-api</module>
         <module>demo-image</module>
-        <module>demo-auth</module>
+        <module>demo-jwt</module>
+        <module>demo-oauth2-client</module>
     </modules>
 
     <properties>
@@ -199,6 +200,18 @@
                 <artifactId>h2</artifactId>
                 <scope>runtime</scope>
                 <version>2.1.214</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>0.11.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>0.11.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
