@@ -21,7 +21,9 @@ spring:
         order_updates: true
         generate_statistics: true
   application:
-    name: AAA
+    name: JwtApp
+
+
 
 logging:
   config: config/resources/log4j2.xml

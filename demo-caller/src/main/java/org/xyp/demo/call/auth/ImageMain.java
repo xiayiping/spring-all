@@ -15,8 +15,8 @@ import java.nio.file.Path;
 public class ImageMain {
     public static void main(String[] args) throws IOException {
 
-        File input = Path.of("d:", "sss.png").toFile();
-        File output = Path.of("d:", "abc3.png").toFile();
+        File input = Path.of("d:", "main2.jpg").toFile();
+        File output = Path.of("d:", "abc4.png").toFile();
         BufferedImage bufferedImage = ImageIO.read(input);
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
@@ -84,16 +84,16 @@ public class ImageMain {
 //                System.out.transfer2println("r");
                 val r = transfer2(pixels2D, i, j, halfStep, height, width, 0x00ff0000);
 //                System.out.println("g");
-//                val g = transfer(pixels2D, i, j, halfStep, height, width, 0x0000ff00);
+                val g = transfer2(pixels2D, i, j, halfStep, height, width, 0x0000ff00);
 //                System.out.println("b");
-//                val b = transfer(pixels2D, i, j, halfStep, height, width, 0x000000ff);
+                val b = transfer2(pixels2D, i, j, halfStep, height, width, 0x000000ff);
 //                val tmp = r | g | b;
 //                Assert.isTrue(tmp < 0x01000000, "should not occupy mask bits");
 
-                result[i][j] = 0xBF000000
+                result[i][j] = 0xFF000000
                     | r
-                    | r >> 8
-                    | r >> 16
+                    | g
+                    | b
                 /**/
                 ;
             }

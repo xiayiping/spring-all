@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,6 @@ import java.util.Map;
 @Slf4j
 @Data
 @RestController
-@AllArgsConstructor
 @RequestMapping("/caller")
 @Validated
 public class CallerController {
@@ -34,6 +34,15 @@ public class CallerController {
     private final RestTemplate restTemplate;
     private final WebClient webClient;
     private final EchoService echoService;
+
+    public CallerController(
+            @Qualifier("echo") RestTemplate restTemplate,
+            WebClient webClient,
+            EchoService echoService) {
+        this.restTemplate = restTemplate;
+        this.webClient = webClient;
+        this.echoService = echoService;
+    }
 
     @Operation
     @GetMapping("/echo")

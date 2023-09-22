@@ -64,7 +64,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
 //                .requestMatchers("/", "/home").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
 //            .exceptionHandling()
 //            .authenticationEntryPoint(spnegoEntryPoint())

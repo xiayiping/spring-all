@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="pl.tkowalcz.tjahzi.log4j2" >
+    <Properties>
+        <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
+        <Property name="appName" value="${spring:spring.application.name}" />
+        <Property name="profiles" value="${env:spring.profiles.active:-default}" />
+
+        <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
+%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
+[%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />
+        <Property name="FILE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
+%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
+[%20.20thread{20}]
+%highlight{%-5level %30.30logger{1.}} - %msg%n" />
+    </Properties>
+
+    <Appenders>
+
+        <RollingFile name="RollingFileRender"
+                     fileName="../logs/app.${appName}.${profiles}.log"
+                     filePattern="../logs/${date:yyyy-MM}/app.${appName}.${profiles}.%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="25MB"/>
+            </Policies>
+        </RollingFile>
+
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout disableAnsi="false"
+                           pattern="${sys:CONSOLE_LOG_PATTERN}" />
+            <filters>
+                <ThresholdFilter level="${sys:CONSOLE_LOG_THRESHOLD:-TRACE}"/>
+            </filters>
+        </Console>
+
+        <Loki name="LokiAppender">
+            <host>localhost</host>
+            <port>3100</port>
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
+            <Label name="appName_profile" value="${appName}.${profiles}"/>
+        </Loki>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apache.catalina.startup.DigesterFactory" level="error"/>
+        <Logger name="org.apache.catalina.util.LifecycleBase" level="error"/>
+        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn"/>
+        <Logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>
+        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn"/>
+        <Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="error"/>
+        <Logger name="org.hibernate.validator.internal.util.Version" level="warn"/>
+        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>
+        <Logger name="org.springframework" level="info"/>
+        <Logger name="org.xyp.demo.otel" level="debug"/>
+
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+
+            <SpringProfile name="caller">
+                <AppenderRef ref="RollingFileRender"/>
+            </SpringProfile>
+
+            <SpringProfile name="otel">
+                <AppenderRef ref="RollingFileRender"/>
+                <AppenderRef ref="LokiAppender"/>
+            </SpringProfile>
+        </Root>
+    </Loggers>
+</Configuration>

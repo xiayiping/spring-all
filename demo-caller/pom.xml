@@ -33,11 +33,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-otel</artifactId>
-        </dependency>
-
         <!-- needed even for feigh client loadbalancer -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -81,6 +76,15 @@
             <artifactId>feign-micrometer</artifactId>
         </dependency>
 
-
     </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>../config/resources</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

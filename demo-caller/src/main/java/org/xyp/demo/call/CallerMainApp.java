@@ -39,7 +39,7 @@ public class CallerMainApp {
         return echoUrl.startsWith("https");
     }
 
-    @Bean
+    @Bean("echo")
     public RestTemplate getRestTemplate(RestTemplateBuilder builder, SslBundles sslBundles) {
         return Optional.of(isHttps()).filter(i -> i)
             .map(i -> builder
@@ -51,6 +51,13 @@ public class CallerMainApp {
                 .build());
     }
 
+    @Bean("otel")
+    public RestTemplate getOtelRestTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
+
+
+
     @Bean
     public WebClient getHttpClient(WebClientSsl ssl) throws Exception {
         val b = WebClient.builder().baseUrl(echoUrl);
@@ -60,14 +67,14 @@ public class CallerMainApp {
         else return b.build();
     }
 
-    @Bean
-    public ApplicationRunner runner(EchoService service) {
-        return args -> {
-            try {
-                System.out.println(service.echo());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
-    }
+//    @Bean
+//    public ApplicationRunner runner(EchoService service) {
+//        return args -> {
+//            try {
+//                System.out.println(service.echo());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        };
+//    }
 }

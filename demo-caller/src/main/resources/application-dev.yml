@@ -15,3 +15,7 @@ spring:
         config:
           echoServer:
             url: "http://localhost:8094"
+
+logging:
+  config: "config/resources/log4j2.xml"
+

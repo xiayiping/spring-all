@@ -59,9 +59,6 @@ spring:
     template-loader-path: "file:caller/src/main/resources/template"
     cache: false
 
-logging:
-  config: classpath:log4j2.xml
-
 app:
   service-principal: 111
   keytab-location: 111
@@ -82,3 +79,4 @@ management:
     web:
       exposure:
         include: "*"
+
