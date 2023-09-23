@@ -7,6 +7,10 @@ server:
     key-store-password: "123456"
     bundle: "clientStoreJks"
 
+my:
+  name: "xypxyp"
+  age: 11
+
 spring:
   application:
     name: callerServer

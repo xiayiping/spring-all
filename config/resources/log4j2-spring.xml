@@ -2,7 +2,7 @@
 <Configuration status="WARN" packages="pl.tkowalcz.tjahzi.log4j2" >
     <Properties>
         <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
-        <Property name="appName" value="${spring:spring.application.name}" />
+        <Property name="appName" value="${spring:spring.application.name:-App}" />
         <Property name="profiles" value="${env:spring.profiles.active:-default}" />
 
         <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
@@ -12,6 +12,8 @@
 %style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
 [%20.20thread{20}]
 %highlight{%-5level %30.30logger{1.}} - %msg%n" />
+        <Property name="LOKI_LOG_PATTERN" value="[${appName},%X{traceId},%X{spanId}]
+[%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />
     </Properties>
 
     <Appenders>
@@ -37,8 +39,9 @@
         <Loki name="LokiAppender">
             <host>localhost</host>
             <port>3100</port>
-            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
-            <Label name="appName_profile" value="${appName}.${profiles}"/>
+            <PatternLayout pattern="${sys:LOKI_LOG_PATTERN}"/>
+            <Label name="appName_profile" value="${appName}"/>
+            <Label name="org" value="xyp"/>
         </Loki>
     </Appenders>
     <Loggers>
@@ -55,15 +58,9 @@
 
         <Root level="info">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFileRender"/>
+            <AppenderRef ref="LokiAppender"/>
 
-            <SpringProfile name="caller">
-                <AppenderRef ref="RollingFileRender"/>
-            </SpringProfile>
-
-            <SpringProfile name="otel">
-                <AppenderRef ref="RollingFileRender"/>
-                <AppenderRef ref="LokiAppender"/>
-            </SpringProfile>
         </Root>
     </Loggers>
 </Configuration>

@@ -21,10 +21,43 @@ datasources:
     editable: false
     apiVersion: 1
     uid: tempo
+    jsonData:  ## this config not work yet
+      httpMethod: GET
+      tracesToMetrics:
+        datasourceUid: prometheus
+        tags: [{ key: 'service.name', value: 'application' }, { key: 'org' }, { key: 'method' }, { key: 'uri' }, { key: 'outcome' }, { key: 'status' }, { key: 'exception' }]
+        queries:
+          - name: 'Throughput'
+            query: 'sum(rate(http_server_requests_seconds_count{$$__tags}[$$__rate_interval]))'
+          - name: 'Latency'
+            query: 'histogram_quantile(1.00, sum(rate(http_server_requests_seconds_bucket{$$__tags}[$$__rate_interval])) by (le))'
+        spanStartTimeShift: '-10m'
+        spanEndTimeShift: '10m'
+      tracesToLogs:
+        datasourceUid: loki
+        mappedTags: [{ key: 'org' }]
+        mapTagNamesEnabled: true
+        filterByTraceID: true
+        filterBySpanID: false
+        spanStartTimeShift: '-10m'
+        spanEndTimeShift: '10m'
+      lokiSearch:
+        datasourceUid: loki
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true
   - name: Loki
     type: loki
     uid: loki
     access: proxy
     url: http://loki:3100
     editable: true
+    jsonData:
+      maxLines: 50
+      derivedFields: ## this config will create a button on Loki log which points to Tempo
+        - datasourceUid: tempo
+          matcherRegex: '\[\w+,(\w*),\w*\] '
+          name: traceId
+          url: $${__value.raw}
 

@@ -76,7 +76,12 @@
             <artifactId>feign-micrometer</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>pl.tkowalcz.tjahzi</groupId>
+            <artifactId>log4j2-appender-nodep</artifactId>
+        </dependency>
     </dependencies>
+
     <build>
         <resources>
             <resource>
