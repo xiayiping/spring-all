@@ -24,7 +24,7 @@ datasources:
     jsonData:  ## this config not work yet
       httpMethod: GET
       tracesToMetrics:
-        datasourceUid: prometheus
+        datasourceUid: Prometheus
         tags: [{ key: 'service.name', value: 'application' }, { key: 'org' }, { key: 'method' }, { key: 'uri' }, { key: 'outcome' }, { key: 'status' }, { key: 'exception' }]
         queries:
           - name: 'Throughput'
@@ -44,7 +44,7 @@ datasources:
       lokiSearch:
         datasourceUid: loki
       serviceMap:
-        datasourceUid: prometheus
+        datasourceUid: Prometheus
       nodeGraph:
         enabled: true
   - name: Loki
