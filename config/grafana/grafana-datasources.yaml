@@ -35,8 +35,8 @@ datasources:
         spanEndTimeShift: '10m'
       tracesToLogs:
         datasourceUid: loki
-        mappedTags: [{ key: 'org' }]
-        mapTagNamesEnabled: true
+#        mappedTags: [{ key: 'org' }]
+#        mapTagNamesEnabled: true
         filterByTraceID: true
         filterBySpanID: false
         spanStartTimeShift: '-10m'

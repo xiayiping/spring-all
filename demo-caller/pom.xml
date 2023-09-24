@@ -80,6 +80,11 @@
             <groupId>pl.tkowalcz.tjahzi</groupId>
             <artifactId>log4j2-appender-nodep</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

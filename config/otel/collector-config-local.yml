@@ -25,25 +25,25 @@ processors:
 exporters:
   prometheus:
     endpoint: collector:6666
-    namespace: default
+    namespace: xyp
   otlp:
     endpoint: tempo:4317
     tls:
       insecure: true
   logging:
-    loglevel: debug
+    loglevel: info
 
 service:
   pipelines:
     metrics:
       receivers: [otlp]
-      #      processors: [batch]
+      processors: [batch]
       exporters: [prometheus]
     traces:
       receivers: [otlp]
       #      processors: [batch]
       exporters: [otlp]
 
-#  telemetry:
-#    logs:
-#      level: debug
+  telemetry:
+    logs:
+      level: info
