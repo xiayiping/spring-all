@@ -1,9 +1,9 @@
 <scheme name="IntelliJ Light xyp" version="142" parent_scheme="Default">
   <metaInfo>
-    <property name="created">2023-08-25T10:46:08</property>
+    <property name="created">2023-09-24T20:54:56</property>
     <property name="ide">idea</property>
-    <property name="ideVersion">2023.2.1.0.0</property>
-    <property name="modified">2023-08-25T10:46:20</property>
+    <property name="ideVersion">2023.2.2.0.0</property>
+    <property name="modified">2023-09-24T20:55:20</property>
     <property name="originalScheme">IntelliJ Light xyp</property>
   </metaInfo>
   <colors>
@@ -25,7 +25,7 @@
       <value>
         <option name="FOREGROUND" value="6dcc" />
         <option name="EFFECT_COLOR" value="6dcc" />
-        <option name="EFFECT_TYPE" value="1" />
+        <option name="EFFECT_TYPE" value="-1" />
       </value>
     </option>
     <option name="CUSTOM_KEYWORD1_ATTRIBUTES" baseAttributes="DEFAULT_KEYWORD" />
@@ -155,13 +155,6 @@
     <option name="DEFAULT_VALID_STRING_ESCAPE">
       <value>
         <option name="FOREGROUND" value="37a6" />
-      </value>
-    </option>
-    <option name="DELETED_TEXT_ATTRIBUTES">
-      <value>
-        <option name="FOREGROUND" value="505050" />
-        <option name="BACKGROUND" value="fdfdfd" />
-        <option name="EFFECT_TYPE" value="1" />
       </value>
     </option>
     <option name="DIFF_MODIFIED">
@@ -301,12 +294,12 @@
     <option name="INSTANCE_FIELD_ATTRIBUTES" baseAttributes="DEFAULT_INSTANCE_FIELD" />
     <option name="JAVA_KEYWORD">
       <value>
-        <option name="FOREGROUND" value="ea6b01" />
+        <option name="FOREGROUND" value="2300c2" />
       </value>
     </option>
     <option name="JAVA_STRING">
       <value>
-        <option name="FOREGROUND" value="7e7715" />
+        <option name="FOREGROUND" value="ff8800" />
       </value>
     </option>
     <option name="JS.GLOBAL_VARIABLE">
@@ -347,7 +340,7 @@
     </option>
     <option name="METHOD_DECLARATION_ATTRIBUTES">
       <value>
-        <option name="FOREGROUND" value="918311" />
+        <option name="FOREGROUND" value="9f9200" />
         <option name="FONT_TYPE" value="1" />
       </value>
     </option>
@@ -387,7 +380,7 @@
     <option name="STATIC_FINAL_FIELD_ATTRIBUTES" baseAttributes="STATIC_FIELD_ATTRIBUTES" />
     <option name="STATIC_METHOD_ATTRIBUTES">
       <value>
-        <option name="FOREGROUND" value="918311" />
+        <option name="FOREGROUND" value="9f9200" />
         <option name="FONT_TYPE" value="3" />
       </value>
     </option>
@@ -399,8 +392,8 @@
     </option>
     <option name="TEXT">
       <value>
-        <option name="FOREGROUND" value="262423" />
-        <option name="BACKGROUND" value="f4f4f4" />
+        <option name="FOREGROUND" value="2b2b33" />
+        <option name="BACKGROUND" value="fdfdfd" />
       </value>
     </option>
     <option name="TEXT_SEARCH_RESULT_ATTRIBUTES">
@@ -412,7 +405,7 @@
     </option>
     <option name="TODO_DEFAULT_ATTRIBUTES">
       <value>
-        <option name="FOREGROUND" value="bababa" />
+        <option name="FOREGROUND" value="8dde" />
         <option name="FONT_TYPE" value="2" />
         <option name="ERROR_STRIPE_COLOR" value="54aae3" />
       </value>

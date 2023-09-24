@@ -102,6 +102,7 @@ public class CallerController {
         val word64 = Base64.getEncoder().encodeToString(wordSampleBytes);
         val signature64 = Base64.getEncoder().encodeToString(signatureSample);
 
+        System.out.println(this.echoService);
         Map<String, String> replaceDate = Map.of("{<|<EnglishName>|>}", "matt.xia.from.java");
         Map<String, Object> jsonData = Map.of("baseName", "baseName1",
                 "allNames", List.of(
@@ -112,6 +113,7 @@ public class CallerController {
                 ));
         val signatureMap = Map.of("signature", signature64);
         val fileName = "word2pdf_java.pdf";
+        System.out.println(this.echoService);
 
         return "fileService return " ;
     }

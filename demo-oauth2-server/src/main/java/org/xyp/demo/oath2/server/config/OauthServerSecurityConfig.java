@@ -50,6 +50,10 @@ public class OauthServerSecurityConfig {
         return http.build();
     }
 
+    private String abc() {
+        return "23234";
+    }
+
     @Bean
     @Order(2)
     public SecurityFilterChain appSecurityFilterChain(HttpSecurity http)
@@ -106,7 +110,12 @@ public class OauthServerSecurityConfig {
                 .requireProofKey(false)
                 .build();
     }
+    //f df gdf d fg
 
+    /**
+     * efwewewef
+     * @return
+     */
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
         RSAKey rsaKey = generateRsa();
@@ -116,6 +125,7 @@ public class OauthServerSecurityConfig {
 
     private RSAKey generateRsa() {
         KeyPair keyPair = generateRsaKey();
+        keyPair = null;
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
         return new RSAKey.Builder(publicKey).privateKey(privateKey)

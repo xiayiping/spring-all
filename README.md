@@ -258,6 +258,8 @@ gradlew -Dhttp.proxyHost=127.0.0.1 \
   
   "-Dhttp.nonProxyHosts=*.nonproxyrepos.com|localhost"
 
+gradle -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=7890 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=7890
+  
 #ref: https://stackoverflow.com/questions/5991194/gradle-proxy-configuration
 ```
 
