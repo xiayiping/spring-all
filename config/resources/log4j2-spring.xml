@@ -42,6 +42,8 @@
             <PatternLayout pattern="${sys:LOKI_LOG_PATTERN}"/>
             <Label name="appName_profile" value="${appName}"/>
             <Label name="org" value="xyp"/>
+            <Label name="http_method" value="GET"/>
+            <Label name="http.method" value="GET"/>
         </Loki>
     </Appenders>
     <Loggers>
@@ -55,12 +57,11 @@
         <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>
         <Logger name="org.springframework" level="info"/>
         <Logger name="org.xyp.demo.otel" level="debug"/>
-
+        <Logger name="io.micrometer" level="debug" />
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFileRender"/>
             <AppenderRef ref="LokiAppender"/>
-
         </Root>
     </Loggers>
 </Configuration>

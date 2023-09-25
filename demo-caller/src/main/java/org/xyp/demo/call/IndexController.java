@@ -1,6 +1,9 @@
 package org.xyp.demo.call;
 
+import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class IndexController {
 
+    @Autowired
+    ObservationRegistry registry;
 
     public IndexController() { // default constructor
     }
 
+    @Observed(name = "pdfByStringJson",
+            contextualName = "pdfGenerator",
+            lowCardinalityKeyValues = {"userType", "pdf"})
     @GetMapping("/")
     public String call() {
         return "index";

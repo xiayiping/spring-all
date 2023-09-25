@@ -16,4 +16,3 @@ spring:
           echoServer:
             url: "http://localhost:8094"
 
-
