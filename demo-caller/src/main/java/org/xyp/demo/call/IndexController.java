@@ -2,6 +2,7 @@ package org.xyp.demo.call;
 
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.annotation.Observed;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,7 @@ public class IndexController {
     public IndexController() { // default constructor
     }
 
+    @WithSpan("call index")
     @Observed(name = "pdfByStringJson",
             contextualName = "pdfGenerator",
             lowCardinalityKeyValues = {"userType", "pdf"})

@@ -39,3 +39,14 @@ as per the doc, after setup the otel mid-layer:
 
 [quote]
 The Prometheus endpoint of the application is no longer involved. You can now remove the Prometheus endpoint configuration in application.properties and remove the micrometer-registry-prometheus dependency from pom.xml.
+
+
+[source,shell]
+----
+netstat -ano
+netsh interface ipv4 show excludedportrange protocol=tcp
+netsh interface ipv4 delete excludedportrange startport=3093 numberofports=100 protocol=tcp
+
+net stop winnat
+net start winnat
+----

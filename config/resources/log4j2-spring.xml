@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" packages="pl.tkowalcz.tjahzi.log4j2" >
+<Configuration status="WARN" packages="io.opentelemetry.instrumentation.log4j.appender.v2_16"> <!--pl.tkowalcz.tjahzi.log4j2, ,io.opentelemetry.instrumentation.log4j.appender.v2_17 -->
     <Properties>
         <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
         <Property name="appName" value="${spring:spring.application.name:-App}" />
         <Property name="profiles" value="${env:spring.profiles.active:-default}" />
 
         <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
-%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
+%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta} %mdc{trace_id}
 [%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />
+
         <Property name="FILE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
 %style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
 [%20.20thread{20}]
 %highlight{%-5level %30.30logger{1.}} - %msg%n" />
+
         <Property name="LOKI_LOG_PATTERN" value="[${appName},%X{traceId},%X{spanId}]
 [%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />
     </Properties>
@@ -36,32 +38,36 @@
             </filters>
         </Console>
 
-        <Loki name="LokiAppender">
-            <host>localhost</host>
-            <port>3100</port>
-            <PatternLayout pattern="${sys:LOKI_LOG_PATTERN}"/>
-            <Label name="appName_profile" value="${appName}"/>
-            <Label name="org" value="xyp"/>
-            <Label name="http_method" value="GET"/>
-            <Label name="http.method" value="GET"/>
-        </Loki>
+<!--        <Loki name="LokiAppender">-->
+<!--            <host>localhost</host>-->
+<!--            <port>3100</port>-->
+<!--            <PatternLayout pattern="${sys:LOKI_LOG_PATTERN}"/>-->
+<!--            <Label name="appName_profile" value="${appName}"/>-->
+<!--            <Label name="org" value="xyp"/>-->
+<!--            <Label name="http_method" value="GET"/>-->
+<!--            <Label name="http.method" value="GET"/>-->
+<!--        </Loki>-->
+
+<!--        <OpenTelemetry name="OpenTelemetryAppender" captureMapMessageAttributes="true" captureExperimentalAttributes="true"/>-->
     </Appenders>
     <Loggers>
-        <Logger name="org.apache.catalina.startup.DigesterFactory" level="error"/>
-        <Logger name="org.apache.catalina.util.LifecycleBase" level="error"/>
-        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn"/>
-        <Logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>
-        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn"/>
-        <Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="error"/>
-        <Logger name="org.hibernate.validator.internal.util.Version" level="warn"/>
-        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>
-        <Logger name="org.springframework" level="info"/>
-        <Logger name="org.xyp.demo.otel" level="debug"/>
-        <Logger name="io.micrometer" level="debug" />
+<!--        <Logger name="org.apache.catalina.startup.DigesterFactory" level="error"/>-->
+<!--        <Logger name="org.apache.catalina.util.LifecycleBase" level="error"/>-->
+<!--        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn"/>-->
+<!--        <Logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>-->
+<!--        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn"/>-->
+<!--        <Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="error"/>-->
+<!--        <Logger name="org.hibernate.validator.internal.util.Version" level="warn"/>-->
+<!--        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>-->
+<!--        <Logger name="org.springframework" level="info"/>-->
+<!--        <Logger name="org.xyp.demo.otel" level="debug"/>-->
+<!--        <Logger name="io.micrometer" level="debug" />-->
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFileRender"/>
-            <AppenderRef ref="LokiAppender"/>
+<!--            <AppenderRef ref="LokiAppender"/>-->
+<!--            <AppenderRef ref="OpenTelemetryAppender"/>-->
+
         </Root>
     </Loggers>
 </Configuration>
