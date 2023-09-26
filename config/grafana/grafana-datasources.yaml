@@ -35,10 +35,11 @@ datasources:
         spanEndTimeShift: '10m'
       tracesToLogs:
         datasourceUid: loki
-        mappedTags: [{ key: 'http.method', value: 'http_method' }]
+        mappedTags: [{ key: 'service.name', value: 'job' }]
         mapTagNamesEnabled: true
+        ## no need to include span in query when finding log from tracing
         filterByTraceID: true
-        filterBySpanID: true
+        filterBySpanID: false
         spanStartTimeShift: '-10m'
         spanEndTimeShift: '10m'
       lokiSearch:
@@ -57,7 +58,10 @@ datasources:
       maxLines: 50
       derivedFields: ## this config will create a button on Loki log which points to Tempo
         - datasourceUid: tempo
-          matcherRegex: '\[\w+,(\w*),\w*\] '
+          ## for plain text log
+#          matcherRegex: '\[\w+,(\w*),\w*\] '
+          ## for structured json log
+          matcherRegex: '"traceid"\s*:\s*"(\w+)"'
           name: traceId
           url: $${__value.raw}
 

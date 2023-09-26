@@ -1,8 +1,13 @@
 receivers:
-  otlp:
+  otlp:  # for tracing
     protocols:
       grpc:
         endpoint: 0.0.0.0:5555
+#      http:
+  otlp/2:  # for logging
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:5556
 
 processors:
   batch:
@@ -30,24 +35,30 @@ exporters:
     endpoint: tempo:4317
     tls:
       insecure: true
+  logging:
+    verbosity: detailed
+  ## only contrib version of otel collector contains loki exporter
+  ## see docker config
   loki:
     endpoint: http://loki:3100/loki/api/v1/push
-  logging:
-    loglevel: info
+    default_labels_enabled:
+      exporter: false
+      job: true
 
 service:
   pipelines:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus]
+      exporters: [logging]
     traces:
       receivers: [otlp]
-      #      processors: [batch]
+      processors: [batch]
       exporters: [otlp]
     logs:
-      receivers: [otlp]
-      exporters: [logging]
+      receivers: [otlp/2]
+      processors: [batch]
+      exporters: [loki]
   telemetry:
     logs:
-      level: info
+      level: debug

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" packages="io.opentelemetry.instrumentation.log4j.appender.v2_16"> <!--pl.tkowalcz.tjahzi.log4j2, ,io.opentelemetry.instrumentation.log4j.appender.v2_17 -->
+<Configuration status="WARN" packages="io.opentelemetry.instrumentation.log4j.appender.v2_17"> <!--pl.tkowalcz.tjahzi.log4j2, ,io.opentelemetry.instrumentation.log4j.appender.v2_17 -->
     <Properties>
         <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
         <Property name="appName" value="${spring:spring.application.name:-App}" />
         <Property name="profiles" value="${env:spring.profiles.active:-default}" />
 
         <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
-%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta} %mdc{trace_id}
+%style{[${appName},%mdc{trace_id},%mdc{span_id}]}{bright_magenta}
 [%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />
 
         <Property name="FILE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
-%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
+%style{[${appName},%mdc{trace_id},%mdc{span_id}]}{bright_magenta}
 [%20.20thread{20}]
 %highlight{%-5level %30.30logger{1.}} - %msg%n" />
 
@@ -38,17 +38,8 @@
             </filters>
         </Console>
 
-<!--        <Loki name="LokiAppender">-->
-<!--            <host>localhost</host>-->
-<!--            <port>3100</port>-->
-<!--            <PatternLayout pattern="${sys:LOKI_LOG_PATTERN}"/>-->
-<!--            <Label name="appName_profile" value="${appName}"/>-->
-<!--            <Label name="org" value="xyp"/>-->
-<!--            <Label name="http_method" value="GET"/>-->
-<!--            <Label name="http.method" value="GET"/>-->
-<!--        </Loki>-->
-
-<!--        <OpenTelemetry name="OpenTelemetryAppender" captureMapMessageAttributes="true" captureExperimentalAttributes="true"/>-->
+        <!-- no need loki appander, send log to collector now -->
+        <OpenTelemetry name="OpenTelemetryAppender" captureMapMessageAttributes="true" captureExperimentalAttributes="true"/>
     </Appenders>
     <Loggers>
 <!--        <Logger name="org.apache.catalina.startup.DigesterFactory" level="error"/>-->
@@ -61,12 +52,11 @@
 <!--        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>-->
 <!--        <Logger name="org.springframework" level="info"/>-->
 <!--        <Logger name="org.xyp.demo.otel" level="debug"/>-->
-<!--        <Logger name="io.micrometer" level="debug" />-->
+        <Logger name="io" level="finest" />
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFileRender"/>
-<!--            <AppenderRef ref="LokiAppender"/>-->
-<!--            <AppenderRef ref="OpenTelemetryAppender"/>-->
+            <AppenderRef ref="OpenTelemetryAppender"/>
 
         </Root>
     </Loggers>
