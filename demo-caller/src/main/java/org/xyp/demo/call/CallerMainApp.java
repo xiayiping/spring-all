@@ -17,14 +17,17 @@ import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientSsl;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.xyp.demo.api.EchoService;
 
 import java.util.Optional;
 
@@ -129,16 +132,19 @@ public class CallerMainApp {
             return b.build();
     }
 
-    // @Bean
-    // public ApplicationRunner runner(EchoService service) {
-    // return args -> {
-    // try {
-    // System.out.println(service.echo());
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // };
-    // }
+    @Value("${name.a.b}")
+    String theName;
+
+    @Bean
+    public ApplicationRunner runner() {
+        return args -> {
+            try {
+                System.out.println(theName + " +++++++++++++++++++++++++++");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+    }
 
 //    @Bean
 //    @ConditionalOnClass(name = "io.opentelemetry.javaagent.OpenTelemetryAgent")
@@ -178,6 +184,7 @@ public class CallerMainApp {
 //    }
 
     private String abc() {
+
         return "sdfsdf";
     }
 }

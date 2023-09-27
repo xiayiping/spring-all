@@ -4,25 +4,34 @@
         <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
         <Property name="appName" value="${spring:spring.application.name:-App}" />
         <Property name="profiles" value="${env:spring.profiles.active:-default}" />
+        <Property name="logDir" value="${spring:logging.file.path:-logs}"/>
 
-        <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
+        <SpringProfile name="!nootel">
+            <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
 %style{[${appName},%mdc{trace_id},%mdc{span_id}]}{bright_magenta}
 [%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />
 
-        <Property name="FILE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
-%style{[${appName},%mdc{trace_id},%mdc{span_id}]}{bright_magenta}
-[%20.20thread{20}]
-%highlight{%-5level %30.30logger{1.}} - %msg%n" />
+            <Property name="FILE_LOG_PATTERN" value="%d{HH:mm:ss.SSS}
+[${appName},%mdc{trace_id},%mdc{span_id}] [%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />
 
-        <Property name="LOKI_LOG_PATTERN" value="[${appName},%X{traceId},%X{spanId}]
-[%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />
+        </SpringProfile>
+
+        <SpringProfile name="nootel">
+            <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
+%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
+[%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />
+
+            <Property name="FILE_LOG_PATTERN" value="%d{HH:mm:ss.SSS}
+[${appName},%X{traceId},%X{spanId}] [%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />
+
+        </SpringProfile>
     </Properties>
 
     <Appenders>
 
         <RollingFile name="RollingFileRender"
-                     fileName="../logs/app.${appName}.${profiles}.log"
-                     filePattern="../logs/${date:yyyy-MM}/app.${appName}.${profiles}.%d{MM-dd-yyyy}-%i.log.gz">
+                     fileName="${logDir}/app.${appName}.${profiles}.log"
+                     filePattern="${logDir}/${date:yyyy-MM}/app.${appName}.${profiles}.%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -56,7 +65,7 @@
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFileRender"/>
-            <AppenderRef ref="OpenTelemetryAppender"/>
+<!--            <AppenderRef ref="OpenTelemetryAppender"/>-->
 
         </Root>
     </Loggers>

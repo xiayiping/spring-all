@@ -93,5 +93,6 @@ management:
 #        url: "http://localhost:5555"
 #    tracing:
 #      endpoint: "http://localhost:4318"
-
-
+logging:
+  file:
+    path: logs
