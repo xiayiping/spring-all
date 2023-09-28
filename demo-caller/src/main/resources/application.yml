@@ -20,6 +20,11 @@ spring:
       discovery:
         server-addr: "localhost:8848"
         enabled: false
+      config:
+        server-addr: "localhost:8848"
+        group: "xyp.nacos"
+  #        import-check:
+#          enabled: false
   ssl:
     bundle:
       jks:
@@ -63,6 +68,8 @@ spring:
     suffix: ""
     template-loader-path: "file:caller/src/main/resources/template"
     cache: false
+  config:
+    import: "nacos:conf1"
 
 app:
   service-principal: 111

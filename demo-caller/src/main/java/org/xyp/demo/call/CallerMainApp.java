@@ -35,7 +35,7 @@ import java.util.Optional;
 @SpringBootApplication
 // @LoadBalancerClients({
 // @LoadBalancerClient("echoServer")
-// })
+// }) |
 public class CallerMainApp {
 
     @Bean

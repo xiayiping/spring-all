@@ -6,25 +6,22 @@
         <Property name="profiles" value="${env:spring.profiles.active:-default}" />
         <Property name="logDir" value="${spring:logging.file.path:-logs}"/>
 
-        <SpringProfile name="!nootel">
             <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
-%style{[${appName},%mdc{trace_id},%mdc{span_id}]}{bright_magenta}
+%style{[${appName},%mdc{trace_id}%X{traceId},%mdc{span_id}%X{spanId}]}{bright_magenta}
 [%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />
 
             <Property name="FILE_LOG_PATTERN" value="%d{HH:mm:ss.SSS}
 [${appName},%mdc{trace_id},%mdc{span_id}] [%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />
 
-        </SpringProfile>
+<!--        <SpringProfile name="nootel">-->
+<!--            <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}-->
+<!--%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}-->
+<!--[%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />-->
 
-        <SpringProfile name="nootel">
-            <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{cyan}
-%style{[${appName},%X{traceId},%X{spanId}]}{bright_magenta}
-[%20.20thread{20}] %highlight{%-5level %30.30logger{1.}} - %msg%n" />
+<!--            <Property name="FILE_LOG_PATTERN" value="%d{HH:mm:ss.SSS}-->
+<!--[${appName},%X{traceId},%X{spanId}] [%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />-->
 
-            <Property name="FILE_LOG_PATTERN" value="%d{HH:mm:ss.SSS}
-[${appName},%X{traceId},%X{spanId}] [%20.20thread{20}] %-5level %30.30logger{1.} - %msg%n" />
-
-        </SpringProfile>
+<!--        </SpringProfile>-->
     </Properties>
 
     <Appenders>
@@ -61,12 +58,14 @@
 <!--        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="warn"/>-->
 <!--        <Logger name="org.springframework" level="info"/>-->
 <!--        <Logger name="org.xyp.demo.otel" level="debug"/>-->
-        <Logger name="io" level="finest" />
+        <Logger name="io" level="info" />
+        <Logger name="com.alibaba" level="trace" />
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFileRender"/>
 <!--            <AppenderRef ref="OpenTelemetryAppender"/>-->
 
         </Root>
+
     </Loggers>
 </Configuration>

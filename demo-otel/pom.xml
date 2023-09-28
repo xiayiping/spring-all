@@ -20,13 +20,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.opentelemetry.instrumentation</groupId>
-            <artifactId>opentelemetry-instrumentation-annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>pl.tkowalcz.tjahzi</groupId>
-            <artifactId>log4j2-appender-nodep</artifactId>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,2 +1,55 @@
 
 ServletWebServerFactoryConfiguration is where embedded tomcat created.
+
+---
+
+ConfigFileApplicationListener : find config
+ConfigDataLocationResolver : resolve config
+
+---
+
+In Spring Framework, the BootstrapRegistry interface is part of the Bootstrap context framework introduced in Spring 5.3. It represents a registry for bootstrapping components and is used during the early initialization phase of an application.
+
+The primary purpose of the BootstrapRegistry is to allow the registration of bootstrap components such as BeanDefinition and BeanDefinitionRegistrar instances before the main application context is created. These components contribute to the configuration and customization of the application context itself.
+
+Here are some key points regarding the BootstrapRegistry interface:
+
+Registration of Bean Definitions: The BootstrapRegistry allows you to register BeanDefinition instances, which define the configuration metadata for beans in the application context. By registering bean definitions during the bootstrap phase, you can influence the creation and configuration of beans before the application context is fully initialized.
+
+Registration of Bean Definition Registrars: The BootstrapRegistry also supports the registration of BeanDefinitionRegistrar instances. A BeanDefinitionRegistrar allows for programmatic registration of bean definitions based on certain conditions or logic. By registering a BeanDefinitionRegistrar with the BootstrapRegistry, you can contribute additional bean definitions to the application context during the bootstrap phase.
+
+Customization and Extension: The BootstrapRegistry provides a way to customize and extend the Spring application context's behavior early in the initialization process. It allows you to influence the creation and configuration of beans, enabling advanced customization scenarios.
+
+The BootstrapRegistry is primarily used internally within the Spring Framework and related frameworks, and it might not be directly used in typical application development scenarios. However, it plays a crucial role in enabling extensibility and customization of the Spring application context during its early initialization phase.
+
+---
+
+SpringFactoriesLoader load factories defiled in spring.factories in classpath:META-INF
+
+---
+
+when environment prepared, event enters
+`EnvironmentPostProcessorApplicationListener`
+The listener then get `EnvironmentPostProcessors`, each one process the environment and application.
+
+In so many Processors (about 13-14) the `ConfigDataEnvironmentPostProcessor`
+contains ConfigurableEnvironment which will call `processAndApply`.
+Inside `processAndApply`, `ConfigDataImporter` will be created.
+
+The ConfigDataEnvironment constructor will create loaders by factory method,
+type is `ConfigDataLoader`,  there are 3 sub-types will be created.
+
+- ConfigTreeConfigDataLoader
+- NacosConfigDataLoader (if nacos included)
+- StandardConfigDataLoader
+
+The `ConfigDataLoaders` constructor also create resourceTypes based on loaders. (generic type of loader)
+
+---
+
+The EnvironmentPostProcessorApplicationListener.onApplicationEvent , `if(ApplicationEnvironmentPreparedEvent)`
+is entered twice.
+The second time:
+
+1. The application.yml series is wetup by BoostrapConfigFileApplicationListener
+2. fe
