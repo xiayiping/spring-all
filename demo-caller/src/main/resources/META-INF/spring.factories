@@ -1,0 +1,4 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  org.xyp.EnvProcessor,\
+  org.xyp.EnvProcessor2
+

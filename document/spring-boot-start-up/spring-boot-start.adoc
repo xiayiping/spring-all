@@ -51,5 +51,73 @@ The EnvironmentPostProcessorApplicationListener.onApplicationEvent , `if(Applica
 is entered twice.
 The second time:
 
-1. The application.yml series is wetup by BoostrapConfigFileApplicationListener
+1. The application.yml series is setup by BootstrapConfigFileApplicationListener
 2. fe
+
+---
+
+in boot test , ConfigDataEnvironmentPostProcessor.postProcessEnvironment read application.yml
+
+StandardConfigDataLoader use YamlPropertySourceLoader to load config from yml file.
+
+---
+
+Spring boot cloud, the yml processing starts from `BootstrapConfigFileApplicationListener`
+
+normal spring, the yml processing starts from `ConfigDataEnvironmentPostProcessor`
+
+[plantuml]
+----
+@startuml
+box BootstrapConfigFileApplicationListener
+
+BootstrapConfigFileApplicationListener -> Loader.load
+
+endbox
+@enduml
+----
+
+[plantuml]
+----
+@startuml
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+Alice -> Bob: Another authentication Request
+Alice <-- Bob: Another authentication Response
+
+ConfigDataEnvironmentPostProcessor -> processAndApply
+box "ConfigDataEnvironment"
+participant processAndApply
+endbox
+@enduml
+----
+
+
+=== Application Listeners
+----
+org.springframework.context.ApplicationListener=\
+org.springframework.boot.ClearCachesApplicationListener,\
+org.springframework.boot.builder.ParentContextCloserApplicationListener,\
+org.springframework.boot.context.FileEncodingApplicationListener,\
+org.springframework.boot.context.config.AnsiOutputApplicationListener,\
+org.springframework.boot.context.config.DelegatingApplicationListener,\
+org.springframework.boot.context.logging.LoggingApplicationListener,\
+org.springframework.boot.env.EnvironmentPostProcessorApplicationListener
+----
+
+=== Application Listeners defined in spring-cloud-context
+----
+org.springframework.context.ApplicationListener=\
+org.springframework.cloud.bootstrap.BootstrapApplicationListener,\
+org.springframework.cloud.bootstrap.LoggingSystemShutdownListener,\
+org.springframework.cloud.context.restart.RestartListener
+----
+
+The spring boot with spring cloud will call `BootstrapApplicationListener` before
+normal `ClearCachesApplicationListener`. The Bootstrap one will somehow init its
+own Environments (bootstrap.yml). Through observing I guess the bootstrap and application settings will finally be merged,
+so if you need customized setting, do it on either side.
+Also that's why I see env initiated twice. *This is the big picture.*
+
+https://docs.spring.io/spring-boot/docs/3.1.2/reference/html/howto.html#howto.application.customize-the-environment-or-application-context

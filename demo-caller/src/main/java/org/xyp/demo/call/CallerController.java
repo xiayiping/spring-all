@@ -1,12 +1,11 @@
 package org.xyp.demo.call;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +43,8 @@ public class CallerController {
         this.echoService = echoService;
     }
 
+//    @Observed(name = "echo-remote")
+    @WithSpan
     @Operation
     @GetMapping("/echo")
     public String echo() {

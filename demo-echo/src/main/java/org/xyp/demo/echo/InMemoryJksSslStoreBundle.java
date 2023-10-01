@@ -1,0 +1,110 @@
+package org.xyp.demo.echo;
+
+import org.springframework.boot.ssl.SslStoreBundle;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
+
+public class InMemoryJksSslStoreBundle implements SslStoreBundle {
+
+//    private final JksSslStoreDetails keyStoreDetails;
+//
+//    private final JksSslStoreDetails trustStoreDetails;
+
+    private final InMemoryJksStoreDetails inMemKeyStoreDetails;
+    private final InMemoryJksStoreDetails inMemTrustStoreDetails;
+
+    /**
+     * Location in details is the content of file
+     *
+     * @param keyStoreDetails   the key store details
+     * @param trustStoreDetails the trust store details
+     */
+    public InMemoryJksSslStoreBundle(InMemoryJksStoreDetails keyStoreDetails, InMemoryJksStoreDetails trustStoreDetails) {
+        this.inMemKeyStoreDetails = keyStoreDetails;
+        this.inMemTrustStoreDetails = trustStoreDetails;
+
+    }
+
+    @Override
+    public KeyStore getKeyStore() {
+        return createKeyStore("key", this.inMemKeyStoreDetails);
+    }
+
+    @Override
+    public String getKeyStorePassword() {
+        return (this.inMemKeyStoreDetails != null) ? this.inMemKeyStoreDetails.password() : null;
+    }
+
+    @Override
+    public KeyStore getTrustStore() {
+        return createKeyStore("trust", this.inMemTrustStoreDetails);
+    }
+
+    private boolean isDetailsEmpty(InMemoryJksStoreDetails details) {
+        return !StringUtils.hasText(details.location())
+                && !StringUtils.hasText(details.type())
+                && !StringUtils.hasText(details.provider());
+    }
+
+    private KeyStore createKeyStore(String name, InMemoryJksStoreDetails details) {
+        if (details == null || isDetailsEmpty(details)) {
+            return null;
+        }
+        try {
+            String type = (!StringUtils.hasText(details.type())) ? KeyStore.getDefaultType() : details.type();
+            char[] password = (details.password() != null) ? details.password().toCharArray() : null;
+            String location = details.location();
+            KeyStore store = getKeyStoreInstance(type, details.provider());
+            if (isHardwareKeystoreType(type)) {
+                loadHardwareKeyStore(store, location, password);
+            } else {
+                loadKeyStore(store, location, details.content(), password);
+            }
+            return store;
+        } catch (Exception ex) {
+            throw new IllegalStateException("Unable to create %s store: %s".formatted(name, ex.getMessage()), ex);
+        }
+    }
+
+    private KeyStore getKeyStoreInstance(String type, String provider)
+            throws KeyStoreException, NoSuchProviderException {
+        return (!StringUtils.hasText(provider)) ? KeyStore.getInstance(type) : KeyStore.getInstance(type, provider);
+    }
+
+    private boolean isHardwareKeystoreType(String type) {
+        return type.equalsIgnoreCase("PKCS11");
+    }
+
+    private void loadHardwareKeyStore(KeyStore store, String location, char[] password)
+            throws IOException, NoSuchAlgorithmException, CertificateException {
+        Assert.state(!StringUtils.hasText(location),
+                () -> "Location is '%s', but must be empty or null for PKCS11 hardware key stores".formatted(location));
+        store.load(null, password);
+    }
+
+    private void loadKeyStore(KeyStore store, String location, byte[] content, char[] password) {
+        Assert.state(StringUtils.hasText(location), () -> "store content must not be empty or null");
+        try {
+
+            try (InputStream stream = new ByteArrayInputStream(content)) {
+                store.load(stream, password);
+            }
+
+//            URL url = ResourceUtils.getURL(location);
+//            try (InputStream stream = url.openStream()) {
+//                store.load(stream, password);
+//            }
+        } catch (Exception ex) {
+            throw new IllegalStateException("Could not load store from '" + location + "'", ex);
+        }
+    }
+}

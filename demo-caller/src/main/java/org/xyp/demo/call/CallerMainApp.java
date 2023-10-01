@@ -24,10 +24,9 @@ import org.springframework.boot.autoconfigure.web.reactive.function.client.WebCl
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.xyp.demo.api.EchoService;
 
 import java.util.Optional;
 
@@ -44,44 +43,45 @@ public class CallerMainApp {
         /////////////////////////
 
         Resource resource = Resource.getDefault().toBuilder()
-                .put(ResourceAttributes.SERVICE_NAME, "caller-server")
-                .put(ResourceAttributes.SERVICE_VERSION, "0.1.0")
-                .build();
+            .put(ResourceAttributes.SERVICE_NAME, "caller-server")
+            .put(ResourceAttributes.SERVICE_VERSION, "0.1.0")
+            .build();
 
         SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
-                .addSpanProcessor(BatchSpanProcessor.builder(
+            .addSpanProcessor(BatchSpanProcessor.builder(
 //                LoggingSpanExporter
 //                    .create(),
-                        OtlpGrpcSpanExporter.builder()
-                                .setEndpoint("http://127.0.0.1:5555")
-                                .build()).build())
-                .setResource(resource)
-                .build();
+                OtlpGrpcSpanExporter.builder()
+                    .setEndpoint("http://127.0.0.1:5555")
+                    .build()).build())
+            .setResource(resource)
+            .build();
 
 //        SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
-//            .registerMetricReader(PeriodicMetricReader.builder(LoggingMetricExporter.create()).build())
+//            .registerMetricReader(PeriodicMetricReader.builder(LoggingMetricExporter
+//            .create()).build())
 //            .setResource(resource)
 //            .build();
 
         SdkLoggerProvider sdkLoggerProvider = SdkLoggerProvider
-                .builder()
-                .addLogRecordProcessor(
-                        BatchLogRecordProcessor.builder(
-                                OtlpGrpcLogRecordExporter.builder()
-                                        .setEndpoint("http://127.0.0.1:5556")
-                                        .build()).build())
-                .setResource(resource)
-                .build();
+            .builder()
+            .addLogRecordProcessor(
+                BatchLogRecordProcessor.builder(
+                    OtlpGrpcLogRecordExporter.builder()
+                        .setEndpoint("http://127.0.0.1:5556")
+                        .build()).build())
+            .setResource(resource)
+            .build();
 
         OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
-                .setTracerProvider(sdkTracerProvider)
+            .setTracerProvider(sdkTracerProvider)
 //            .setMeterProvider(sdkMeterProvider)
-                .setLoggerProvider(sdkLoggerProvider)
-                .setPropagators(ContextPropagators.create(
-                        TextMapPropagator.composite(
-                                W3CTraceContextPropagator.getInstance(),
-                                W3CBaggagePropagator.getInstance())))
-                .buildAndRegisterGlobal();
+            .setLoggerProvider(sdkLoggerProvider)
+            .setPropagators(ContextPropagators.create(
+                TextMapPropagator.composite(
+                    W3CTraceContextPropagator.getInstance(),
+                    W3CBaggagePropagator.getInstance())))
+            .buildAndRegisterGlobal();
 
         return openTelemetry;
 
@@ -108,13 +108,13 @@ public class CallerMainApp {
     public RestTemplate getRestTemplate(RestTemplateBuilder builder,
                                         SslBundles sslBundles) {
         return Optional.of(isHttps()).filter(i -> i)
-                .map(i -> builder
-                        .rootUri(echoUrl)
-                        .setSslBundle(sslBundles.getBundle(sslBundleKey))
-                        .build())
-                .orElseGet(() -> builder
-                        .rootUri(echoUrl)
-                        .build());
+            .map(i -> builder
+                .rootUri(echoUrl)
+                .setSslBundle(sslBundles.getBundle("clientStoreJks"))
+                .build())
+            .orElseGet(() -> builder
+                .rootUri(echoUrl)
+                .build());
     }
 
     @Bean("otel")
@@ -127,7 +127,7 @@ public class CallerMainApp {
         val b = WebClient.builder().baseUrl(echoUrl);
         if (isHttps())
             return b.apply(ssl.fromBundle(sslBundleKey))
-                    .build();
+                .build();
         else
             return b.build();
     }
@@ -137,8 +137,13 @@ public class CallerMainApp {
 
     @Bean
     public ApplicationRunner runner() {
+        int aa = 0;
+        int bb = 0;
+        bb = 4;
         return args -> {
             try {
+                System.out.println(aa);
+                Assert.isTrue(aa >= 0, "");
                 System.out.println(theName + " +++++++++++++++++++++++++++");
             } catch (Exception e) {
                 e.printStackTrace();

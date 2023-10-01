@@ -3,26 +3,32 @@ server:
   ssl:
     enabled: true
     # explicit key store so intellij can recognize https
-    key-store: "classpath:keystore/keystore.p12"
-    key-store-password: "123456"
-    bundle: "clientStoreJks"
+#    key-store: "classpath:keystore/keystore.p12"
+#    key-store-password: "123456"
+    key-store: "classpath:keystore/keystore.pem"
+#    bundle: "clientStoreJks"
+    bundle: "clientStorePem"
+    key-store-type: pem
 
 my:
   name: "xypxyp"
   age: 11
 
+name:
+  a:
+    b: ${nameab}
 
 spring:
   application:
     name: callerServer
-  cloud:
-    nacos:
-      discovery:
-        server-addr: "localhost:8848"
-        enabled: false
-      config:
-        server-addr: "localhost:8848"
-        group: "xyp.nacos"
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: "localhost:8848"
+#        enabled: false
+#      config:
+#        server-addr: "localhost:8848"
+#        group: "xyp.nacos"
   #        import-check:
 #          enabled: false
   ssl:
@@ -42,6 +48,14 @@ spring:
           keystore:
             location: "classpath:keystore/keystore.p12"
             password: "123456"
+      pem:
+        clientStorePem:
+          keystore:
+            certificate: "classpath:keystore/certstore.pem"
+            private-key: "classpath:keystore/keystore.pem"
+            private-key-password: 123456
+
+
   datasource:
     url: jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true #
     #  username: matt.xia
@@ -68,8 +82,8 @@ spring:
     suffix: ""
     template-loader-path: "file:caller/src/main/resources/template"
     cache: false
-  config:
-    import: "nacos:conf1"
+#  config:
+#    import: "nacos:conf1"
 
 app:
   service-principal: 111
@@ -82,7 +96,7 @@ springdoc:
     path: "swagger-ui-custom.html"
 
 echo:
-  url: "https://localhost:8094"
+  url: "https://localhost:8092"
 
 management:
   tracing:

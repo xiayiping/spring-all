@@ -16,3 +16,4 @@ spring:
           echoServer:
             url: "http://localhost:8094"
 
+#nameab: xxxxx

@@ -1,11 +1,16 @@
 server:
   port: 8094
   ssl:
-    enabled: true
-    bundle: "web-server"
+    enabled: false
     client-auth: none
+
+    bundle: "web-server"
     key-store: "classpath:keystore/keystore.p12"
     key-store-password: "123456"
+
+#    bundle: "web-server-pem-e"
+#    key-store: "classpath:keystore-encrypt/ca-key.pem"
+#    key-store-type: pem
 
 # https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.1.0-Configuration-Changelog
 # docker run -d -p 9411:9411 openzipkin/zipkin
@@ -29,25 +34,45 @@ spring:
         truststore:
           location: "classpath:keystore/certstore.p12"
           password: "123456"
+    pem:
+      web-server-pem:
+        keystore:
+          certificate: "classpath:keystore2/cert.pem"
+          private-key: "classpath:keystore2/cert-key.pem"
+          private-key-password: 123456
+      web-server-pem-e:
+        keystore:
+          certificate: "classpath:keystore-encrypt/cert.pem"
+          private-key: "classpath:keystore-encrypt/ca-key.pem"
+          private-key-password: 123456
+#  datasource:
+#    url: "jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true" #
+##    username: yipingx
+##    password: Xyp54250
+#    username: "matt.xia"
+#    password: "matt.xia.1234"
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    database-platform: org.hibernate.dialect.MySQLDialect
+#    show-sql: false
+#    hibernate:
+#      ddl-auto: update #create update
+#    properties:
+#      hibernate:
+#        format_sql: false
+#        jdbc.batch_size: 10
+#        order_inserts: true
+#        order_updates: true
+#        generate_statistics: true
+
   datasource:
-    url: "jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true" #
-#    username: yipingx
-#    password: Xyp54250
-    username: "matt.xia"
-    password: "matt.xia.1234"
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:mem:testdb #
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
-    show-sql: false
     hibernate:
-      ddl-auto: update #create update
-    properties:
-      hibernate:
-        format_sql: false
-        jdbc.batch_size: 10
-        order_inserts: true
-        order_updates: true
-        generate_statistics: true
+      ddl-auto: create
 
 management:
   tracing:
