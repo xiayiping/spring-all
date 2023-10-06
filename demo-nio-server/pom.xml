@@ -3,10 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!--    <parent>-->
+    <!--        <groupId>org.xyp</groupId>-->
+    <!--        <artifactId>xyp-demo-all</artifactId>-->
+    <!--        <version>${revision}${sha1}${changelist}</version>-->
+    <!--    </parent>-->
+
+
     <parent>
-        <groupId>org.xyp</groupId>
-        <artifactId>xyp-demo-all</artifactId>
-        <version>${revision}${sha1}${changelist}</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.2</version>
+        <relativePath/>
     </parent>
 
     <artifactId>demo-nio-server</artifactId>
@@ -15,6 +23,28 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!--
+        the stackflow solution:
+        <execution>
+            <goals>
+                <goal>repackage</goal>
+            </goals>
+            <configuration>
+                <skip>true</skip>
+            </configuration>
+        </execution>
+        doesn't work, use below property works
+        -->
+        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+    </dependencies>
 </project>
