@@ -3,16 +3,16 @@ package org.xyp.test.demo.api.el.test;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.xyp.demo.api.maptransfer.MapTransfer;
+import org.xyp.demo.api.maptransfer.PropertyTransfer;
 
 import java.util.List;
 import java.util.Map;
 
-class MapTransferTest {
+class PropertyTransferTest {
     @Test
     void test1() {
         var student = new Student("name1", "number1", 10);
-        var transfer = new MapTransfer();
+        var transfer = new PropertyTransfer();
         var name1 = transfer.parseExpression(student, "${name}");
         var name2 = transfer.parseExpression(student, "name");
         var age1 = transfer.parseExpression(student, "${age}");
@@ -31,7 +31,7 @@ class MapTransferTest {
     @Test
     void test2() {
         var student = new Student("name1", "number1", 10);
-        var transfer = new MapTransfer();
+        var transfer = new PropertyTransfer();
         var name1 = transfer.parseExpression(student, "hello ${name}, your age is ${age}, next year you'll be #{${age}+1}.");
         System.out.println(name1);
 
@@ -49,7 +49,7 @@ class MapTransferTest {
                         Map.of("cource", "c3", "score", 5)
 
                 ));
-        var transfer = new MapTransfer();
+        var transfer = new PropertyTransfer();
         var name1 = transfer.parseExpression(student, "hello ${name}, your age is ${age}, next year you'll be #{${age}+1}.");
         System.out.println(name1);
         var score = transfer.parseExpression(student, "${scores[1].score}");

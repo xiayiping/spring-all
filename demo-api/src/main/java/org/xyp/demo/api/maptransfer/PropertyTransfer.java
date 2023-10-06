@@ -3,7 +3,7 @@ package org.xyp.demo.api.maptransfer;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
-public class MapTransfer {
+public class PropertyTransfer {
 
     private static final String EL_PREFIX = "#{";
 
