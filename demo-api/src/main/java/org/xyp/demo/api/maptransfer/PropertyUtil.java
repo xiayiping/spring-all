@@ -14,7 +14,7 @@ public class PropertyUtil {
 
     public static final String PROPERTY_SPLITTER = ".";
 
-    public static final String ARR_INDEX_PATTERN = "^(.*)\\[(\\d+)\\]$";
+    public static final String ARR_INDEX_PATTERN = "^(.*)\\[(\\d+)]$";
 
     public static Object getProperty(Object object, String property) {
 
