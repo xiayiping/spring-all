@@ -1,0 +1,88 @@
+
+Unseal Key 1: pu/Vc+J5QPv/YudjZ22xXqC2cuQ4pJZRS0bmiPpa1ev6
+Unseal Key 2: p5fnNgd6zD+wUZhqXj1JG6eFebrIDfTKEQS/BzreKTDF
+Unseal Key 3: tl8e0G3xGa5GmgGqmAfzJ2l9fcdwddZYmYEOjkmp9pHA
+Unseal Key 4: Bc0+9oPU7b0Ilp+pl5BN5jNmAd5YH9UOUDlcW7TsPITI
+Unseal Key 5: sTtQtBZOxf7jQ8/hjqIYMGcKlG0W4f9QK0zrrlFv0A18
+
+Initial Root Token: hvs.6SnLsAKoGIyHE4sE5NtRvk0b
+
+kv/dev/database/db.password
+kv_xyp/dev/username
+
+kv-get kv_xyp/dev
+
+vault token create -policy=kv-read
+
+[source,shell]
+----
+# start vault
+vault server -config=config.file.name
+----
+
+[source,text]
+----
+## the vault config file sample
+
+listener "tcp" {
+  address = "0.0.0.0:8180"
+  #tls_disable = 1
+  tls_cert_file = "d:/tools/vault/1.14/ca.pem"
+  tls_key_file = "d:/tools/vault/1.14/ca-key.pem"
+}
+
+ui=true
+
+#storage "inmem" {}
+
+storage "file" {
+  path = "d:/tools/vault/vault-data"
+}
+
+api_addr = "https://127.0.0.1:8180"
+----
+
+[source,shell]
+----
+# the first time you need to use vault
+export VAULT_ADDR='https://127.0.0.1:8180'
+
+----
+
+[source,shell]
+----
+# assume you have username=aaaa under kv_xyp/dev
+# kv_xyp is the kv engine path, dev is the secret path
+vault kv get --field=username kv_xyp/dev
+
+# you want a url , you do this:
+vault kv get --field=username  -output-curl-string kv_xyp/dev
+
+curl\
+  -H "X-Vault-Request: true"\
+  -H "X-Vault-Token: hvs.6SnLsAKoGIyHE4sE5NtRvk0b"\
+  https://127.0.0.1:8180/v1/kv_xyp/data/dev
+
+## --cert /path/to/cert.pem
+----
+
+[source,text]
+----
+# config the policy
+
+path "kv_xyp/*" {
+    capabilities = ["read"]
+}
+
+----
+
+[source,shell]
+----
+vault login -ca-path=./ca.pem
+#then provide the token
+
+vault token create -ca-path=./ca.pem -policy=kv_read
+# then vault will give you the token
+# hvs.CAESIBM8wMR44ljOn3xjy2iImmffSWa2KwLPblxpx_003-yHGh4KHGh2cy5TR3BBMVNRcFczenpqNVlJQ2h6U2lFbEM
+#hvs.CAESIH66nAoa6gU05CN1CIpKIpaP3pkNYM2gbMEjmo7szQ4WGh4KHGh2cy4wQlB3Z25tMnFFS2NodjhPZzhpak9XSkQ
+----

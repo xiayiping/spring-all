@@ -1,11 +1,13 @@
 package org.xyp.demo.api.antlr.test;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
+//import org.antlr.v4.runtime.CharStreams;
+//import org.antlr.v4.runtime.CommonTokenStream;
+//import org.antlr.v4.runtime.tree.ParseTree;
+//import org.junit.jupiter.api.Test;
+//import org.xyp.demo.api.antlr4.MathGrammerLexer;
+//import org.xyp.demo.api.antlr4.MathGrammerParser;
+
 import org.junit.jupiter.api.Test;
-import org.xyp.demo.api.antlr4.MathGrammerLexer;
-import org.xyp.demo.api.antlr4.MathGrammerParser;
 
 import java.io.IOException;
 
@@ -13,17 +15,17 @@ class AntlrTest {
     @Test
     void test1() throws IOException {
 
-        MathGrammerLexer lexer = new MathGrammerLexer(CharStreams.fromString("(3+9+2-(1+7))"));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        MathGrammerParser parser = new MathGrammerParser(tokens);
+//        MathGrammerLexer lexer = new MathGrammerLexer(CharStreams.fromString("(3+9+2-(1+7))"));
+//        CommonTokenStream tokens = new CommonTokenStream(lexer);
+//        MathGrammerParser parser = new MathGrammerParser(tokens);
 //        MathGrammerVisitor visitor = new MathGrammerBaseVisitor();
 //        visitor.visitExpression(parser.expression());
 //
 //
-        ParseTree tree = parser.expression();
+//        ParseTree tree = parser.expression();
 //
 //        // Print a text-based representation of the parse tree
-        System.out.println(tree.toStringTree(parser));
+//        System.out.println(tree.toStringTree(parser));
 
         // Draw a graphical parse tree (requires Graphviz)
         // You can use an online tool like WebGraphviz (http://www.webgraphviz.com/)
