@@ -7,19 +7,6 @@ Unseal Key 5: sTtQtBZOxf7jQ8/hjqIYMGcKlG0W4f9QK0zrrlFv0A18
 
 Initial Root Token: hvs.6SnLsAKoGIyHE4sE5NtRvk0b
 
-kv/dev/database/db.password
-kv_xyp/dev/username
-
-kv-get kv_xyp/dev
-
-vault token create -policy=kv-read
-
-[source,shell]
-----
-# start vault
-vault server -config=config.file.name
-----
-
 [source,text]
 ----
 ## the vault config file sample
@@ -44,9 +31,25 @@ api_addr = "https://127.0.0.1:8180"
 
 [source,shell]
 ----
+# start vault
+vault server -config=config.file.name
+----
+
+[source,shell]
+----
 # the first time you need to use vault
 export VAULT_ADDR='https://127.0.0.1:8180'
 
+----
+
+[source,shell]
+----
+vault login -ca-path=./ca.pem
+#then provide the token
+
+vault token create -ca-path=./ca.pem -policy=kv_read
+# then vault will give you the token
+# hvs.CAESIH66nAoa6gU05CN1CIpKIpaP3pkNYM2gbMEjmo7szQ4WGh4KHGh2cy4wQlB3Z25tMnFFS2NodjhPZzhpak9XSkQ
 ----
 
 [source,shell]
@@ -76,13 +79,138 @@ path "kv_xyp/*" {
 
 ----
 
+=== Generate Root CA
 [source,shell]
 ----
-vault login -ca-path=./ca.pem
-#then provide the token
+# vault pki
+export pki_path=pki_xyp
+export v_ca=./ca.pem
 
-vault token create -ca-path=./ca.pem -policy=kv_read
-# then vault will give you the token
-# hvs.CAESIBM8wMR44ljOn3xjy2iImmffSWa2KwLPblxpx_003-yHGh4KHGh2cy5TR3BBMVNRcFczenpqNVlJQ2h6U2lFbEM
-#hvs.CAESIH66nAoa6gU05CN1CIpKIpaP3pkNYM2gbMEjmo7szQ4WGh4KHGh2cy4wQlB3Z25tMnFFS2NodjhPZzhpak9XSkQ
+vault secrets enable -ca-path=${v_ca}  -path ${pki_path} pki
+vault secrets tune -max-lease-ttl=87600h -ca-path=${v_ca} ${pki_path}
+
+vault write \
+     -field=certificate \
+     -ca-path=${v_ca} \
+     ${pki_path}/root/generate/internal \
+     common_name="xyp.com" \
+     issuer_name="root-2023" \
+     ttl=87600h > root_2023_ca.crt
+
+## check issuer:
+vault list -ca-path=${v_ca} ${pki_path}/issuers/
+vault list -ca-path=${v_ca} -format=json  ${pki_path}/issuers/
+
+vault read -ca-path=${v_ca} \
+  ${pki_path}/issuer/6168f63c-f718-c39a-47f6-2b35137c8767
+
+vault read -ca-path=${v_ca} \
+  ${pki_path}/issuer/$(vault list \
+      -ca-path=${v_ca} -format=json ${pki_path}/issuers/ | jq -r '.[]') \
+  | tail -n 6
+### ckeck done
+
+# create role
+export pki_role=2023-servers
+vault write -ca-path=${v_ca} ${pki_path}/roles/${pki_role} allow_any_name=true
+
+## ca and crl urls
+vault write -ca-path=${v_ca} \
+     ${pki_path}/config/urls \
+     issuing_certificates="${VAULT_ADDR}/v1/${pki_path}/ca" \
+     crl_distribution_points="${VAULT_ADDR}/v1/${pki_path}/crl"
+
 ----
+
+=== Generate Immediate Certificate
+[source,shell]
+----
+export pki_path=pki_xyp
+export pki_int_path=pki_xyp_int
+export v_ca=./ca.pem
+export cert_role=example-dot-com
+
+## create a new path
+vault secrets enable -ca-path=${v_ca} -path=${pki_int_path} pki
+vault secrets tune -ca-path=${v_ca} -max-lease-ttl=43800h ${pki_int_path}
+
+## create csr
+vault write -ca-path=${v_ca} \
+    -format=json \
+    ${pki_int_path}/intermediate/generate/internal \
+    common_name="xyp.com Intermediate Authority" \
+    issuer_name="xyp-dot-com-intermediate" \
+    | jq -r '.data.csr' > pki_intermediate.csr
+## check
+openssl req -in ./pki_intermediate.csr -text -noout
+## check done
+
+## sign the csr
+vault write -ca-path=${v_ca} \
+    -format=json \
+    ${pki_path}/root/sign-intermediate \
+    issuer_ref="root-2023" \
+    csr=@pki_intermediate.csr \
+    format=pem_bundle ttl="43800h" \
+    | jq -r '.data.certificate' > intermediate.cert.pem
+## check
+openssl x509 -in ./intermediate.cert.pem -text -noout
+## check done
+##########################
+
+# input back to vault
+vault write -ca-path=${v_ca} \
+    ${pki_int_path}/intermediate/set-signed \
+    certificate=@intermediate.cert.pem
+## you'll see the new certificate appended under the root ${pki_path}
+
+## create the role
+vault write -ca-path=${v_ca} \
+    ${pki_int_path}/roles/${cert_role} \
+    issuer_ref="$(vault read -ca-path=${v_ca} -field=default ${pki_int_path}/config/issuers)" \
+    allowed_domains="xypexample.com" \
+    allow_subdomains=true \
+    max_ttl="720h"
+
+## request certificates
+vault write -ca-path=${v_ca} \
+    ${pki_int_path}/issue/${cert_role} common_name="test.xypexample.com" ttl="24h"
+## you'll find the certificate created under ${pki_int_path}
+vault write -ca-path=${v_ca} \
+    ${pki_int_path}/issue/${cert_role} common_name="test2.xypexample.com" ttl="2400h"
+vault write -ca-path=${v_ca} \
+    ${pki_int_path}/issue/${cert_role} common_name="test3.xypexample.com" ttl="2400h"
+vault write -ca-path=${v_ca} \
+    ${pki_int_path}/issue/${cert_role} common_name="test4.xypexample.com" \
+    ip_sans="127.0.0.1,192.168.0.1" \
+    alt_names="tt4.xypexample.com,aa4.xypexample.com,localhost"
+    ttl="2400h"
+
+----
+
+[source,shell]
+----
+## use certificate in application
+# create policy
+export policy=certs_int
+
+echo "path \"${pki_int_path}/*\" {
+  capabilities = [\"read\",\"create\",\"update\"]
+}" > ${policy}.hcl
+cat ${policy}.hcl | vault policy write -ca-path=${v_ca}  ${policy} -
+
+----
+
+[source,shell]
+----
+## get certs
+vault list -ca-path=./ca.pem pki_xyp/certs
+vault read -ca-path=./ca.pem -format=json \
+    -output-curl-string \
+    pki_xyp/cert/09:d7:a4:5d:3c:df:bd:62:d3:42:a6:ca:e0:5e:23:39:89:5e:0e:3b
+vault read -ca-path=./ca.pem -format=json \
+    pki_xyp/cert/09:d7:a4:5d:3c:df:bd:62:d3:42:a6:ca:e0:5e:23:39:89:5e:0e:3b
+
+----
+
+https://www.hashicorp.com/blog/certificate-management-with-vault

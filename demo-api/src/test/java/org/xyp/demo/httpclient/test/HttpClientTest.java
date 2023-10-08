@@ -26,6 +26,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Map;
 
 class HttpClientTest {
@@ -53,7 +54,7 @@ class HttpClientTest {
 
         // Create a new JKS and add the certificate
         KeyStore trustStore = KeyStore.getInstance("JKS");
-        trustStore.load(null, null);
+        trustStore.load(null, null); // the load null null is MUST
         trustStore.setCertificateEntry("alias", certificate);
 
 //        KeyStore ks1 = KeyStore.getInstance(new File("d:/tools/vault/1.14/vault-trust.p12"), "123456".toCharArray());
@@ -67,10 +68,10 @@ class HttpClientTest {
 
     @Test
     void test1() throws Exception {
-        System.out.println(createSSLContextFromPem() + " create ssl context from pk12" );
+        System.out.println(createSSLContextFromPem() + " create ssl context from pem");
         HttpClient client = HttpClient.newBuilder()
-                .sslContext(createSSLContext())
-//                .sslContext(createSSLContextFromPem())
+//                .sslContext(createSSLContext())
+                .sslContext(createSSLContextFromPem())
                 .build();
 //        curl\
 //        -H "X-Vault-Request: true"\
@@ -92,10 +93,56 @@ class HttpClientTest {
         val map = mapper.readValue(body.body().getBytes(), Map.class);
         System.out.println(map.get("errors"));
 
+        System.out.println("---- map ----");
         System.out.println(map);
         Map<?, ?> m2 = (Map) map.get("data");
+        System.out.println("---- m2 ----");
         System.out.println(m2);
+        System.out.println();
         Map<?, ?> m3 = (Map) m2.get("data");
+        System.out.println("---- m3 ----");
+        System.out.println(m3);
+        System.out.println();
+        Object m4 = m3.get("private_key");
+        System.out.println(m4);
+    }
+
+    @Test
+    void test2() throws Exception {
+        System.out.println(createSSLContextFromPem() + " create ssl context from pem");
+        HttpClient client = HttpClient.newBuilder()
+//                .sslContext(createSSLContext())
+                .sslContext(createSSLContextFromPem())
+                .build();
+//        curl\
+//        -H "X-Vault-Request: true"\
+//        -H "X-Vault-Token: hvs.6SnLsAKoGIyHE4sE5NtRvk0b"\
+//        https://127.0.0.1:8180/v1/kv_xyp/data/dev
+
+        String certKey = "09:d7:a4:5d:3c:df:bd:62:d3:42:a6:ca:e0:5e:23:39:89:5e:0e:3b";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://127.0.0.1:8180/v1/pki_xyp_int/cert/" + certKey))
+                .headers(
+                        "X-Vault-Request", "true",
+                        "X-Vault-Token", "hvs.CAESIH66nAoa6gU05CN1CIpKIpaP3pkNYM2gbMEjmo7szQ4WGh4KHGh2cy4wQlB3Z25tMnFFS2NodjhPZzhpak9XSkQ")
+                .timeout(Duration.ofMillis(5009))
+                .build();
+
+
+        val body = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(body.body());
+        ObjectMapper mapper = new ObjectMapper();
+        val map = mapper.readValue(body.body().getBytes(), Map.class);
+        System.out.println(map.get("errors"));
+
+        System.out.println("---- map ----");
+        System.out.println(map);
+        Map<?, ?> m2 = (Map) map.get("data");
+        System.out.println("---- m2 ----");
+        System.out.println(m2);
+        System.out.println();
+        Object m3 = m2.get("certificate");
+        System.out.println("---- m3 ----");
         System.out.println(m3);
     }
 
@@ -108,7 +155,7 @@ class HttpClientTest {
 
      */
     @Test
-    void test2() throws Exception {
+    void test3() throws Exception {
         HttpClient client = HttpClient.newBuilder()
 //                .sslContext(createSSLContext())
                 .build();
@@ -129,5 +176,12 @@ class HttpClientTest {
 
         val body = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println(body.body());
+    }
+
+    @Test
+    void testS() throws IOException {
+        String path = "d:/develop/spring-all/demo-echo/src/main/resources/keystore/certstore.p12";
+        val bytes = Files.readAllBytes(Path.of(path));
+        System.out.println(Base64.getEncoder().encodeToString(bytes));
     }
 }

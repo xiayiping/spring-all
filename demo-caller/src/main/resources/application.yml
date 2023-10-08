@@ -96,7 +96,7 @@ springdoc:
     path: "swagger-ui-custom.html"
 
 echo:
-  url: "https://localhost:8092"
+  url: "https://localhost:8094"
 
 management:
   tracing:
