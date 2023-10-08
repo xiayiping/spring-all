@@ -1,0 +1,21 @@
+
+
+
+#
+#
+secret:
+  keystore:
+    vault:
+      url: https://127.0.0.1:8180
+      ca-path: "/path/to/ca.pem"
+      secret-path:
+      entries:
+        main:
+          password-field: password
+          store-field: key_store
+        trust1:
+          password-field: password
+          store-field: trust_store
+#
+#
+#    aws:

@@ -25,26 +25,27 @@ spring:
         ip: localhost
         secure: true
         enabled: false
-  ssl.bundle:
-    jks: # https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl
-      web-server:
-        keystore:
-          location: "classpath:keystore/keystore.p12"
-          password: "123456"
-        truststore:
-          location: "classpath:keystore/certstore.p12"
-          password: "123456"
-    pem:
-      web-server-pem:
-        keystore:
-          certificate: "classpath:keystore2/cert.pem"
-          private-key: "classpath:keystore2/cert-key.pem"
-          private-key-password: 123456
-      web-server-pem-e:
-        keystore:
-          certificate: "classpath:keystore-encrypt/cert.pem"
-          private-key: "classpath:keystore-encrypt/ca-key.pem"
-          private-key-password: 123456
+  ssl:
+    bundle:
+      jks: # https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl
+        web-server:
+          keystore:
+            location: "classpath:keystore/keystore.p12"
+            password: "123456"
+          truststore:
+            location: "classpath:keystore/certstore.p12"
+            password: "123456"
+      pem:
+        web-server-pem:
+          keystore:
+            certificate: "classpath:keystore2/cert.pem"
+            private-key: "classpath:keystore2/cert-key.pem"
+            private-key-password: 123456
+        web-server-pem-e:
+          keystore:
+            certificate: "classpath:keystore-encrypt/cert.pem"
+            private-key: "classpath:keystore-encrypt/ca-key.pem"
+            private-key-password: 123456
 #  datasource:
 #    url: "jdbc:mysql://localhost:3306/companyproj?rewriteBatchedStatements=true" #
 ##    username: yipingx

@@ -26,6 +26,7 @@
         <module>demo-oauth2-server</module>
         <module>demo-nio-server</module>
         <module>demo-otel</module>
+        <module>demo-secret</module>
     </modules>
 
     <properties>
