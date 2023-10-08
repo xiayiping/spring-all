@@ -2,7 +2,7 @@ package org.xyp.demo.api.aws;
 
 // Make sure to import the following packages in your code
 
-import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
@@ -24,8 +24,8 @@ public class SecretManager {
         try (SecretsManagerClient client = SecretsManagerClient.builder()
                 .region(region)
                 // credential chain https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials-chain.html
-//                .credentialsProvider( DefaultCredentialsProvider.create())
-                .credentialsProvider(InstanceProfileCredentialsProvider.create())
+                .credentialsProvider(DefaultCredentialsProvider.create())
+//                .credentialsProvider(InstanceProfileCredentialsProvider.create())
                 .build()
         ) {
 
