@@ -149,8 +149,8 @@ policies ["default" "matt_policy"]
     @Value("${echo.url}")
     String echoUrl;
 
-    @Value("${server.ssl.bundle}")
-    String sslBundleKey;
+//    @Value("${server.ssl.bundle}")
+    String sslBundleKey = "secretBundle";
 
     private boolean isHttps() {
         return echoUrl.startsWith("https");
@@ -162,11 +162,19 @@ policies ["default" "matt_policy"]
             throws Exception {
 
         var bundle = createSslBundle();
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
         return Optional.of(isHttps()).filter(i -> i)
                 .map(i -> builder
                         .rootUri(echoUrl)
-                        .setSslBundle(bundle)
-//                        .setSslBundle(sslBundles.getBundle("clientStoreJks"))
+//                        .setSslBundle(bundle)
+                        .setSslBundle(sslBundles.getBundle(sslBundleKey))
                         .build())
                 .orElseGet(() -> builder
                         .rootUri(echoUrl)

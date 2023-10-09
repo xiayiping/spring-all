@@ -1,12 +1,10 @@
-package org.xyp.demo.echo;
+package org.xyp.demo.api.secret.config;
 
-import org.springframework.boot.ssl.SslStoreBundle;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -15,49 +13,24 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-public class InMemoryJksSslStoreBundle implements SslStoreBundle {
+public class StoreUtil {
 
-//    private final JksSslStoreDetails keyStoreDetails;
-//
-//    private final JksSslStoreDetails trustStoreDetails;
-
-    private final InMemoryJksStoreDetails inMemKeyStoreDetails;
-    private final InMemoryJksStoreDetails inMemTrustStoreDetails;
-
-    /**
-     * Location in details is the content of file
-     *
-     * @param keyStoreDetails   the key store details
-     * @param trustStoreDetails the trust store details
-     */
-    public InMemoryJksSslStoreBundle(InMemoryJksStoreDetails keyStoreDetails, InMemoryJksStoreDetails trustStoreDetails) {
-        this.inMemKeyStoreDetails = keyStoreDetails;
-        this.inMemTrustStoreDetails = trustStoreDetails;
-
+    public static InMemoryJksStoreDetails getStoreDetails(String location, byte[] content, String password) {
+        return new InMemoryJksStoreDetails(null, null, location, content, password);
     }
 
-    @Override
-    public KeyStore getKeyStore() {
-        return createKeyStore("key", this.inMemKeyStoreDetails);
+    public static boolean isHardwareKeystoreType(String type) {
+        return type.equalsIgnoreCase("PKCS11");
     }
 
-    @Override
-    public String getKeyStorePassword() {
-        return (this.inMemKeyStoreDetails != null) ? this.inMemKeyStoreDetails.password() : null;
-    }
 
-    @Override
-    public KeyStore getTrustStore() {
-        return createKeyStore("trust", this.inMemTrustStoreDetails);
-    }
-
-    private boolean isDetailsEmpty(InMemoryJksStoreDetails details) {
+    public static boolean isDetailsEmpty(InMemoryJksStoreDetails details) {
         return !StringUtils.hasText(details.location())
                 && !StringUtils.hasText(details.type())
                 && !StringUtils.hasText(details.provider());
     }
 
-    private KeyStore createKeyStore(String name, InMemoryJksStoreDetails details) {
+    public static KeyStore createKeyStore(String name, InMemoryJksStoreDetails details) {
         if (details == null || isDetailsEmpty(details)) {
             return null;
         }
@@ -77,23 +50,19 @@ public class InMemoryJksSslStoreBundle implements SslStoreBundle {
         }
     }
 
-    private KeyStore getKeyStoreInstance(String type, String provider)
+    public static KeyStore getKeyStoreInstance(String type, String provider)
             throws KeyStoreException, NoSuchProviderException {
         return (!StringUtils.hasText(provider)) ? KeyStore.getInstance(type) : KeyStore.getInstance(type, provider);
     }
 
-    private boolean isHardwareKeystoreType(String type) {
-        return type.equalsIgnoreCase("PKCS11");
-    }
-
-    private void loadHardwareKeyStore(KeyStore store, String location, char[] password)
+    public static void loadHardwareKeyStore(KeyStore store, String location, char[] password)
             throws IOException, NoSuchAlgorithmException, CertificateException {
         Assert.state(!StringUtils.hasText(location),
                 () -> "Location is '%s', but must be empty or null for PKCS11 hardware key stores".formatted(location));
         store.load(null, password);
     }
 
-    private void loadKeyStore(KeyStore store, String location, byte[] content, char[] password) {
+    public static void loadKeyStore(KeyStore store, String location, byte[] content, char[] password) {
         Assert.state(StringUtils.hasText(location), () -> "store content must not be empty or null");
         try {
 

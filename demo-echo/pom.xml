@@ -12,6 +12,12 @@
     <artifactId>demo-echo</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>org.xyp</groupId>
+            <artifactId>demo-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/net.ttddyy/datasource-proxy -->
         <dependency>
             <groupId>net.ttddyy</groupId>

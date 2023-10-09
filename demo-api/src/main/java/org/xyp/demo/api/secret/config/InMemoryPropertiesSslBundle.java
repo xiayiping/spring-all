@@ -1,4 +1,4 @@
-package org.xyp.demo.echo;
+package org.xyp.demo.api.secret.config;
 
 import org.springframework.boot.autoconfigure.ssl.SslBundleProperties;
 import org.springframework.boot.ssl.*;
