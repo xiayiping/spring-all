@@ -1,4 +1,7 @@
 
+[source.text]
+----
+
 Unseal Key 1: pu/Vc+J5QPv/YudjZ22xXqC2cuQ4pJZRS0bmiPpa1ev6
 Unseal Key 2: p5fnNgd6zD+wUZhqXj1JG6eFebrIDfTKEQS/BzreKTDF
 Unseal Key 3: tl8e0G3xGa5GmgGqmAfzJ2l9fcdwddZYmYEOjkmp9pHA
@@ -7,6 +10,49 @@ Unseal Key 5: sTtQtBZOxf7jQ8/hjqIYMGcKlG0W4f9QK0zrrlFv0A18
 
 Initial Root Token: hvs.6SnLsAKoGIyHE4sE5NtRvk0b
 
+
+
+PS C:\Users\terry.xiao> vault token create -policy=matt_policy
+Key Value
+--- -----
+token hvs.CAESIOuIuBjV-viraSq1zb6A7F5Aeg4icLbz9HyfEXTZMlaXGh4KHGh2cy5EWFNadDVOM1VtbEJkUWhIb1FpZjQ3QU4
+token_accessor vnOOvwwoDBV3c7fpOZse8rru
+token_duration 768h
+token_renewable true
+token_policies ["default" "matt_policy"]
+identity_policies []
+policies ["default" "matt_policy"]
+
+PS C:\Users\terry.xiao> vault token create -policy="admin" -period=168h
+Key Value
+--- -----
+token hvs.CAESIAsnldj83JZesIIIjJFRbb57M2thM79K2ewpn8Irvl9yGh4KHGh2cy5XMm1sUTl4cjczNVJjNkswTWZ6YkZDcmM
+token_accessor q96WMwFxTno4Kheh34rrgnbu
+token_duration 168h
+token_renewable true
+token_policies ["admin" "default"]
+identity_policies []
+policies ["admin" "default"]
+
+export VAULT_ADDR='https://vault.tcghl.com'
+vault token revoke -self -ca-path=./ca.pem
+vault print token
+
+dev_paradise_kv_read
+Key                  Value
+---                  -----
+token                hvs.CAESIKD7uAwveSXkWUzsQGtBdZ2vi9Q3CQODKX8WSYkS-rHFGh4KHGh2cy5MUGZ4dXJJeXAzOFVzR2NjM0tRTmRpOFg
+token_accessor       23oHfMgFap5DOuuJQXWRzyAX
+token_duration       768h
+token_renewable      true
+token_policies       ["default" "dev_paradise_kv_read"]
+identity_policies    []
+policies             ["default" "dev_paradise_kv_read"]
+
+you can put $vault_token in system environment  ,
+it's the highest priority token.
+2nd priority is ~/.vault.token file.
+----
 [source,text]
 ----
 ## the vault config file sample
@@ -54,7 +100,7 @@ vault token create -ca-path=./ca.pem -policy=kv_read
 
 [source,shell]
 ----
-# assume you have username=aaaa under kv_xyp/dev
+# assume you have k-v username=aaaa under kv_xyp/dev
 # kv_xyp is the kv engine path, dev is the secret path
 vault kv get --field=username kv_xyp/dev
 
@@ -77,6 +123,14 @@ path "kv_xyp/*" {
     capabilities = ["read"]
 }
 
+path "pki_xyp_int/*" {
+  capabilities = ["read","create","update"]
+}
+
+path "pki_xyp/*" {
+  capabilities = ["read","create","update"]
+}
+
 ----
 
 === Generate Root CA
@@ -85,10 +139,12 @@ path "kv_xyp/*" {
 # vault pki
 export pki_path=pki_xyp
 export v_ca=./ca.pem
+export vca="-ca-path=./ca.pem"
 
-vault secrets enable -ca-path=${v_ca}  -path ${pki_path} pki
+vault secrets enable -ca-path=${v_ca} -path ${pki_path} pki
 vault secrets tune -max-lease-ttl=87600h -ca-path=${v_ca} ${pki_path}
 
+## for all names, refer to https://developer.hashicorp.com/vault/api-docs/secret/pki
 vault write \
      -field=certificate \
      -ca-path=${v_ca} \
@@ -105,8 +161,9 @@ vault read -ca-path=${v_ca} \
   ${pki_path}/issuer/6168f63c-f718-c39a-47f6-2b35137c8767
 
 vault read -ca-path=${v_ca} \
-  ${pki_path}/issuer/$(vault list \
-      -ca-path=${v_ca} -format=json ${pki_path}/issuers/ | jq -r '.[]') \
+  ${pki_path}/issuer/$(vault list -ca-path=${v_ca} \
+                        -format=json ${pki_path}/issuers/ \
+                        | jq -r '.[0]') \
   | tail -n 6
 ### ckeck done
 
@@ -122,7 +179,7 @@ vault write -ca-path=${v_ca} \
 
 ----
 
-=== Generate Immediate Certificate
+=== Generate Intermediate Certificate
 [source,shell]
 ----
 export pki_path=pki_xyp
@@ -134,18 +191,20 @@ export cert_role=example-dot-com
 vault secrets enable -ca-path=${v_ca} -path=${pki_int_path} pki
 vault secrets tune -ca-path=${v_ca} -max-lease-ttl=43800h ${pki_int_path}
 
-## create csr
+## create csr,
+# nothing uploaded to vault in this step
 vault write -ca-path=${v_ca} \
     -format=json \
     ${pki_int_path}/intermediate/generate/internal \
-    common_name="xyp.com Intermediate Authority" \
+    common_name="xyp2.com Intermediate Authority" \
     issuer_name="xyp-dot-com-intermediate" \
     | jq -r '.data.csr' > pki_intermediate.csr
 ## check
 openssl req -in ./pki_intermediate.csr -text -noout
 ## check done
 
-## sign the csr
+## sign the csr, the csr=@ is followed by the file name
+## this step will create a certificate in the root-ca's path
 vault write -ca-path=${v_ca} \
     -format=json \
     ${pki_path}/root/sign-intermediate \
@@ -158,16 +217,23 @@ openssl x509 -in ./intermediate.cert.pem -text -noout
 ## check done
 ##########################
 
-# input back to vault
+# input back to vault under intermediate path
+# this will add an issuer to the path
 vault write -ca-path=${v_ca} \
     ${pki_int_path}/intermediate/set-signed \
     certificate=@intermediate.cert.pem
-## you'll see the new certificate appended under the root ${pki_path}
 
+----
+
+=== Now create leaf certificate from Intermediate Certificate
+[source,shell]
+----
 ## create the role
+export cert_role=example-dot-com
 vault write -ca-path=${v_ca} \
     ${pki_int_path}/roles/${cert_role} \
-    issuer_ref="$(vault read -ca-path=${v_ca} -field=default ${pki_int_path}/config/issuers)" \
+    issuer_ref="$(vault read -ca-path=${v_ca} \
+                  -field=default ${pki_int_path}/config/issuers)" \
     allowed_domains="xypexample.com" \
     allow_subdomains=true \
     max_ttl="720h"
@@ -186,7 +252,145 @@ vault write -ca-path=${v_ca} \
     alt_names="tt4.xypexample.com,aa4.xypexample.com,localhost"
     ttl="2400h"
 
+## issue with dedicated rol "issuer_role"
+vault write -ca-path=${v_ca} \
+    ${pki_path}/issue/issuer_role common_name="test4.xypexample.com" \
+    -format=json \
+    ip_sans="127.0.0.1,192.168.0.1" \
+    alt_names="tt4.xypexample.com,aa4.xypexample.com,localhost"
+    ttl="24000h"
 ----
+
+==== create a new role for non-default issuer under same engine
+[source,shell]
+----
+
+# vault pki
+export pki_path=paradise_dev
+export v_ca=./tcghl-com-crt.pem
+export vca="-ca-path=./tcghl-com-crt.pem"
+export root_issuer_role=root_issuer
+export root_issuer_name="paradise_dev_root_issuer"
+export issuer_role=paradise_issuer
+export issuer_name="paradise_dev_issuer"
+export vault_kv_mount=secret
+export vault_kv_path=dev/paradise/keystore
+
+## max ttl 10 years
+vault secrets enable -ca-path=${v_ca} -path ${pki_path} pki
+vault secrets tune -max-lease-ttl=87600h -ca-path=${v_ca} ${pki_path}
+
+# the root certificate
+vault write \
+     -field=certificate \
+     -ca-path=${v_ca} \
+     ${pki_path}/root/generate/internal \
+     common_name="tcg.com" \
+     issuer_name="${root_issuer_name}" \
+     ttl=87600h > root_ca.crt
+cat root_ca.crt
+
+# create role
+vault write -ca-path=${v_ca} ${pki_path}/roles/${root_issuer_role} \
+  allow_any_name=true \
+  allow_ip_sans=false
+
+## so far no need CRL
+########################################################### ROOT done
+
+### now create Intermediate certificate
+# csr
+vault write -ca-path=${v_ca} \
+    -format=json \
+    ${pki_path}/intermediate/generate/internal \
+    common_name="Paradise_TCG9" \
+    issuer_name="${issuer_name}" > csr_req.json
+cat csr_req.json
+cat csr_req.json | jq -r '.data.csr' > tcg_intermediate.csr
+
+# sign
+## this step will create a certificate in the root-ca's path
+vault write -ca-path=${v_ca} \
+    -format=json \
+    ${pki_path}/root/sign-intermediate \
+    issuer_ref="${root_issuer_name}" \
+    csr=@tcg_intermediate.csr \
+    format=pem_bundle ttl="44000h" > sign_req.json
+cat sign_req.json
+cat sign_req.json | jq -r '.data.certificate' > intermediate.cert.pem
+
+
+# write to pki
+vault write -ca-path=${v_ca} \
+    -format=json \
+    ${pki_path}/intermediate/set-signed \
+    certificate=@intermediate.cert.pem > sign.json
+cat ./sign.json | jq -r .data.imported_issuers[0]
+export issuer_name=$(cat ./sign.json | jq -r .data.imported_issuers[0])
+
+# https://developer.hashicorp.com/vault/api-docs/secret/pki#create-update-role
+## create role with specified issuer ,
+## issuer_role2 is the role name
+vault write -ca-path=${v_ca} \
+  ${pki_path}/roles/${issuer_role} \
+  allow_any_name=true \
+  allow_ip_sans=false \
+  issuer_ref="${issuer_name}"
+
+## issue the certificate
+#    ip_sans="127.0.0.1" \
+## this will return you the private key and certificate
+vault write -ca-path=${v_ca} \
+    ${pki_path}/issue/${issuer_role} \
+    common_name="paradise.tcg.com" \
+    -format=json \
+    alt_names="tcg.com,tcghl.com,*.tcg.com,*.tcghl.com,localhost" \
+    ttl="43800h" | tee leaf_cert.json
+
+cat ./leaf_cert.json | jq -r .data.private_key > pk.pem
+cat ./leaf_cert.json | jq -r .data.certificate > cert.pem
+cat ./leaf_cert.json | jq -r .data.issuing_ca > issuer.pem
+cat pk.pem > key_store.pem
+cat cert.pem > cert_chain.pem
+cat issuer.pem >> cert_chain.pem
+
+openssl x509 -in ./cert.pem -text -noout
+openssl x509 -in ./issuer.pem -text -noout
+
+rm ./keystore2.p12
+openssl pkcs12 -export -in cert_chain.pem -inkey pk.pem -out keystore2.p12 -name "server-key2"
+keytool -list -v -keystore ./keystore2.p12
+
+vault list -ca-path=${v_ca} -format=json ${pki_path}/issuers/
+export root_issuer_id=$(vault read -ca-path=${v_ca}   -format=json   ${pki_path}/issuer/${root_issuer_name} \
+   | jq -r .data.issuer_id)
+
+## the root CA
+vault read -ca-path=${v_ca} \
+  -format=json \
+  ${pki_path}/issuer/${root_issuer_id} | jq -r .data.certificate > root-ca.pem
+cat root-ca.pem
+
+rm ./truststore2.p12
+keytool -import -alias server-trust -file ./root-ca.pem -keystore ./truststore2.p12
+
+#export vault_kv_mount=secret
+#export vault_kv_path=dev/paradise/keystore
+
+vault kv get ${vca} -mount=${vault_kv_mount} --field=password ${vault_kv_path}
+
+## use path!!!!
+## if use put, the whole k-v in the path will be removed, only the
+echo "nacos" | vault kv patch ${vca} -mount=${vault_kv_mount} ${vault_kv_path} npassword=-
+
+# add -w 0 to avoid new line break
+base64 -w 0 ./keystore2.p12   | vault kv patch ${vca} -mount=${vault_kv_mount} ${vault_kv_path} key_store_2=-
+base64 -w 0 ./truststore2.p12 | vault kv patch ${vca} -mount=${vault_kv_mount} ${vault_kv_path} trust_store_2=-
+# add head -c -1 | to avoid last line that breaks the
+echo "123456" | head -c -1 | vault kv patch ${vca} -mount=${vault_kv_mount} ${vault_kv_path} password=-
+
+----
+
 
 [source,shell]
 ----
@@ -210,6 +414,8 @@ vault read -ca-path=./ca.pem -format=json \
     pki_xyp/cert/09:d7:a4:5d:3c:df:bd:62:d3:42:a6:ca:e0:5e:23:39:89:5e:0e:3b
 vault read -ca-path=./ca.pem -format=json \
     pki_xyp/cert/09:d7:a4:5d:3c:df:bd:62:d3:42:a6:ca:e0:5e:23:39:89:5e:0e:3b
+vault read -ca-path=./ca.pem -format=json \
+    pki_xyp_int/cert/75:39:5a:f4:8e:5c:75:1a:e1:c8:56:76:99:01:c1:54:d7:90:92:e1
 
 ----
 

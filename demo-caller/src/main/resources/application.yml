@@ -7,7 +7,7 @@ server:
 #    key-store-password: "123456"
     key-store: "classpath:keystore/keystore.pem"
 #    bundle: "clientStoreJks"
-    bundle: "clientStorePem"
+    bundle: "defaultBundle"
     key-store-type: pem
 
 my:
@@ -21,16 +21,24 @@ name:
 spring:
   application:
     name: callerServer
-#  cloud:
-#    nacos:
-#      discovery:
-#        server-addr: "localhost:8848"
-#        enabled: false
-#      config:
-#        server-addr: "localhost:8848"
-#        group: "xyp.nacos"
-  #        import-check:
-#          enabled: false
+  cloud:
+    nacos:
+      username: nacos
+      password: ${nacos_password}
+      config:
+        server-addr: 10.3.1.71:8848  # Nacos Config地址
+        namespace: dev  # 命名空间(默认:PUBLIC)
+        group: DEFAULT_GROUP  # 服务组
+        # prefix: ${spring.application.name} #文件名前缀(默认是spring.application.name)
+        file-extension: yml  # 文件名后缀
+        timeout: 5000  # 从Nacos读取配置项的超时时间
+        config-long-poll-timeout: 10000  # 长轮询超时时间
+        config-retry-time: 2000  # 轮询的重试时间
+        max-retry: 3  # 长轮询最大重试次数
+        refresh-enabled: true  # 开启监听和自动刷新
+  config:
+    import:
+      - nacos:${spring.application.name}.${spring.cloud.nacos.config.file-extension}?refresh=true
   ssl:
     bundle:
       jks:
@@ -82,8 +90,6 @@ spring:
     suffix: ""
     template-loader-path: "file:caller/src/main/resources/template"
     cache: false
-#  config:
-#    import: "nacos:conf1"
 
 app:
   service-principal: 111
@@ -117,3 +123,33 @@ management:
 logging:
   file:
     path: logs
+
+
+
+secret:
+  keystore:
+    entries:
+      tcghl:
+        type: vault
+        url: "https://vault.tcghl.com"
+#        url: "https://localhost:8180"
+        ca-path: "d:/tools/vault/1.14/tcghl-com-crt.pem"
+#        ca-path: "d:/tools/vault/1.14/ca.pem"
+        paths:
+          pathKeyStore:
+#            secret-path: "/v1/kv_xyp/data/dev"
+            secret-path: "/v1/secret/data/dev/paradise/keystore"
+            bundles:
+              defaultBundle:
+                trust-store-field: "trust_store"
+                trust-store-password-field: "password"
+                key-store-field: "key_store"
+                key-store-password-field: "password"
+      aws:
+        type: aws
+        region: "ap-southeast-1"
+        paths:
+          defaultPath:
+            bundles:
+              awsBundle1:
+                key-store-field: "key_store"

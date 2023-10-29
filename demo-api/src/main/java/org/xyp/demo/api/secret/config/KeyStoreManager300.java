@@ -7,4 +7,8 @@ public interface KeyStoreManager300 {
     KeyStore getKeyStore(String bundleName);
 
     KeyStore getTrustStore(String bundleName);
+
+    String getKeyStorePassword(String bundleName);
+
+    String getTrustStorePassword(String bundleName);
 }

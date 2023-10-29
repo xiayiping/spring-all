@@ -32,21 +32,29 @@ import java.util.Optional;
 public class VaultClient {
     private String url;
     private String vaultPemPath;
-    private String secretPath;
+//    private String secretPath;
     private String vaultToken;
 
     private HttpClient client = null;
 
-    public VaultClient(String url, String token, String vaultPemPath, String secretPath)
+//    public VaultClient(String url, String token, String vaultPemPath, String secretPath)
+//            throws Exception {
+//        this.url = url;
+//        this.vaultPemPath = vaultPemPath;
+//        this.secretPath = secretPath;
+//        this.vaultToken = token;
+//        init();
+//    }
+
+    public VaultClient(String url, String token, String vaultPemPath)
             throws Exception {
         this.url = url;
         this.vaultPemPath = vaultPemPath;
-        this.secretPath = secretPath;
         this.vaultToken = token;
         init();
     }
 
-    public String read() throws IOException, InterruptedException {
+    public String read(String secretPath) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url + secretPath))
                 .headers(
@@ -60,6 +68,10 @@ public class VaultClient {
         log.debug("vault returned body " + body.body());
         return body.body();
     }
+
+//    public String read() throws IOException, InterruptedException {
+//        return read(this.secretPath);
+//    }
 
     private void init() throws Exception {
         this.client = createClient();

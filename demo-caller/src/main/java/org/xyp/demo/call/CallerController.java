@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.xyp.demo.api.EchoService;
+//import org.xyp.demo.api.EchoService;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,15 +32,15 @@ public class CallerController {
 
     private final RestTemplate restTemplate;
     private final WebClient webClient;
-    private final EchoService echoService;
+//    private final EchoService echoService;
 
     public CallerController(
             @Qualifier("echo") RestTemplate restTemplate,
-            WebClient webClient,
-            EchoService echoService) {
+            WebClient webClient/*,
+            EchoService echoService*/) {
         this.restTemplate = restTemplate;
         this.webClient = webClient;
-        this.echoService = echoService;
+//        this.echoService = echoService;
     }
 
 //    @Observed(name = "echo-remote")
@@ -65,8 +65,8 @@ public class CallerController {
     @GetMapping("/echoFeign")
     public String echoFeign() {
         log.info("echo by Feign");
-        val echo = echoService.echo();
-        return "echo Feign " + echo;
+//        val echo = echoService.echo();
+        return "echo Feign " /*+ echo*/;
     }
 
     @Operation
@@ -103,7 +103,7 @@ public class CallerController {
         val word64 = Base64.getEncoder().encodeToString(wordSampleBytes);
         val signature64 = Base64.getEncoder().encodeToString(signatureSample);
 
-        System.out.println(this.echoService);
+//        System.out.println(this.echoService);
         Map<String, String> replaceDate = Map.of("{<|<EnglishName>|>}", "matt.xia.from.java");
         Map<String, Object> jsonData = Map.of("baseName", "baseName1",
                 "allNames", List.of(
@@ -114,7 +114,7 @@ public class CallerController {
                 ));
         val signatureMap = Map.of("signature", signature64);
         val fileName = "word2pdf_java.pdf";
-        System.out.println(this.echoService);
+//        System.out.println(this.echoService);
 
         return "fileService return " ;
     }

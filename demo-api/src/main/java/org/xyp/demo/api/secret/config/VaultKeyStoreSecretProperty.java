@@ -26,14 +26,15 @@ public class VaultKeyStoreSecretProperty {
         String caPath;
         String secretPath;
         String region;
-        private final Map<String, Bundle> bundles = new HashMap<>();
+        private final Map<String, SecretPath> paths = new HashMap<>();
 
     }
 
     @NoArgsConstructor
     @Data
-    public static class Secret {
-        String path;
+    public static class SecretPath {
+        String secretPath;
+        private final Map<String, Bundle> bundles = new HashMap<>();
     }
 
     @NoArgsConstructor

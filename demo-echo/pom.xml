@@ -11,13 +11,18 @@
 
     <artifactId>demo-echo</artifactId>
 
-    <dependencies>
+    <dependencies><!--
         <dependency>
             <groupId>org.xyp</groupId>
             <artifactId>demo-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+-->
+        <dependency>
+            <groupId>com.tcg.paradise.common</groupId>
+            <artifactId>secret-config</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/net.ttddyy/datasource-proxy -->
         <dependency>
             <groupId>net.ttddyy</groupId>

@@ -26,10 +26,11 @@ public class SecretServletWebServerFactoryCustomizer
 
         PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
         val ssl = this.serverProperties.getSsl();
-        ssl.setKeyStorePassword(this.provider.getKeyPassword());
-
+        if (null != ssl) {
+            ssl.setKeyStorePassword(this.provider.getKeyPassword());
+            factory.setSsl(ssl);
+        }
         factory.setSslStoreProvider(provider);
-        factory.setSsl(ssl);
     }
 
     @Override

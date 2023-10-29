@@ -2,6 +2,7 @@ package org.xyp.demo.api.secret.config.vault;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
@@ -13,56 +14,95 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class VaultKeyStoreLoader implements KeyStoreLoader {
-    private static final String SupportedType = "vault";
+
+    public static final String VAULT_TOKEN = "vault_token";
+
+    public static final String SupportedType = "vault";
 
     private final VaultKeyStoreSecretProperty property;
 
     private Map<String, StoreBundle> storeBundleMap = new HashMap<>();
 
+    public VaultKeyStoreLoader(VaultKeyStoreSecretProperty property) {
+        this.property = property;
+    }
+
     @PostConstruct
     public void loadData() {
-        String vaultToken = System.getenv("vault_token");
+        String vaultToken = System.getenv(VAULT_TOKEN);
         if (!StringUtils.hasText(vaultToken)) {
             log.warn("${vault_token} not provided when starting up, so skip load key store from vault");
             return;
         }
         log.info("start loading key store data from vault");
 
+        // entry: url, capath, token
+        // path: secret path
+        // bundle fields
+
         val vaultEntries = property.getEntries().entrySet().stream()
                 .filter(e -> SupportedType.equals(e.getValue().getType()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        val vaultClient = vaultEntries.entrySet().stream()
-                .map(e -> {
+        val clientAndPaths = vaultEntries.entrySet().stream()
+                .map(ve -> {
+                    val entry = ve.getValue();
                     try {
-                        return new Tuple<>(e.getKey(), new VaultClient(
-                                e.getValue().getUrl(),
-                                vaultToken,
-                                e.getValue().getCaPath(),
-                                e.getValue().getSecretPath()));
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
+                        val client = new VaultClient(entry.getUrl(), vaultToken, entry.getCaPath());
+                        return new Tuple<>(client, entry.getPaths());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
-                })
-                .collect(Collectors.toMap(e -> e.v1, e -> e.v2));
+                }).toList();
 
-        val bundled = vaultEntries.entrySet().stream()
-                .map(e-> {
-                    val client = vaultClient.get(e.getKey());
-                    val bundleCfgs = e.getValue().getBundles();
+
+//        val vaultClient = vaultEntries.entrySet().stream()
+//                .map(e -> {
+//                    try {
+//                        return new Tuple<>(e.getKey(), new VaultClient(
+//                                e.getValue().getUrl(),
+//                                e.getValue().getCaPath(),
+//                                e.getValue().getSecretPath()));
+//                    } catch (Exception ex) {
+//                        throw new RuntimeException(ex);
+//                    }
+//                })
+//                .collect(Collectors.toMap(e -> e.v1, e -> e.v2));
+
+//        val bundled = vaultEntries.entrySet().stream()
+//                .map(e -> {
+//                    val client = vaultClient.get(e.getKey());
+//                    val bundleCfgs = e.getValue().getBundles();
+//                    try {
+//                        return readBundle(client, bundleCfgs);
+//                    } catch (IOException | InterruptedException ex) {
+//                        throw new RuntimeException(ex);
+//                    }
+//                }).toList();
+
+        val bundled = clientAndPaths.stream()
+                .flatMap(tu -> {
+                    val client = tu.v1;
+                    return tu.v2.values().stream()
+                            .map(path -> new Tuple<>(client, path));
+                })
+                .map(tu -> {
+                    val client = tu.v1;
+                    val path = tu.v2;
                     try {
-                        return readBundle(client, bundleCfgs);
+                        return readBundle(client, path.getSecretPath(), path.getBundles());
                     } catch (IOException | InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }
                 }).toList();
 
-        for(Map<String, StoreBundle > map : bundled) {
+        for (Map<String, StoreBundle> map : bundled) {
             this.storeBundleMap.putAll(map);
         }
 
@@ -70,11 +110,28 @@ public class VaultKeyStoreLoader implements KeyStoreLoader {
 
     }
 
+//    private Map<String, StoreBundle> readBundle(
+//            VaultClient client,
+//            Map<String, VaultKeyStoreSecretProperty.Bundle> bundles)
+//            throws IOException, InterruptedException {
+//        String resp = client.read();
+//        ObjectMapper mapper = new ObjectMapper();
+//        val responseMap = mapper.readValue(resp.getBytes(), Map.class);
+//        val dataMap = getDataSection(responseMap);
+//
+//        return bundles.entrySet().stream()
+//                .map(e -> new Tuple<>(
+//                        e.getKey(),
+//                        creatStoreBundleFromMap(dataMap, e.getValue())))
+//                .collect(Collectors.toMap(e -> e.v1, e -> e.v2));
+//    }
+
     private Map<String, StoreBundle> readBundle(
             VaultClient client,
+            String spath,
             Map<String, VaultKeyStoreSecretProperty.Bundle> bundles)
             throws IOException, InterruptedException {
-        String resp = client.read();
+        String resp = client.read(spath);
         ObjectMapper mapper = new ObjectMapper();
         val responseMap = mapper.readValue(resp.getBytes(), Map.class);
         val dataMap = getDataSection(responseMap);
@@ -100,6 +157,9 @@ public class VaultKeyStoreLoader implements KeyStoreLoader {
 
     @SuppressWarnings("unchecked")
     private Map<String, ?> getDataSection(Map<String, Object> map) {
+        if (map.get("errors") != null) {
+            throw new IllegalStateException("load vault error " + map.get("errors"));
+        }
         return (Map<String, ?>) ((Map<String, ?>) map.get("data")).get("data");
     }
 
@@ -113,31 +173,28 @@ public class VaultKeyStoreLoader implements KeyStoreLoader {
         }
     }
 
-    public VaultKeyStoreLoader(VaultKeyStoreSecretProperty property) {
-        this.property = property;
-    }
-
     @Override
     public byte[] loadKeyStore(String bundleName) {
-        return new byte[0];
+        return this.storeBundleMap.get(bundleName).keyStore;
     }
 
     @Override
     public byte[] loadTrustStore(String bundleName) {
-        return new byte[0];
+        return this.storeBundleMap.get(bundleName).trustStore;
     }
 
     @Override
-    public String loadKeyStorePassword(String bundle) {
-        return null;
+    public String loadKeyStorePassword(String bundleName) {
+        return this.storeBundleMap.get(bundleName).keyPassword;
     }
 
     @Override
-    public String loadTrustStorePassword(String bundle) {
-        return null;
+    public String loadTrustStorePassword(String bundleName) {
+        return this.storeBundleMap.get(bundleName).trustPassword;
     }
 
-    class StoreBundle {
+    @Getter
+    public class StoreBundle {
         byte[] keyStore;
         byte[] trustStore;
         String keyPassword;

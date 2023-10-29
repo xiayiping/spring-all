@@ -121,3 +121,9 @@ so if you need customized setting, do it on either side.
 Also that's why I see env initiated twice. *This is the big picture.*
 
 https://docs.spring.io/spring-boot/docs/3.1.2/reference/html/howto.html#howto.application.customize-the-environment-or-application-context
+
+bootstrap doc
+https://cloud.spring.io/spring-cloud-static/spring-cloud.html#_the_bootstrap_application_context
+
+12 factor
+https://12factor.net/

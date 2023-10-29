@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  org.xyp.demo.api.secret.config.EnvProcessor
