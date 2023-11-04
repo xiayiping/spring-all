@@ -1,6 +1,0 @@
-org.springframework.boot.env.EnvironmentPostProcessor=\
-  org.xyp.EnvProcessor,\
-  org.xyp.EnvProcessor2
-
-org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-  tcg.bootstrap.BootstrapConfig

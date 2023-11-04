@@ -1,0 +1,31 @@
+all-configs:
+  server-port:
+    demo-caller: 8080
+    demo-echo: 8081
+  app-name:
+    demo-caller: demo-caller
+    demo-echo: demo-echo
+
+spring:
+  profiles:
+    default: dev
+  ssl:
+    bundle:
+      jks:
+        defaultBundle:
+          keystore:
+            location: "classpath:keystore/keystore.p12"
+            password: "123456"
+          truststore:
+            location: "classpath:keystore/certstore.p12"
+            password: "123456"
+
+springdoc:
+  api-docs:
+    path: "/api-docs"
+  swagger-ui:
+    path: "swagger-ui-custom.html"
+
+echo:
+  url: "http://localhost:8094"
+

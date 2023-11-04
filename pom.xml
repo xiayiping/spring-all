@@ -17,9 +17,8 @@
     <description>Demo project for Spring Boot</description>
 
     <modules>
+        <module>demo-call-echo</module>
         <module>demo-api</module>
-        <module>demo-caller</module>
-        <module>demo-echo</module>
         <module>demo-image</module>
         <module>demo-jwt</module>
         <module>demo-oauth2-client</module>
@@ -37,7 +36,6 @@
         <log4j.version>2.20.0</log4j.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH.mm.ss</maven.build.timestamp.format>
         <kerberos.extension.version>2.0.0</kerberos.extension.version>
-        <spring-cloud.version>2022.0.4</spring-cloud.version>
         <spring.openapi.version>2.1.0</spring.openapi.version>
         <spring.cloud.alibaba.version>2022.0.0.0</spring.cloud.alibaba.version>
         <feign.hc5.version>12.4</feign.hc5.version>
@@ -49,14 +47,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.xyp.spring</groupId>
+            <artifactId>demo-all-config</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -70,10 +67,10 @@
             <optional>true</optional>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>io.micrometer</groupId>-->
-<!--            <artifactId>micrometer-tracing-bridge-otel</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.micrometer</groupId>-->
+        <!--            <artifactId>micrometer-tracing-bridge-otel</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -92,21 +89,6 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-spring-boot</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
@@ -116,12 +98,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -133,26 +109,21 @@
     <dependencyManagement>
 
         <dependencies>
+
+            <dependency>
+                <groupId>org.xyp.spring</groupId>
+                <artifactId>demo-all-config</artifactId>
+                <version>0.0.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
+                <version>2022.0.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-<!--
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring.cloud.alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>-->
-            <dependency>
-                <groupId>io.github.openfeign</groupId>
-                <artifactId>feign-hc5</artifactId>
-                <version>${feign.hc5.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.springframework.security.kerberos</groupId>
                 <artifactId>spring-security-kerberos-core</artifactId>
@@ -167,6 +138,12 @@
                 <groupId>org.springframework.security.kerberos</groupId>
                 <artifactId>spring-security-kerberos-client</artifactId>
                 <version>${kerberos.extension.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-hc5</artifactId>
+                <version>${feign.hc5.version}</version>
             </dependency>
 
             <dependency>
@@ -205,7 +182,6 @@
                 <artifactId>jjwt-impl</artifactId>
                 <version>0.11.5</version>
             </dependency>
-
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId>
@@ -217,7 +193,6 @@
                 <artifactId>opentelemetry-instrumentation-annotations</artifactId>
                 <version>1.30.0</version>
             </dependency>
-
             <dependency>
                 <groupId>io.opentelemetry</groupId>
                 <artifactId>opentelemetry-bom</artifactId>
@@ -225,6 +200,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>pl.tkowalcz.tjahzi</groupId>
                 <artifactId>log4j2-appender-nodep</artifactId>
@@ -296,7 +272,8 @@
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>4.13.1</version> <!-- Replace with the version you want to use -->
+                    <version>4.13.1
+                    </version> <!-- Replace with the version you want to use -->
                     <executions>
                         <execution>
                             <goals>

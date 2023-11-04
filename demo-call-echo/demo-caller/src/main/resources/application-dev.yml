@@ -1,0 +1,9 @@
+
+server:
+  port: ${all-configs.server-port.demo-caller}
+  ssl:
+    enabled: false
+
+spring:
+  application:
+    name: ${all-configs.app-name.demo-caller}
