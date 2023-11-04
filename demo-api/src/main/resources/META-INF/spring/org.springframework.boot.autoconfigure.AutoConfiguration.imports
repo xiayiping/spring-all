@@ -1,1 +1,2 @@
 org.xyp.demo.api.ServiceConfig
+org.xyp.demo.api.secret.config.SecretConfig

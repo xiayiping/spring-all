@@ -1,7 +1,7 @@
 
 server:
   ssl:
-    enabled: false
+    enabled: true
 
 spring:
   datasource:
@@ -16,4 +16,24 @@ spring:
           echoServer:
             url: "http://localhost:8094"
 
-#nameab: xxxxx
+
+
+secret:
+  keystore:
+    entries:
+      tcghl:
+        type: vault
+        url: "https://vault.tcghl.com"
+        #        url: "https://localhost:8180"
+        ca-path: "d:/tools/vault/1.14/tcghl-com-crt.pem"
+        #        ca-path: "d:/tools/vault/1.14/ca.pem"
+        paths:
+          pathKeyStore:
+            #            secret-path: "/v1/kv_xyp/data/dev"
+            secret-path: "/v1/secret/data/dev/paradise/keystore"
+            bundles:
+              defaultBundle2:
+                trust-store-field: "trust_store"
+                trust-store-password-field: "password"
+                key-store-field: "key_store"
+                key-store-password-field: "password"

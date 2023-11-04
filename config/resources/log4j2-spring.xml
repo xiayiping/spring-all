@@ -62,7 +62,7 @@
 <!--        <Logger name="org.springframework" level="info"/>-->
 <!--        <Logger name="org.xyp.demo.otel" level="debug"/>-->
         <Logger name="io" level="info" />
-        <Logger name="com.alibaba" level="trace" />
+        <Logger name="org.xyp.demo.api.secret" level="trace" />
         <Logger name="org.springframework.boot" level="info" />
         <Root level="info">
             <AppenderRef ref="Console"/>

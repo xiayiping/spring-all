@@ -67,26 +67,6 @@ token_policies ["default" "matt_policy"]
 identity_policies []
 policies ["default" "matt_policy"]
      */
-//    dev/paradise/keystore
-//    String vaultPemPath = "d:/tools/vault/1.14/ca.pem";
-    String vaultPemPath = "d:/tools/vault/1.14/tcghl-com-crt.pem";
-
-//    String vaultRoot = "https://127.0.0.1:8180";
-    String vaultRoot = "https://vault.tcghl.com";
-
-    //    String vaultToken = "hvs.CAESIH66nAoa6gU05CN1CIpKIpaP3pkNYM2gbMEjmo7szQ4WGh4KHGh2cy4wQlB3Z25tMnFFS2NodjhPZzhpak9XSkQ";
-    String vaultToken = "hvs.CAESIOuIuBjV-viraSq1zb6A7F5Aeg4icLbz9HyfEXTZMlaXGh4KHGh2cy5EWFNadDVOM1VtbEJkUWhIb1FpZjQ3QU4";
-
-    //    String secretPath = vaultRoot + "/v1/kv_xyp/data/dev";
-    String secretPath = vaultRoot + "/v1/secret/data/dev/paradise/keystore";
-
-//    String passwordField = "keystore_key";
-    String passwordField = "password";
-
-//    String keyStoreField = "private_keystoe";
-    String keyStoreField = "key_store";
-
-    String trustStoreField = "trust_store";
 
 
     @Bean
@@ -149,8 +129,8 @@ policies ["default" "matt_policy"]
     @Value("${echo.url}")
     String echoUrl;
 
-    @Value("${server.ssl.bundle}")
-    String sslBundleKey;
+//    @Value("${server.ssl.bundle}")
+    String sslBundleKey = "defaultBundle";
 
     private boolean isHttps() {
         return echoUrl.startsWith("https");
@@ -161,12 +141,19 @@ policies ["default" "matt_policy"]
                                         SslBundles sslBundles)
             throws Exception {
 
-        var bundle = createSslBundle();
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
         return Optional.of(isHttps()).filter(i -> i)
                 .map(i -> builder
                         .rootUri(echoUrl)
-                        .setSslBundle(bundle)
-//                        .setSslBundle(sslBundles.getBundle("clientStoreJks"))
+//                        .setSslBundle(bundle)
+                        .setSslBundle(sslBundles.getBundle(sslBundleKey))
                         .build())
                 .orElseGet(() -> builder
                         .rootUri(echoUrl)
@@ -250,138 +237,5 @@ policies ["default" "matt_policy"]
     }
 
 
-    SSLContext createSSLContextFromPem() throws Exception {
-
-        val pemBytes = Files.readAllBytes(Path.of(vaultPemPath));
-        System.out.println("------------------ read vault pem from " + vaultPemPath);
-
-        // Convert PEM to X509Certificate
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(pemBytes));
-
-        // Create a new JKS and add the certificate
-        KeyStore trustStore = KeyStore.getInstance("JKS");
-        trustStore.load(null, null); // the load null/null is MUST
-        trustStore.setCertificateEntry("alias", certificate);
-
-        return new SSLContextBuilder()
-                .loadTrustMaterial(trustStore, new TrustAllStrategy())
-                .build();
-    }
-
-    private byte[] getPrivateKeyFromVault() throws Exception {
-        System.out.println(createSSLContextFromPem() + " create ssl context from pem");
-        HttpClient client = HttpClient.newBuilder()
-                .sslContext(createSSLContextFromPem())
-                .build();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(secretPath))
-                .headers(
-                        "X-Vault-Request", "true",
-                        "X-Vault-Token", vaultToken)
-                .timeout(Duration.ofMillis(5009))
-                .build();
-
-        val body = client.send(request, HttpResponse.BodyHandlers.ofString());
-        ObjectMapper mapper = new ObjectMapper();
-        val map = mapper.readValue(body.body().getBytes(), Map.class);
-        System.out.println(map.get("errors"));
-
-        System.out.println("---- map ----");
-        System.out.println(map);
-        Map<?, ?> m2 = (Map) map.get("data");
-        Map<?, ?> m3 = (Map) m2.get("data");
-        Object m4 = m3.get(keyStoreField);
-        System.out.println("---- private key store ----");
-        System.out.println("[" + m4 + "]");
-
-        return Base64.getDecoder().decode(m4.toString());//.getBytes();
-    }
-
-    private byte[] getCertificateFromVault() throws Exception {
-        System.out.println(createSSLContextFromPem() + " create ssl context from pem");
-        HttpClient client = HttpClient.newBuilder()
-                .sslContext(createSSLContextFromPem())
-                .build();
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(secretPath))
-                .headers(
-                        "X-Vault-Request", "true",
-                        "X-Vault-Token", vaultToken)
-                .timeout(Duration.ofMillis(5009))
-                .build();
-
-
-        val body = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(body.body());
-        ObjectMapper mapper = new ObjectMapper();
-        val map = mapper.readValue(body.body().getBytes(), Map.class);
-        System.out.println(map.get("errors"));
-
-        Map<?, ?> m2 = (Map) map.get("data");
-        Map<?, ?> m3 = (Map) m2.get("data");
-        Object m4 = m3.get(trustStoreField);
-        System.out.println("---- trust store ----");
-        System.out.println(m4);
-
-        return Base64.getDecoder().decode(m4.toString());
-    }
-
-    private String getKeyPasswordFromVault() throws Exception {
-        System.out.println(createSSLContextFromPem() + " create ssl context from pem");
-        HttpClient client = HttpClient.newBuilder()
-                .sslContext(createSSLContextFromPem())
-                .build();
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(secretPath))
-                .headers(
-                        "X-Vault-Request", "true",
-                        "X-Vault-Token", vaultToken)
-                .timeout(Duration.ofMillis(5009))
-                .build();
-
-
-        val body = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(body.body());
-        ObjectMapper mapper = new ObjectMapper();
-        val map = mapper.readValue(body.body().getBytes(), Map.class);
-        System.out.println(map.get("errors"));
-
-        System.out.println("---- map ----");
-        System.out.println(map);
-        Map<?, ?> m2 = (Map) map.get("data");
-        System.out.println("---- m2 ----");
-        System.out.println(m2);
-        System.out.println();
-        Map m3 = (Map) m2.get("data");
-        Object m4 = m3.get(passwordField);
-        System.out.println("---- password ----");
-        System.out.println(m4);
-
-        return m4.toString();
-    }
-
-    private InMemoryJksStoreDetails getStoreDetails(String location, byte[] content, String password) {
-        return new InMemoryJksStoreDetails(null, null, location, content, password);
-    }
-
-    SslBundle createSslBundle() throws Exception {
-
-        val password = getKeyPasswordFromVault();
-
-        val privateKey = getPrivateKeyFromVault();
-        var keyStoreDetail = getStoreDetails("keystore", privateKey, password);
-
-        val trustCertificate = getCertificateFromVault();
-        var trustStoreDetail = getStoreDetails("trustStore", trustCertificate, password);
-
-        var sslStoreBundle = new InMemoryJksSslStoreBundle(keyStoreDetail, trustStoreDetail);
-        var sslBundle = new InMemoryPropertiesSslBundle(
-                sslStoreBundle, new JksSslBundleProperties());
-
-        return sslBundle;
-    }
 
 }

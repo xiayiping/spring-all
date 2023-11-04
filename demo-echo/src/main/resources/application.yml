@@ -1,12 +1,11 @@
 server:
   port: 8094
   ssl:
-    enabled: false
+    enabled: true
     client-auth: none
-
-    bundle: "web-server"
-    key-store: "classpath:keystore/keystore.p12"
-    key-store-password: "123456"
+    bundle: "defaultBundle"
+#    key-store: "classpath:keystore/keystore.p12"
+#    key-store-password: "123456"
 
 #    bundle: "web-server-pem-e"
 #    key-store: "classpath:keystore-encrypt/ca-key.pem"
@@ -83,3 +82,31 @@ management:
       exposure:
         include: "*"
 
+
+secret:
+  keystore:
+    entries:
+      tcghl:
+        type: vault
+        url: "https://vault.tcghl.com"
+#        url: "https://localhost:8180"
+        ca-path: "d:/tools/vault/1.14/tcghl-com-crt.pem"
+#        ca-path: "d:/tools/vault/1.14/ca.pem"
+        paths:
+          pathKeyStore:
+#            secret-path: "/v1/kv_xyp/data/dev"
+            secret-path: "/v1/secret/data/dev/paradise/keystore"
+            bundles:
+              defaultBundle:
+                trust-store-field: "trust_store"
+                trust-store-password-field: "password"
+                key-store-field: "key_store"
+                key-store-password-field: "password"
+      aws:
+        type: aws
+        region: "ap-southeast-1"
+        paths:
+          defaultPath:
+            bundles:
+              awsBundle1:
+                key-store-field: "key_store"
