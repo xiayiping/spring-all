@@ -69,7 +69,7 @@
 <!--            <AppenderRef ref="RollingFileRender"/>-->
 <!--            <AppenderRef ref="OpenTelemetryAppender"/>-->
 
-        </Root>
 
+        </Root>
     </Loggers>
 </Configuration>
