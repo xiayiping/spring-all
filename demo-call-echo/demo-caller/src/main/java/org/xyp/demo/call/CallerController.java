@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,7 @@ import java.util.Map;
 @Slf4j
 @Data
 @RestController
-@RequestMapping("/caller")
+@RequestMapping("/")
 @Validated
 public class CallerController {
 
@@ -32,8 +31,8 @@ public class CallerController {
     private final WebClient webClient;
 
     public CallerController(
-            @Qualifier("echo") RestTemplate restTemplate,
-            WebClient webClient/*,
+        RestTemplate restTemplate,
+        WebClient webClient/*,
             EchoService echoService*/) {
         this.restTemplate = restTemplate;
         this.webClient = webClient;
@@ -44,7 +43,7 @@ public class CallerController {
     @GetMapping("/echo")
     public String echo() {
         log.info("call from caller");
-        val echo = restTemplate.getForObject("/echo/echo", String.class);
+        val echo = restTemplate.getForObject("/echo", String.class);
         return "echo RestTemplate " + echo;
     }
 
@@ -52,7 +51,8 @@ public class CallerController {
     @GetMapping("/echoAsync")
     public String echoAsync() {
         log.info("call from caller");
-        val echo = webClient.get().uri("/echo/echo").retrieve().bodyToMono(String.class).block();
+        val echo =
+            webClient.get().uri("/echo").retrieve().bodyToMono(String.class).block();
         return "echo webClient " + echo;
     }
 
@@ -87,10 +87,10 @@ public class CallerController {
     @GetMapping("/fileService")
     public String fileService() throws IOException {
         File wordFile = new DefaultResourceLoader()
-                .getResource("file:D:/JDH Post-IPO_Share_Award_Scheme 202307-1.docx").getFile();
+            .getResource("file:D:/JDH Post-IPO_Share_Award_Scheme 202307-1.docx").getFile();
 
         File signatureFile = new DefaultResourceLoader()
-                .getResource("file:D:/abcd.png").getFile();
+            .getResource("file:D:/abcd.png").getFile();
 
         val wordSampleBytes = Files.readAllBytes(wordFile.toPath());
         val signatureSample = Files.readAllBytes(signatureFile.toPath());
@@ -99,18 +99,19 @@ public class CallerController {
         val signature64 = Base64.getEncoder().encodeToString(signatureSample);
 
 //        System.out.println(this.echoService);
-        Map<String, String> replaceDate = Map.of("{<|<EnglishName>|>}", "matt.xia.from.java");
+        Map<String, String> replaceDate = Map.of("{<|<EnglishName>|>}", "matt.xia.from" +
+            ".java");
         Map<String, Object> jsonData = Map.of("baseName", "baseName1",
-                "allNames", List.of(
-                        Map.of("n", 1),
-                        Map.of("n", 2),
-                        Map.of("n", 3),
-                        Map.of("n", 4)
-                ));
+            "allNames", List.of(
+                Map.of("n", 1),
+                Map.of("n", 2),
+                Map.of("n", 3),
+                Map.of("n", 4)
+            ));
         val signatureMap = Map.of("signature", signature64);
         val fileName = "word2pdf_java.pdf";
 //        System.out.println(this.echoService);
 
-        return "fileService return " ;
+        return "fileService return ";
     }
 }

@@ -5,6 +5,11 @@ all-configs:
   app-name:
     demo-caller: demo-caller
     demo-echo: demo-echo
+  server-ssl:
+    demo-echo:
+      enabled: true
+      bundle: defaultBundle
+      client-auth: need
 
 spring:
   profiles:
@@ -26,6 +31,4 @@ springdoc:
   swagger-ui:
     path: "swagger-ui-custom.html"
 
-echo:
-  url: "http://localhost:8094"
 

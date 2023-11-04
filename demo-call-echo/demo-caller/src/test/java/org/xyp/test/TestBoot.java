@@ -1,7 +1,6 @@
 package org.xyp.test;
 
-
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,12 +15,12 @@ class TestBoot {
 
     @Test
     void abc() {
-        Assertions.assertNotNull(controller);
+        Assertions.assertThat(controller).isNotNull();
     }
 
     @Test
     void echo() {
         String echo = controller.echo();
-        System.out.println(echo);
+        org.assertj.core.api.Assertions.assertThat(echo).isNotNull();
     }
 }

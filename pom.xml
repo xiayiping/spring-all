@@ -10,13 +10,14 @@
         <relativePath/>
     </parent>
 
-    <groupId>org.xyp</groupId>
+    <groupId>org.xyp.spring</groupId>
     <artifactId>xyp-demo-all</artifactId>
     <version>${revision}${sha1}${changelist}</version>
     <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
 
     <modules>
+        <module>demo-all-config</module>
         <module>demo-call-echo</module>
         <module>demo-api</module>
         <module>demo-image</module>
@@ -26,6 +27,7 @@
         <module>demo-nio-server</module>
         <module>demo-otel</module>
         <module>demo-secret</module>
+        <module>demo-oauth2</module>
     </modules>
 
     <properties>
@@ -217,10 +219,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>

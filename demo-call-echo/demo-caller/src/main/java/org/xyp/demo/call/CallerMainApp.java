@@ -2,19 +2,13 @@ package org.xyp.demo.call;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientSsl;
-import org.springframework.boot.ssl.SslBundles;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
@@ -26,7 +20,9 @@ public class CallerMainApp {
     PS C:\Users\terry.xiao> vault token create -policy=matt_policy
 Key Value
 --- -----
-token hvs.CAESIOuIuBjV-viraSq1zb6A7F5Aeg4icLbz9HyfEXTZMlaXGh4KHGh2cy5EWFNadDVOM1VtbEJkUWhIb1FpZjQ3QU4
+token hvs
+.CAESIOuIuBjV
+-viraSq1zb6A7F5Aeg4icLbz9HyfEXTZMlaXGh4KHGh2cy5EWFNadDVOM1VtbEJkUWhIb1FpZjQ3QU4
 token_accessor vnOOvwwoDBV3c7fpOZse8rru
 token_duration 768h
 token_renewable true
@@ -89,57 +85,18 @@ policies ["default" "matt_policy"]
     public static void main(String[] args) {
         SpringApplication.run(CallerMainApp.class, args);
     }
-    //
-    // @Autowired
-    // EchoService echoService;
 
-    @Value("${echo.url}")
-    String echoUrl;
-
-//    @Value("${server.ssl.bundle}")
-    String sslBundleKey = "defaultBundle";
-
-    private boolean isHttps() {
-        return echoUrl.startsWith("https");
-    }
-
-    @Bean("echo")
-    public RestTemplate getRestTemplate(RestTemplateBuilder builder,
-                                        SslBundles sslBundles)
-            throws Exception {
-
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
-        return Optional.of(isHttps()).filter(i -> i)
-                .map(i -> builder
-                        .rootUri(echoUrl)
-//                        .setSslBundle(bundle)
-                        .setSslBundle(sslBundles.getBundle(sslBundleKey))
-                        .build())
-                .orElseGet(() -> builder
-                        .rootUri(echoUrl)
-                        .build());
-    }
-
-    @Bean("otel")
-    public RestTemplate getOtelRestTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
 
     @Bean
     public WebClient getHttpClient(WebClientSsl ssl) throws Exception {
-        val b = WebClient.builder().baseUrl(echoUrl);
-        if (isHttps())
-            return b.apply(ssl.fromBundle(sslBundleKey))
-                    .build();
-        else
-            return b.build();
+        val b = WebClient.builder()
+//            .baseUrl(echoUrl);
+//        if (isHttps())
+//            return b.apply(ssl.fromBundle(sslBundleKey))
+//                    .build()
+            ;
+//        else
+        return b.build();
     }
 
     @Bean
@@ -198,7 +155,6 @@ policies ["default" "matt_policy"]
 
         return "sdfsdf";
     }
-
 
 
 }

@@ -3,12 +3,20 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!-- if I use revision sha1 changelist, maven will report this project refer to itself -->
+    <!-- then I remove the dependency in parent dependencies, intellij can't find the property config -->
+    <!-- the success way: use spring boot as parent here, and in parent, include this module and add dependency using explicit version -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.2</version>
         <relativePath/>
     </parent>
+    <!--<parent>
+        <groupId>org.xyp.spring</groupId>
+        <artifactId>xyp-demo-all</artifactId>
+        <version>${revision}${sha1}${changelist}</version>
+    </parent>-->
 
     <groupId>org.xyp.spring</groupId>
     <artifactId>demo-all-config</artifactId>
@@ -23,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

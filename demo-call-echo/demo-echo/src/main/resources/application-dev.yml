@@ -1,8 +1,9 @@
-
 server:
   port: ${all-configs.server-port.demo-echo}
   ssl:
-    enabled: false
+    enabled: ${all-configs.server-ssl.demo-echo.enabled}
+    bundle: ${all-configs.server-ssl.demo-echo.bundle}
+    client-auth: ${all-configs.server-ssl.demo-echo.client-auth}
 
 spring:
   application:
