@@ -404,23 +404,23 @@ https://www.youtube.com/watch?v=SNCXp5ilYaA
 - Each of these libraries has its strengths and weaknesses so the choice depends on your project requirements and preferences. If you need more control support for complex HTML or advanced features like headless browsing Puppeteer or wkhtmltopdf could be a better fit. If you prefer simplicity and ease of use you might find libraries like pdfmake or html-pdf more suitable.
 
 
-```html
+```javascript
 
 const puppeteer = require('puppeteer');
 
 (async () => {
     const browser = await puppeteer.launch({headless: "new"});
     const page = await browser.newPage();
-    await page.goto('https://github.com/coreybutler/nvm-windows/releases'
-{
-    waitUntil: 'networkidle2',
-});
-//   await page.pdf({ path: 'hn.pdf'
-format: 'a4' });
-await page.screenshot({ path: 'hn.png' });
-//137 6158 0845
-await browser.close();
-
+    await page.goto('https://github.com/coreybutler/nvm-windows/releases',
+    {
+        waitUntil: 'networkidle2',
+    });
+    await page.pdf({ 
+        path: 'hn.pdf', 
+        format: 'a4' });
+    await page.screenshot({ path: 'hn.png' });
+    //137 6158 0845
+    await browser.close();
 })();
 ```
 ## AOP
@@ -520,43 +520,23 @@ https://www.youtube.com/watch?v=VVn9OG9nfH0&t=341s
 Password normally encrypted with https://en.wikipedia.org/wiki/Bcrypt 
 this is a hash encryption algo.
 
-![](jwt.png)
-
-```text
-
-19:12:36.388 [  restartedMain] INFO  s.s.w.DefaultSecurityFilterChain - {{{{
-Will secure any request with [
-org.springframework.security.web.session.DisableEncodeUrlFilter@6b92a5ca
-
-org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@60153c28
-org.springframework.security.web.context.SecurityContextHolderFilter@4c898a4c
-org.springframework.security.web.header.HeaderWriterFilter@4314766b
-org.springframework.web.filter.CorsFilter@2ec2b060
-org.springframework.security.web.csrf.CsrfFilter@22090e7d
-org.springframework.security.web.authentication.logout.LogoutFilter@252036d7
-org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@13d6949b
-org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@792a00a4
-org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@27fcb5f5
-org.springframework.security.web.authentication.www.BasicAuthenticationFilter@4dc8c898
-org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6aadd963
-org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5270e093
-org.springframework.security.web.authentication.AnonymousAuthenticationFilter@593ee835
-org.springframework.security.web.access.ExceptionTranslationFilter@18ec1ff9
-org.springframework.security.web.access.intercept.AuthorizationFilter@2a23dda1]}}}}
+![jwt.png](D:/develop/spring-all/jwt.png)
 
 
-{{{{Will secure any request with [
-org.springframework.security.web.session.DisableEncodeUrlFilter@70e9d4b4
-org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@56f956e2
-org.springframework.security.web.context.SecurityContextHolderFilter@4c9e7a1a
-org.springframework.security.web.header.HeaderWriterFilter@70ff19e0
-org.springframework.security.web.authentication.logout.LogoutFilter@43ed9bfd
-org.xyp.demo.call.auth.AuthenticationFilter@54fee657
-org.springframework.security.web.savedrequest.RequestCacheAwareFilter@72bb7065
-org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@50e88287
-org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1db9e646
-org.springframework.security.web.access.ExceptionTranslationFilter@3b636735]}}}}
+```plantuml
+@startuml
+robust "Web Browser" as WB
+concise "Web User" as WU
 
+@0
+WU is Idle
+WB is Idle
+
+@100
+WU is Waiting
+WB is Processing
+
+@300
+WB is Waiting
+@enduml
 ```
-When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are
-$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
