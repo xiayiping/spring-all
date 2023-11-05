@@ -1,5 +1,5 @@
 
-[source.text]
+[source,text]
 ----
 
 Unseal Key 1: pu/Vc+J5QPv/YudjZ22xXqC2cuQ4pJZRS0bmiPpa1ev6
@@ -53,6 +53,7 @@ you can put $vault_token in system environment  ,
 it's the highest priority token.
 2nd priority is ~/.vault.token file.
 ----
+
 [source,text]
 ----
 ## the vault config file sample
