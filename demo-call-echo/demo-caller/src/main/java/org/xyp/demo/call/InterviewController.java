@@ -1,6 +1,5 @@
 package org.xyp.demo.call;
 
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import lombok.val;
 import org.springframework.http.ContentDisposition;
@@ -40,7 +39,6 @@ public class InterviewController {
         return "interview.ftl";
     }
 
-    @Operation(summary = "Display a signature page for demo")
     @PostMapping("/interview/submit")
     public String interviewSubmit(@RequestPart("file") @NotNull MultipartFile file)
             throws IOException {

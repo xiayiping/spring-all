@@ -1,6 +1,5 @@
 package org.xyp.demo.call;
 
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,6 @@ public class CallerController {
 //        this.echoService = echoService;
     }
 
-    @Operation
     @GetMapping("/echo")
     public String echo() {
         log.info("call from caller");
@@ -47,7 +45,6 @@ public class CallerController {
         return "echo RestTemplate " + echo;
     }
 
-    @Operation
     @GetMapping("/echoAsync")
     public String echoAsync() {
         log.info("call from caller");
@@ -56,7 +53,6 @@ public class CallerController {
         return "echo webClient " + echo;
     }
 
-    @Operation
     @GetMapping("/echoFeign")
     public String echoFeign() {
         log.info("echo by Feign");
@@ -64,21 +60,18 @@ public class CallerController {
         return "echo Feign " /*+ echo*/;
     }
 
-    @Operation
     @GetMapping("/hello")
     public String hello() {
         log.info("call from hello");
         return "hello fff";
     }
 
-    @Operation
     @GetMapping("/nullcheck")
     public String check(@NotNull String title) {
         return "hello " + title;
     }
 
 
-    @Operation
     @GetMapping("/getBytes")
     public String getBytes() {
         return Base64.getEncoder().encodeToString(new byte[]{1, 2, 4, 4, 5});

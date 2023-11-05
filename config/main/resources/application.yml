@@ -2,9 +2,11 @@ all-configs:
   server-port:
     demo-caller: 8080
     demo-echo: 8081
+    demo-caller-log4j2: 8082
   app-name:
     demo-caller: demo-caller
     demo-echo: demo-echo
+    demo-caller-log4j2: demo-caller-log4j2
   server-ssl:
     demo-echo:
       enabled: true

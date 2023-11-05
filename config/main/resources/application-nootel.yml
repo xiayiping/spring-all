@@ -1,4 +1,0 @@
-otel:
-  springboot:
-    web:
-      enabled: false

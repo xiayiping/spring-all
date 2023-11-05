@@ -5,7 +5,7 @@
 
     <springProperty scope="context" name="application.name" source="spring.application.name" />
 
-    <property name="CONSOLE_LOG_PATTERN" value="%highlight(%d{HH:mm:ss.SSSXXX}) - %m %highlight([${LOG_LEVEL_PATTERN:-%p}] [${application.name}]) %clr(${PID:- }){magenta} %clr([%t]){faint} [%clr(%logger){cyan}] %n"/>
+    <property name="CONSOLE_LOG_PATTERN" value="%highlight(%d{HH:mm:ss.SSSXXX}) %highlight([${LOG_LEVEL_PATTERN:-%5p}]) - %m %highlight([${application.name}]) %clr(${PID:- }){magenta} %clr([%t]){faint} [%clr(%logger){cyan}] %n"/>
 
     <springProfile name="production | staging">
         <logger name="org.springframework.web" level="DEBUG"/>
