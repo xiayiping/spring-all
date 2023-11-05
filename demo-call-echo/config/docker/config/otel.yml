@@ -1,0 +1,20 @@
+receivers:
+  otlp:  # for matrix
+    protocols:
+      http:
+        endpoint: otel-collector:6666
+
+exporters:
+  logging:
+    verbosity: detailed
+  prometheus:
+    endpoint: otel-collector:9191
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      exporters: [logging,prometheus]
+  telemetry:
+    logs:
+      level: debug

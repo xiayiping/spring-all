@@ -1,4 +1,3 @@
-
 server:
   port: ${all-configs.server-port.demo-caller}
   ssl:
@@ -7,3 +6,9 @@ server:
 spring:
   application:
     name: ${all-configs.app-name.demo-caller}
+
+# add tag in metrics so that we can use in prometheus
+management:
+  metrics:
+    tags:
+      app-name: ${spring.application.name}
