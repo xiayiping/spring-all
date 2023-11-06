@@ -1,6 +1,13 @@
 
 docker build --help
 
+[source,shell]
+----
+# if docker desktop can't start, run
+netsh winsock reset
+# and restart PC
+----
+
 [source,dockerfile]
 ----
 FROM node:alpine
