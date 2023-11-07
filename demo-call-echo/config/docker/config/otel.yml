@@ -4,17 +4,28 @@ receivers:
       http:
         endpoint: otel-collector:6666
 
+processors:
+  batch:
+    timeout: 3s
+    send_batch_size: 1024
+
 exporters:
   logging:
     verbosity: detailed
   prometheus:
-    endpoint: otel-collector:9191
+    endpoint: "otel-collector:9191"
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
 
 service:
   pipelines:
     metrics:
       receivers: [otlp]
-      exporters: [logging,prometheus]
+      exporters: [prometheus]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [zipkin,logging]
   telemetry:
     logs:
       level: debug
