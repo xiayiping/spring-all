@@ -10,3 +10,12 @@ datasources:
     isDefault: false
     version: 1
     editable: false
+  - name: Zipkin
+    type: zipkin
+    url: http://zipkin:9411
+    access: proxy
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: false
+    readOnly: true

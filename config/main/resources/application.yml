@@ -9,9 +9,9 @@ all-configs:
     demo-caller-log4j2: demo-caller-log4j2
   server-ssl:
     demo-echo:
-      enabled: true
+      enabled: false
       bundle: defaultBundle
-      client-auth: need
+      client-auth: none
 
 spring:
   profiles:

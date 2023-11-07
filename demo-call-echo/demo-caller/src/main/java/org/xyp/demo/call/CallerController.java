@@ -1,5 +1,6 @@
 package org.xyp.demo.call;
 
+import io.micrometer.core.annotation.Timed;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class CallerController {
 //        this.echoService = echoService;
     }
 
+    @Timed("echo_timer")
     @GetMapping("/echo")
     public String echo() {
         log.info("call from caller");

@@ -1,10 +1,10 @@
 package org.xyp.demo.echo;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
@@ -25,5 +25,11 @@ public class EchoMainApp {
         return (args) -> {
 //            System.out.println(vaultSecretProperty);
         };
+    }
+
+    // A TimedAspect is needed for @Timed annotation
+    @Bean
+    public TimedAspect createTimedAspect(MeterRegistry meterRegistry) {
+        return new TimedAspect(meterRegistry);
     }
 }

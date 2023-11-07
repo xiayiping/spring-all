@@ -2,6 +2,7 @@ package org.xyp.demo.echo.pojo;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -49,6 +50,7 @@ import static org.xyp.demo.echo.pojo.User.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User {
 
     public static final String ID_SEQUENCE_NAME = "UserIdOneByOneGenerator";
