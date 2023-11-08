@@ -3,10 +3,12 @@ all-configs:
     demo-caller: 8080
     demo-echo: 8081
     demo-caller-log4j2: 8082
+    config-secret: 8083
   app-name:
     demo-caller: demo-caller
     demo-echo: demo-echo
     demo-caller-log4j2: demo-caller-log4j2
+    config-secret: config-secret
   server-ssl:
     demo-echo:
       enabled: false
@@ -26,11 +28,4 @@ spring:
           truststore:
             location: "classpath:keystore/certstore.p12"
             password: "123456"
-
-springdoc:
-  api-docs:
-    path: "/api-docs"
-  swagger-ui:
-    path: "swagger-ui-custom.html"
-
 

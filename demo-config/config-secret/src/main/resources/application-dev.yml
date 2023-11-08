@@ -1,0 +1,28 @@
+server:
+  port: ${all-configs.server-port.config-secret}
+  ssl:
+    enabled: false
+
+spring:
+  application:
+    name: ${all-configs.app-name.config-secret}
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: hvs.316vyySiVqzsHecxnllBDzfX
+      kv:
+        backend: kv  # default is secret
+        application-name: dev/app/path # default is ${spring.application.name}
+    aws:
+      region:
+        static: ap-southeast-1
+  config:
+    import:
+      - vault://
+      - aws-secretsmanager:xyp/a/b/c;abcfd
+
+secret:
+  ref: "${xyp/a/b/d}"

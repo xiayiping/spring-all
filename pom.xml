@@ -19,6 +19,8 @@
     <modules>
         <module>demo-all-config</module>
         <module>demo-call-echo</module>
+        <module>demo-config</module>
+        <module>demo-security</module>
         <module>demo-api</module>
         <module>demo-image</module>
         <module>demo-jwt</module>

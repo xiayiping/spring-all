@@ -11,11 +11,15 @@
     <springProfile name="production | staging">
         <logger name="org.springframework.web" level="DEBUG"/>
     </springProfile>
-    <root level="INFO">
+    <root level="info">
         <appender-ref ref="CONSOLE" />
     </root>
 
     <logger name="com.zaxxer.hikari" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <logger name="org.springframework" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
 </configuration>
