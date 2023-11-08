@@ -31,6 +31,7 @@
         </dependency>
 
         <!-- otlp config, eg properties -->
+        <!-- All tracer implementations need the org.springframework.boot:spring-boot-starter-actuator dependency. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -40,7 +41,7 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-otlp</artifactId>
         </dependency>
-        <!-- for tracing -->
+        <!-- next 2 are for tracing -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>

@@ -1,9 +1,11 @@
 package org.xyp.demo.call;
 
+import io.micrometer.common.KeyValue;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.config.MeterFilter;
+import io.micrometer.observation.ObservationFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,5 +77,12 @@ public class CallerConfig {
         return registry -> registry.config().commonTags("region_xyp", "shanghai");
     }
 
+    @Bean
+    public ObservationFilter observationFilter() {
+        return context -> {
+            context.addHighCardinalityKeyValue(KeyValue.of("iip","1.2.3.4"));
+            return context;
+        };
+    }
 
 }

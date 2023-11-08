@@ -380,8 +380,8 @@ keytool -import -alias server-trust -file ./root-ca.pem -keystore ./truststore2.
 
 vault kv get ${vca} -mount=${vault_kv_mount} --field=password ${vault_kv_path}
 
-## use path!!!!
-## if use put, the whole k-v in the path will be removed, only the
+## use 'path' !!!!
+## if use 'put', the whole k-v in the path will be removed, only the put one be kept.
 echo "nacos" | vault kv patch ${vca} -mount=${vault_kv_mount} ${vault_kv_path} npassword=-
 
 # add -w 0 to avoid new line break
