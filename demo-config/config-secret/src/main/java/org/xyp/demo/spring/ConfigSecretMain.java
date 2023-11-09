@@ -12,13 +12,13 @@ public class ConfigSecretMain {
     @Value("${sql_password:222}")
     String pwd;
 
-    @Value("${ppp:pp222}")
+    @Value("${private_key:pp222}")
     String pwd2;
 
-    @Value("${xyp/a/b/d:pp333}")
+    @Value("${key_store:pp333}")
     String pwd3;
 
-    @Value("${xyp/a/b/d:ref}")
+    @Value("${crypto.symmetric-secrets.123.secret:ref}")
     String pwd4;
 
     public static void main(String[] args) {

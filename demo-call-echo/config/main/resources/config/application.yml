@@ -2,7 +2,7 @@ management:
   otlp:
     metrics:
       export:
-        enabled: true
+        enabled: false
         url: "http://localhost:6666/v1/metrics"
         step: 10s
     tracing:
@@ -20,4 +20,4 @@ management:
       app-name: ${spring.application.name}
   tracing:
     sampling:
-      probability: 1.0
+      probability: 0
