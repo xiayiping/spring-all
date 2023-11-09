@@ -86,7 +86,19 @@ vault server -config=config.file.name
 ----
 # the first time you need to use vault
 export VAULT_ADDR='https://127.0.0.1:8180'
+export vault_token=hvs.6SnLsAKoGIyHE4sE5NtRvk0b
+export ca="-ca-path=./ca.pem"
+vault kv get $ca -format=json kv_xyp/dev
 
+export VAULT_ADDR=https://vault.tcghl.com
+export vault_token="hvs.CAESIBFEm5eW69K608ugiQzDC3Vx8J2_TLoC24V_EfSzrGWsGh4KHGh2cy5PSEQ4WUU4c3BIaEU4dERBbmdLallscW4"
+export vault_token="hvs.CAESIEzY-4tf7ndPdQZslaCdZSDJuBlmus0_E4go-DV5uoBrGh4KHGh2cy5CdzBac1FaS0tQVzRqUGt5VWZpaDNHT3U"
+export ca="-ca-path=D:/develop/tcg-paradise/template/config/resources/vault.pem"
+vault kv get $ca -format=json dev/paradise/keystore
+
+vault token create -ca-path=./ca.pem -policy=kv_read
+
+vault login -ca-path=D:/develop/tcg-paradise/template/config/resources/vault.pem
 ----
 
 [source,shell]
@@ -101,6 +113,8 @@ vault token create -ca-path=./ca.pem -policy=kv_read
 
 [source,shell]
 ----
+
+
 # assume you have k-v username=aaaa under kv_xyp/dev
 # kv_xyp is the kv engine path, dev is the secret path
 vault kv get --field=username kv_xyp/dev
