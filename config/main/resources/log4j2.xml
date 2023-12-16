@@ -56,7 +56,7 @@
     <Loggers>
         <Logger name="io" level="info" />
         <Logger name="org.springframework.boot" level="info" />
-        <Logger name="org.springframework" level="info" />
+        <Logger name="org.springframework" level="debug" />
         <Root level="info">
             <AppenderRef ref="Console"/>
 <!--            <AppenderRef ref="RollingFileRender"/>-->
