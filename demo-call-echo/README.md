@@ -2,10 +2,13 @@
 
 - "caller" call rest api of "echo" using http/https/mTLS connections. (done)
 - Spring boot mvc test  
-  - end to end
+  - reference: 
+    - https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing
+    - https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing.spring-boot-applications.spring-mvc-tests
+  - using end to end
   - using mock mvc
-  - end to end also mock other microservice's response
-- Enable system observation via open-telemetry: (TBD)
+  - mock mvc also mock other microservice's response
+- Enable system observation via open-telemetry: (almost done)
   - reference: https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.observability
   - Tracing (TBD)
   - Metrics 
