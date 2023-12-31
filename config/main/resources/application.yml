@@ -1,7 +1,7 @@
 all-configs:
   server-port:
     demo-caller: 8080
-    demo-echo: 8081
+    demo-echo: 8088
     demo-caller-log4j2: 8082
     config-secret: 8083
   app-name:
@@ -28,4 +28,10 @@ spring:
           truststore:
             location: "classpath:keystore/certstore.p12"
             password: "123456"
-
+logging:
+  config: classpath:log4j2-spring.xml
+management:
+  defaults:
+    metrics:
+      export:
+        enabled: false

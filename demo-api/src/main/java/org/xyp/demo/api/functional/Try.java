@@ -4,6 +4,7 @@ import lombok.val;
 
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.function.LongUnaryOperator;
 
 public abstract class Try {
 
@@ -76,6 +77,18 @@ class TestTry {
 
 
     public static void main(String[] args) throws Exception {
+//        Optional.of(new FileInputStream("/"))
+//            .map(s -> System.currentTimeMillis())
+//            .filter(i -> i % 2 == 0)
+//            .ifPresent(System.out::println);
+
+        LongUnaryOperator f = (i -> i + 0L);
+
+        val resultCompose = f.compose((long i) -> i * 3)
+            .compose((long i) -> i + 2)
+            .applyAsLong(3L);
+        System.out.println(resultCompose);
+
         val result = Try.on(() -> 2)
             .mapLazy(i -> i / 0)
             .mapLazy(i -> i + 2)

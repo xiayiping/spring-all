@@ -1,7 +1,14 @@
 server:
   port: 8081
+  netty:
+    max-keep-alive-requests: 20
+
+
 management:
   defaults:
     metrics:
       export:
         enabled: false
+logging:
+  config: classpath:log4j2-spring-info.xml
+

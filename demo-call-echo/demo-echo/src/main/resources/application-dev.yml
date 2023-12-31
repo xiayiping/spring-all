@@ -4,7 +4,14 @@ server:
     enabled: ${all-configs.server-ssl.demo-echo.enabled}
     bundle: ${all-configs.server-ssl.demo-echo.bundle}
     client-auth: ${all-configs.server-ssl.demo-echo.client-auth}
+  tomcat:
+    threads:
+      max: 10
 
 spring:
   application:
-    name: ${all-configs.app-name.demo-echo}
+    name: 13${all-configs.app-name.demo-echo}
+  main:
+    web-application-type: reactive
+
+
