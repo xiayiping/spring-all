@@ -21,4 +21,4 @@ management:
       app-name: ${spring.application.name}
   tracing:
     sampling:
-      probability: 1.0
+      probability: 0
