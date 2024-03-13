@@ -27,6 +27,7 @@
         <module>demo-oauth2</module>
         <module>demo-nio-server</module>
         <module>demo-secret</module>
+        <module>local-temp</module>
     </modules>
 
     <properties>

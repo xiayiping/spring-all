@@ -11,7 +11,6 @@ Unseal Key 5: sTtQtBZOxf7jQ8/hjqIYMGcKlG0W4f9QK0zrrlFv0A18
 Initial Root Token: hvs.6SnLsAKoGIyHE4sE5NtRvk0b
 
 
-
 PS C:\Users\terry.xiao> vault token create -policy=matt_policy
 Key Value
 --- -----
@@ -49,9 +48,16 @@ token_policies       ["default" "dev_paradise_kv_read"]
 identity_policies    []
 policies             ["default" "dev_paradise_kv_read"]
 
+
+hvs.CAESIG0b0zwrmDV5_kJAw4OIfOLqSRSm5JR9DROreORe8sNhGh4KHGh2cy5ram9UYkdxeVlQMGRBTE1XVjcwSXV1VEU
+
+
+vault_token : "hvs.CAESIG0b0zwrmDV5_kJAw4OIfOLqSRSm5JR9DROreORe8sNhGh4KHGh2cy5ram9UYkdxeVlQMGRBTE1XVjcwSXV1VEU"
+
 you can put $vault_token in system environment  ,
 it's the highest priority token.
 2nd priority is ~/.vault.token file.
+
 ----
 
 [source,text]
