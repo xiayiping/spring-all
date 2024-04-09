@@ -1,97 +1,116 @@
 package org.xyp.demo.nio.server;
 
-import lombok.val;
-
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public class NonblockingSingleThreadSelectorServer {
-    public static Collection<SocketChannel> sockets = Collections.newSetFromMap(
-        new HashMap<SocketChannel, Boolean>()
-    );
 
-    public static void main(String[] args) throws Exception {
-        ServerSocketChannel ssc = ServerSocketChannel.open();
-        ssc.bind(new InetSocketAddress("localhost", 8080));
-        ssc.configureBlocking(false);
-        Selector selector1 = Selector.open();
-        Selector selector2 = Selector.open();
-        val key1 = ssc.register(selector1, SelectionKey.OP_ACCEPT);
-        val key2 = ssc.register(selector2, SelectionKey.OP_ACCEPT);
+    private static final String POISON_PILL = "POISON_PILL";
 
-        while (!Thread.currentThread().isInterrupted()) {
-            System.out.println("before select1");
-            selector1.select();
-            System.out.println("before select2");
-            selector2.select();
-            System.out.println("after select2");
+    static volatile int run = 1;
 
-            for (SelectionKey key : selector1.selectedKeys()) {
-                if (key.isValid() && key.isAcceptable()) {
-                    System.out.println("key1 " + System.identityHashCode(key)
-                        + " " + System.identityHashCode(key1)
-                        + " " + System.identityHashCode(key2));
-                    accept(key, selector1);
+    public static void main(String[] args) throws IOException, InterruptedException {
+        try (Selector selector = Selector.open();
+             ServerSocketChannel serverSocket = ServerSocketChannel.open()) {
+            serverSocket.bind(new InetSocketAddress("localhost", 5454));
+            serverSocket.configureBlocking(false);
+            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+            ByteBuffer buffer = ByteBuffer.allocate(4096);
+
+            var thread = new Thread(() -> {
+                try {
+                    while (run > 0) {
+                        selector.select();
+                        Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                        Iterator<SelectionKey> iter = selectedKeys.iterator();
+                        for (SelectionKey key : selectedKeys) {
+//                        while (iter.hasNext()) {
+//                            SelectionKey key = iter.next();
+//
+//
+                            if (key.isAcceptable()) {
+                                System.out.println("!!!! acceptable !!!!");
+                                register(selector, serverSocket);
+                            }
+
+                            if (key.isReadable()) {
+                                System.out.println("!!!! readable !!!!");
+                                answerWithEcho(buffer, key);
+                            }
+
+//                            iter.remove();
+                        }
+                        selectedKeys.clear();
+                    }
+                    Thread.yield();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
-            for (SelectionKey key : selector2.selectedKeys()) {
-
-                if (key.isValid() && key.isAcceptable()) {
-                    System.out.println("key2 " + System.identityHashCode(key)
-                        + " " + System.identityHashCode(key1)
-                        + " " + System.identityHashCode(key2));
-                    accept(key, selector2);
-                }
-            }
-
-//
-//
-//            SocketChannel s = ssc.accept();
-//            if (null != s) {
-//                System.out.println("connection from " + s);
-//                s.configureBlocking(false);
-//                sockets.add(s);
-//            }
-//
-//            for (Iterator<SocketChannel> it = sockets.iterator(); it.hasNext(); ) {
-//                SocketChannel socket = it.next();
-//                try {
-//                    ByteBuffer buf = ByteBuffer.allocateDirect(1024);
-//                    int read = socket.read(buf);
-//                    if (-1 == read) {
-//                        System.out.println("remove socket " + socket);
-//                        it.remove();
-//                        socket.close();
-//                    } else if (read != 0) {
-//                        buf.flip();
-//                        for (int i = 0; i < buf.limit(); i++) {
-//                            buf.put(i, (byte) Util.transmogrify(buf.get(i)));
-//                        }
-//                        socket.write(buf);
-//                        buf.clear();
-//                    }
-//                } catch (IOException e) {
-//                    System.err.println("connection problem " + e.getMessage());
-//                }
-//            }
+            });
+            thread.start();
+            thread.join();
         }
     }
 
-    private static void accept(SelectionKey key, Selector selector) throws Exception {
-        // because it's a accept, so has to be ServerSocketChannel......
-        ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
-        System.out.println("channel " + ssc);
-//        SocketChannel socketChannel = ssc.accept(); // this is non-blocking;
-//        // because it's selected, so must have something, will not return null.
-//
-//        socketChannel.configureBlocking(false);
-//        socketChannel.register(key.selector(), SelectionKey.OP_READ);
-//        sockets.add(socketChannel);
+    private static void write(SelectionKey key)
+        throws IOException, InterruptedException {
+
+        ByteBuffer buffer = ByteBuffer.allocate(256);
+        try (SocketChannel client = (SocketChannel) key.channel()) {
+            Thread.sleep(2000);
+            buffer.put("abc hello\n".getBytes());
+            buffer.flip();
+            client.write(buffer);
+            buffer.clear();
+        }
+        System.out.println("write done");
+    }
+
+    private static void answerWithEcho(ByteBuffer buffer, SelectionKey key)
+        throws IOException {
+
+        SocketChannel client = (SocketChannel) key.channel();
+        try {
+            int r = client.read(buffer);
+            if (r == -1 || new String(buffer.array()).trim().equals(POISON_PILL)) {
+                System.out.println("Not accepting client messages anymore");
+            } else {
+                buffer.flip();
+                final var arr = buffer.array();
+                String s = new String(arr, 0, r);
+                System.out.println(s);
+                System.out.println("-----");
+                System.out.println("-----");
+                String response = "HTTP/1.1 200 OK\r\n" +
+                    "Content-Type: text/plain\r\n" +
+                    "Content-Length: 12\r\n" +
+                    "\r\n" +
+                    "Hello, World";
+                client.write(ByteBuffer.wrap(response.getBytes()));
+//                    client.write(buffer);
+
+                buffer.clear();
+            }
+        } catch (Exception e) {
+//            client.close();
+//            e.printStackTrace();
+        } finally {
+            client.close();
+        }
+    }
+
+    private static void register(Selector selector, ServerSocketChannel serverSocket)
+        throws IOException {
+
+        SocketChannel client = serverSocket.accept();
+        client.configureBlocking(false);
+        client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
     }
 }
