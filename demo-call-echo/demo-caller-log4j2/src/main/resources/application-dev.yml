@@ -7,3 +7,4 @@ server:
 spring:
   application:
     name: ${all-configs.app-name.demo-caller-log4j2}
+  
