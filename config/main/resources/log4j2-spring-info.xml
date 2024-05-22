@@ -57,6 +57,7 @@
         <Logger name="io" level="info" />
         <Logger name="org.springframework.boot" level="info" />
         <Logger name="org.springframework" level="info" />
+        <Logger name="org.xyp.demo" level="info" />
         <Root level="info">
             <AppenderRef ref="Console"/>
 <!--            <AppenderRef ref="RollingFileRender"/>-->

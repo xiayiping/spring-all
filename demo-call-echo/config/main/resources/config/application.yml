@@ -2,13 +2,12 @@ management:
   otlp:
     metrics:
       export:
-        enabled: true
-#        url: "http://localhost:6666/v1/metrics"
-        url: "http://192.168.56.101:6666/v1/metrics"
+        enabled: false
+        url: "http://localhost:6666/v1/metrics"
         step: 10s
     tracing:
-#      endpoint: "http://localhost:6666/v1/traces"
-      endpoint: "http://192.168.56.101:6666/v1/traces"
+      endpoint: "http://localhost:6666/v1/traces"
+
   # this is only for actuator web, prometheus doesn't read actuator if using otel
   # this is only for debug purpose because you can verify metrics on web
   endpoints:
@@ -22,4 +21,4 @@ management:
       app-name: ${spring.application.name}
   tracing:
     sampling:
-      probability: 1.0
+      probability: 0
