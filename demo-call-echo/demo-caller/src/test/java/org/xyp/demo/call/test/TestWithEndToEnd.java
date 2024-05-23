@@ -8,10 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.xyp.demo.call.CallerController;
-import org.xyp.demo.call.CallerMainApp;
 
 @SpringBootTest(
-    classes = CallerMainApp.class,
+//    classes = CallerMainApp.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TestWithEndToEnd {
 

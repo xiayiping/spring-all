@@ -6,8 +6,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version>
-        <relativePath/>
+        <version>3.2.6</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>org.xyp.spring</groupId>
@@ -31,47 +31,21 @@
     </modules>
 
     <properties>
-        <revision>1.0.0</revision>
+        <revision>0.0.0</revision>
         <changelist></changelist>
         <sha1/>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH.mm.ss</maven.build.timestamp.format>
-        <kerberos.extension.version>2.0.0</kerberos.extension.version>
-        <spring.openapi.version>2.1.0</spring.openapi.version>
-        <spring.cloud.alibaba.version>2022.0.0.0</spring.cloud.alibaba.version>
-        <feign.hc5.version>12.4</feign.hc5.version>
-        <httpclient5.version>5.2.1</httpclient5.version>
-        <net.ttddyy.datasource-proxy>1.9</net.ttddyy.datasource-proxy>
-        <snakeyaml.version>2.0</snakeyaml.version>
-        <flatten.mvn.plugin.version>1.5.0</flatten.mvn.plugin.version>
+        <version.kerberos.extension>2.0.0</version.kerberos.extension>
+        <version.spring.openapi>2.1.0</version.spring.openapi>
+        <version.feign.hc5>12.4</version.feign.hc5>
+        <version.httpclient5>5.2.1</version.httpclient5>
+        <version.net.ttddyy>1.9</version.net.ttddyy>
+        <version.snake.yaml>2.0</version.snake.yaml>
+        <version.flatten.mvn.plugin>1.5.0</version.flatten.mvn.plugin>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.xyp.spring</groupId>
-            <artifactId>demo-all-config</artifactId>
-        </dependency>
-<!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>-->
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!--        <dependency>
-                    <groupId>io.micrometer</groupId>
-                    <artifactId>micrometer-tracing-bridge-otel</artifactId>
-                </dependency>-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -94,12 +68,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        </dependency>-->
-
     </dependencies>
 
     <dependencyManagement>
@@ -122,53 +90,53 @@
             <dependency>
                 <groupId>org.springframework.security.kerberos</groupId>
                 <artifactId>spring-security-kerberos-core</artifactId>
-                <version>${kerberos.extension.version}</version>
+                <version>${version.kerberos.extension}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security.kerberos</groupId>
                 <artifactId>spring-security-kerberos-web</artifactId>
-                <version>${kerberos.extension.version}</version>
+                <version>${version.kerberos.extension}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security.kerberos</groupId>
                 <artifactId>spring-security-kerberos-client</artifactId>
-                <version>${kerberos.extension.version}</version>
+                <version>${version.kerberos.extension}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-hc5</artifactId>
-                <version>${feign.hc5.version}</version>
+                <version>${version.feign.hc5}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.ttddyy</groupId>
                 <artifactId>datasource-proxy</artifactId>
-                <version>${net.ttddyy.datasource-proxy}</version>
+                <version>${version.net.ttddyy}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml.version}</version>
+                <version>${version.snake.yaml}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
-                <version>${httpclient5.version}</version>
+                <version>${version.httpclient5}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${spring.openapi.version}</version>
+                <version>${version.spring.openapi}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <scope>runtime</scope>
+                <scope>test</scope>
                 <version>2.1.214</version>
             </dependency>
 
@@ -218,6 +186,26 @@
                 <artifactId>scala-compiler</artifactId>
                 <version>2.13.6</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.25.2</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>aws-sdk-java</artifactId>
+                <version>2.20.162</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.20.162</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -248,7 +236,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>${flatten.mvn.plugin.version}</version>
+                    <version>${version.flatten.mvn.plugin}</version>
                     <configuration>
                         <updatePomFile>true</updatePomFile>
                         <flattenMode>resolveCiFriendliesOnly</flattenMode>

@@ -1,6 +1,5 @@
 package org.xyp.demo.jwt;
 
-import lombok.val;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
