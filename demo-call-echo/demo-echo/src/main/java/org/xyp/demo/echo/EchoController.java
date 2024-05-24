@@ -6,7 +6,6 @@ import io.micrometer.core.instrument.Timer;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xyp.demo.echo.pojo.User;
 import org.xyp.demo.echo.service.UserRepository;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -61,6 +55,11 @@ public class EchoController {
     public String addUsers() {
         User user = User.builder().name("user " + System.currentTimeMillis()).build();
         val saved = userRepository.save(user);
+        Optional.of(saved)
+            .map(User::getId)
+            .map(s -> s + "fdfdf")
+            .filter(s -> s.length() >= 10)
+            .ifPresent(System.out::println);
         log.info("add user {}", saved);
         return "get users echo " + saved;
     }

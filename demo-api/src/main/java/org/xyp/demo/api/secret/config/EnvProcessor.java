@@ -9,7 +9,6 @@ import org.springframework.boot.context.config.ConfigDataEnvironmentPostProcesso
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.boot.env.YamlPropertySourceLoader;
-import org.springframework.cloud.bootstrap.BootstrapApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
@@ -26,22 +25,22 @@ import static org.xyp.demo.api.secret.config.vault.VaultKeyStoreLoader.VAULT_TOK
 @Slf4j
 public class EnvProcessor implements EnvironmentPostProcessor, Ordered {
 
-    private final String prefix = "secret.vault.";
-    private final String suffix = "yml";
+    private static final String PREFIX = "secret.vault.";
+    private static final String SUFFIX = "yml";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
-        var configFile = prefix + suffix;
+        var configFile = PREFIX + SUFFIX;
         ClassPathResource resource = new ClassPathResource(configFile);
 
         val activeProfiles = environment.getProperty("spring.profiles.active");
         if (StringUtils.hasText(activeProfiles)) {
-            var actives = environment.getProperty("spring.profiles.active").split(",");
+            var actives = Objects.requireNonNull(environment.getProperty("spring.profiles.active")).split(",");
             val profileConfig = Stream.of(actives)
                     .filter(StringUtils::hasText)
                     .map(String::trim)
-                    .map(p -> prefix + p + "." + suffix)
+                    .map(p -> PREFIX + p + "." + SUFFIX)
                     .map(ClassPathResource::new)
                     .filter(Resource::exists)
                     .toList();
