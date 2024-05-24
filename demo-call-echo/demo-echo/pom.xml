@@ -13,13 +13,6 @@
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/net.ttddyy/datasource-proxy -->
-<!--
-        <dependency>
-            <groupId>net.ttddyy</groupId>
-            <artifactId>datasource-proxy</artifactId>
-            <version>1.9</version>
-        </dependency>
--->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
