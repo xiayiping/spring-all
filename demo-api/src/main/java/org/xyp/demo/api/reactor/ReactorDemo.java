@@ -8,10 +8,8 @@ public class ReactorDemo {
     public static void main(String[] args) {
         val aa = Flux.just(1, 2, 3, 4, 5, 6, 7, 8)
                 .subscribe(System.out::println);
-        if (1 == 1 || 1 >= 1 || 1 != 1) {
-
-        }
         ddd(key -> null);
+        System.out.println(aa);
     }
 
     static void ddd(Scannable sa) {

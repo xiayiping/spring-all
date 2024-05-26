@@ -1,8 +1,6 @@
 <!-- TOC -->
 * [spring-all](#spring-all)
   * [Getting started](#getting-started)
-  * [Add your files](#add-your-files)
-  * [Collaborate with your team](#collaborate-with-your-team)
   * [SSL](#ssl)
     * [generate key](#generate-key)
   * [Gradle](#gradle)
@@ -26,19 +24,6 @@
 
 To make it easy for you to get started with GitLab
 here's a list of recommended next steps.
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
 ***********************************************
 ## SSL
@@ -546,6 +531,9 @@ WB is Waiting
   - 我的设计风格就是以概念为根本，在此基础上叠加设计规范，概念是最高满足优先级
     - 概念不符合，不可商量
 - RestAPI 设计规范
-  - get 只读
-  - post 写
-    - del put按需求
+  - 微软azul rest api规范网址 https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
+- 文件存放
+  - 考虑目录层级的因素
+    - 租户
+    - 公司
+    - 个人

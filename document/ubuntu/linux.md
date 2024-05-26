@@ -23,26 +23,6 @@ id user
 ```
 
 
-```shell
-# Update package list and install prerequisites
-sudo apt update
-sudo apt install -y curl gnupg2
-
-# Install Node.js (using NodeSource)
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Verify installation
-node -v
-npm -v
-
-# Install Nginx
-sudo apt install -y nginx
-
-# Verify installation
-nginx -v
-```
-
 ## Create a Systemd Service File
 Create a systemd service file for your Node.js application. This file tells systemd how to manage your application.
 
@@ -79,6 +59,51 @@ Here are a few other common targets in systemd:
 - rescue.target: A target for single-user mode, used for system rescue and maintenance. It corresponds to runlevel 1.
 - shutdown.target: A target that shuts down the system.
 - reboot.target: A target that reboots the system.
+
+
+```ini
+[Unit]
+Description=Consul Agent
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Restart=on-failure
+WorkingDirectory=/home/user
+ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+StandardOutput=file:start.log
+StandardError=append:error.log
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+KillSignal=SIGINT
+TimeoutStopSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+```
+
+# nginx
+
+```shell
+# Update package list and install prerequisites
+sudo apt update
+sudo apt install -y curl gnupg2
+
+# Install Node.js (using NodeSource)
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Verify installation
+node -v
+npm -v
+
+# Install Nginx
+sudo apt install -y nginx
+
+# Verify installation
+nginx -v
+```
 
 # TMUX
 
