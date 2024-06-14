@@ -39,15 +39,15 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.hibernate.SQL" level="info"/>
+<!--        <Logger name="org.hibernate.SQL" level="info"/>-->
 <!--        <Logger name="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator" level="debug"/>-->
 <!--        <Logger name="org.springframework.jdbc.core.JdbcTemplate" level="debug"/>-->
 <!--        <Logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="trace"/>-->
 <!--        <Logger name="org.springframework.transaction" level="debug"/>-->
-<!--        <Logger name="org.springframework.security" level="trace"/>-->
+        <Logger name="org.springframework.security" level="trace"/>
 <!--        <Logger name="reactor.ipc.netty.channel" level="trace"/>-->
 <!--        <Logger name="org.xyp.sample" level="debug"/>-->
-        <Root level="trace">
+        <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
