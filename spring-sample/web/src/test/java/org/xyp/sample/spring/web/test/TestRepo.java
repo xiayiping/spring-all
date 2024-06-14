@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.xyp.sample.plain.share.All;
-import org.xyp.sample.spring.web.WebApplication;
 import org.xyp.sample.spring.web.domain.entity.Task;
 import org.xyp.sample.spring.web.repository.jdbc.TaskDao;
 

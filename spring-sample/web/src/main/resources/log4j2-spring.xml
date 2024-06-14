@@ -10,9 +10,10 @@
         <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSSZ}}{cyan} %highlight{[%-5level]}
 %msg
 %style{[${appName}]}{bright_magenta} %style{[%pid]}{blue}
- %highlight{[%logger]} %L.
 %style{[%mdc{trace_id}%X{traceId},%mdc{span_id}%X{spanId}]}{bright_magenta}
-- %style{[%thread]}{bright_magenta} %n"/>
+%style{[%thread]}{bright_magenta}
+%blue{%logger}$%green{%L}
+%n"/>
 
     </Properties>
 
@@ -43,7 +44,8 @@
         <Logger name="org.springframework.jdbc.core.JdbcTemplate" level="debug"/>
         <Logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="trace"/>
         <Logger name="org.springframework.transaction" level="debug"/>
-        <Logger name="com.tcghl.msa.kyc" level="debug"/>
+        <Logger name="org.springframework.security" level="trace"/>
+        <Logger name="org.xyp.sample" level="debug"/>
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>

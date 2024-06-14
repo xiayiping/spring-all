@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: web
@@ -24,8 +27,16 @@ spring:
           batch_size: 100
         format_sql: true
         use_sql_comments: false
-        generate_statistics: true
+        generate_statistics: false
         dialect: org.hibernate.dialect.SQLServerDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            ## setup in github
+            clientId: cc30276322adbf59445b
+            clientSecret: f98fc5deb9ecd3af6da5e376264dcaea8b73adde
 
 logging:
   config: classpath:log4j2-spring.xml
