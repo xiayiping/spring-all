@@ -3,286 +3,35 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.6</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
 
-    <groupId>org.xyp.spring</groupId>
+    <groupId>org.xyp.sample</groupId>
     <artifactId>xyp-demo-all</artifactId>
-    <version>${revision}${sha1}${changelist}</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>Demo All</description>
 
     <modules>
+        <module>spring-sample</module>
+        <module>plain</module>
+        <!--
+        <module>demo-image</module>
         <module>demo-all-config</module>
         <module>demo-call-echo</module>
         <module>demo-call-echo-webflux</module>
         <module>demo-config</module>
         <module>demo-security</module>
         <module>demo-api</module>
-        <module>demo-image</module>
         <module>demo-jwt</module>
         <module>demo-oauth2</module>
         <module>demo-nio-server</module>
         <module>demo-secret</module>
-        <module>local-temp</module>
+        <module>local-temp</module>-->
     </modules>
 
     <properties>
         <revision>0.0.0</revision>
-        <changelist></changelist>
-        <sha1/>
         <java.version>21</java.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH.mm.ss</maven.build.timestamp.format>
-        <version.kerberos.extension>2.0.0</version.kerberos.extension>
-        <version.spring.openapi>2.1.0</version.spring.openapi>
-        <version.feign.hc5>12.4</version.feign.hc5>
-        <version.httpclient5>5.2.1</version.httpclient5>
-        <version.net.ttddyy>1.9</version.net.ttddyy>
-        <version.snake.yaml>2.0</version.snake.yaml>
-        <version.flatten.mvn.plugin>1.5.0</version.flatten.mvn.plugin>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-       <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-
-            <dependency>
-                <groupId>org.xyp.spring</groupId>
-                <artifactId>demo-all-config</artifactId>
-                <version>0.0.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2022.0.4</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security.kerberos</groupId>
-                <artifactId>spring-security-kerberos-core</artifactId>
-                <version>${version.kerberos.extension}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.kerberos</groupId>
-                <artifactId>spring-security-kerberos-web</artifactId>
-                <version>${version.kerberos.extension}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.kerberos</groupId>
-                <artifactId>spring-security-kerberos-client</artifactId>
-                <version>${version.kerberos.extension}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.openfeign</groupId>
-                <artifactId>feign-hc5</artifactId>
-                <version>${version.feign.hc5}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.ttddyy</groupId>
-                <artifactId>datasource-proxy</artifactId>
-                <version>${version.net.ttddyy}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${version.snake.yaml}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.httpcomponents.client5</groupId>
-                <artifactId>httpclient5</artifactId>
-                <version>${version.httpclient5}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${version.spring.openapi}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <scope>test</scope>
-                <version>2.1.214</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt-impl</artifactId>
-                <version>0.11.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt-jackson</artifactId>
-                <version>0.11.5</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.opentelemetry.instrumentation</groupId>
-                <artifactId>opentelemetry-instrumentation-annotations</artifactId>
-                <version>1.30.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-bom</artifactId>
-                <version>1.30.1</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>pl.tkowalcz.tjahzi</groupId>
-                <artifactId>log4j2-appender-nodep</artifactId>
-                <version>0.9.17</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr4</artifactId>
-                <version>4.13.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>2.13.6</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-compiler</artifactId>
-                <version>2.13.6</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>3.25.2</version>
-            </dependency>
-
-            <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>aws-sdk-java</artifactId>
-                <version>2.20.162</version>
-            </dependency>
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>bom</artifactId>
-                <version>2.20.162</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-
-    </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <excludes>
-                            <exclude>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                            </exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>flatten-maven-plugin</artifactId>
-                    <version>${version.flatten.mvn.plugin}</version>
-                    <configuration>
-                        <updatePomFile>true</updatePomFile>
-                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                        <flattenDependencyMode/>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>flatten</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>flatten</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>flatten.clean</id>
-                            <phase>clean</phase>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.antlr</groupId>
-                    <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>4.13.1
-                    </version> <!-- Replace with the version you want to use -->
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>antlr4</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <sourceDirectory>src/main/antlr4</sourceDirectory>
-                        <outputDirectory>target/generated-sources/antlr4</outputDirectory>
-                        <listener>true</listener>
-                        <visitor>true</visitor>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
 
 </project>

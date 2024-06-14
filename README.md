@@ -1,23 +1,23 @@
 <!-- TOC -->
-* [spring-all](#spring-all)
-  * [Getting started](#getting-started)
-  * [Add your files](#add-your-files)
-  * [Collaborate with your team](#collaborate-with-your-team)
-  * [SSL](#ssl)
-    * [generate key](#generate-key)
-  * [Gradle](#gradle)
-    * [proxy:](#proxy)
-  * [About AQS](#about-aqs)
-  * [About Observation](#about-observation)
-    * [spring micrometer grafana](#spring-micrometer-grafana)
-    * [Tracing](#tracing)
-  * [Java Optimize](#java-optimize-)
-  * [PDF generator](#pdf-generator)
-  * [AOP](#aop)
-  * [Hibernate](#hibernate)
-  * [Security](#security)
-
-    * [Authenticate with JWT](#authenticate-with-jwt)
+- [spring-all](#spring-all)
+  - [Getting started](#getting-started)
+  - [Add your files](#add-your-files)
+  - [Collaborate with your team](#collaborate-with-your-team)
+  - [SSL](#ssl)
+    - [generate key](#generate-key)
+  - [Gradle](#gradle)
+    - [proxy:](#proxy)
+  - [About AQS](#about-aqs)
+  - [About Observation](#about-observation)
+    - [spring micrometer grafana](#spring-micrometer-grafana)
+    - [Tracing](#tracing)
+  - [Java Optimize](#java-optimize)
+  - [PDF generator](#pdf-generator)
+  - [AOP](#aop)
+  - [Hibernate](#hibernate)
+  - [Security](#security)
+    - [](#)
+    - [Authenticate with JWT](#authenticate-with-jwt)
 <!-- TOC -->
 
 # spring-all
@@ -546,6 +546,13 @@ WB is Waiting
   - 我的设计风格就是以概念为根本，在此基础上叠加设计规范，概念是最高满足优先级
     - 概念不符合，不可商量
 - RestAPI 设计规范
-  - get 只读
-  - post 写
-    - del put按需求
+  - 按azul 推荐spec来
+- exception
+  - 需要有初始化message
+- batch 处理的接口
+  - 按每个步骤处理所有的item，再接下去下一个步骤
+    - 此方法便于将每个步骤分别设置一个单独的接口，并且某些步骤批量处理性能会好
+- controller
+  - 如果有按controller path配置authorization的情况，可以考虑抽出一层controller shared service，作为分发
+    因为可能两个conroller有同样的接口。
+    如果有一层抽象的controller-service dispatcher 层，那么controller层代码就很简化，@preauth注释可以考虑放在代码里面，减少代码复杂性
