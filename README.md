@@ -532,8 +532,19 @@ WB is Waiting
     - 概念不符合，不可商量
 - RestAPI 设计规范
   - 微软azul rest api规范网址 https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
+  - 按azul 推荐spec来
 - 文件存放
   - 考虑目录层级的因素
     - 租户
     - 公司
     - 个人
+
+- exception
+  - 需要有初始化message
+- batch 处理的接口
+  - 按每个步骤处理所有的item，再接下去下一个步骤
+    - 此方法便于将每个步骤分别设置一个单独的接口，并且某些步骤批量处理性能会好
+- controller
+  - 如果有按controller path配置authorization的情况，可以考虑抽出一层controller shared service，作为分发
+    因为可能两个conroller有同样的接口。
+    如果有一层抽象的controller-service dispatcher 层，那么controller层代码就很简化，@preauth注释可以考虑放在代码里面，减少代码复杂性

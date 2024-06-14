@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.xyp.sample</groupId>
+    <artifactId>plain</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+    <description>Demo project for non spring dependency</description>
+
+    <modules>
+        <module>share</module>
+    </modules>
+
+    <properties>
+        <revision>0.0.0</revision>
+        <version.kerberos.extension>2.0.0</version.kerberos.extension>
+        <version.spring.openapi>2.1.0</version.spring.openapi>
+        <version.feign.hc5>12.4</version.feign.hc5>
+        <version.httpclient5>5.2.1</version.httpclient5>
+        <version.net.ttddyy>1.9</version.net.ttddyy>
+        <version.flatten.mvn.plugin>1.5.0</version.flatten.mvn.plugin>
+        <version.spring.start.mybatis>3.0.3</version.spring.start.mybatis>
+    </properties>
+
+    <dependencyManagement>
+    </dependencyManagement>
+
+</project>
