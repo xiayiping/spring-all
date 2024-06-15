@@ -17,11 +17,11 @@ public class HelloController {
     @GetMapping
     public String hello() {
         if (applicationContext.containsBean("dispatcherServlet")) {
-            System.out.println("Running in Spring MVC mode.");
+            log.info("Running in Spring MVC mode.");
         }
         if (applicationContext.containsBean("webHandler")) {
-            System.out.println("Running in Spring WebFlux mode.");
+            log.info("Running in Spring WebFlux mode.");
         }
-        return "Hello World";
+        return "Hello World 123";
     }
 }

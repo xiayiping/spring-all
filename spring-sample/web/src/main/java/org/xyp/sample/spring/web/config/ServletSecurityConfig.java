@@ -1,0 +1,45 @@
+//package org.xyp.sample.spring.web.config;
+//
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+//import org.springframework.security.config.web.server.ServerHttpSecurity;
+//import org.springframework.security.web.SecurityFilterChain;
+//import org.springframework.security.web.access.intercept.AuthorizationFilter;
+//import org.springframework.security.web.server.SecurityWebFilterChain;
+//import org.xyp.sample.spring.web.filter.SomeFilter;
+//import org.xyp.sample.spring.web.filter.SomeServletFilter;
+//
+//@Slf4j
+//@Configuration
+//@ConditionalOnClass(name="org.apache.catalina.filters.RequestFilter")
+//@EnableWebSecurity // this is for traditional web app
+////@EnableWebFluxSecurity // this is for webflux
+//public class ServletSecurityConfig {
+//
+//    public ServletSecurityConfig() {
+//        log.info("using servlet SecurityConfig ......");
+//    }
+//
+//    @Bean
+//    public SecurityFilterChain createSecurityFilterChain(
+//        HttpSecurity http
+//    ) throws Exception {
+//        log.info("creating webflux springSecurityFilterChain ......");
+//        http.authorizeHttpRequests(
+//            cus -> cus.requestMatchers("/hello").authenticated()
+//                .requestMatchers("/*").permitAll()
+//        )
+////            .oauth2Login(Customizer.withDefaults())
+////            .formLogin(Customizer.withDefaults())
+//        ;
+//        http.addFilterBefore(new SomeServletFilter(), AuthorizationFilter.class);
+//        return http.build();
+//    }
+//
+//
+//}

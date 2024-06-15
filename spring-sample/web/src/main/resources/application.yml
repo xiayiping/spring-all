@@ -1,18 +1,18 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   application:
     name: web
   datasource:
-#    driver-class-name: ${qa_db_driver}
-#    url: ${qa_db_url}
-#    username: ${qa_db_user}
-#    password: ${qa_db_token}
     driver-class-name: ${qa_db_driver}
-    url: jdbc:sqlserver://10.21.110.91;databaseName=TCITEAP;schema=KYC;encrypt=false;
+    url: ${qa_db_url}
     username: ${qa_db_user}
     password: ${qa_db_token}
+    #    driver-class-name: ${qa_db_driver}
+    #    url: jdbc:sqlserver://10.21.110.91;databaseName=TCITEAP;schema=KYC;encrypt=false;
+    #    username: ${qa_db_user}
+    #    password: ${qa_db_token}
     hikari:
       maximum-pool-size: 3
   jpa:
@@ -25,21 +25,17 @@ spring:
         default_batch_fetch_size: 100
         jdbc:
           batch_size: 100
+          lob:
+            non_contextual_creation: true
         format_sql: true
         use_sql_comments: false
         generate_statistics: false
         dialect: org.hibernate.dialect.SQLServerDialect
   security:
-    user:
-      name: user
-      password: 1123
-#    oauth2:
-#      client:
-#        registration:
-#          github:
-#            ## setup in github
-#            clientId: cc30276322adbf59445b
-#            clientSecret: f98fc5deb9ecd3af6da5e376264dcaea8b73adde
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://127.0.0.1:8081"
 
 logging:
   config: classpath:log4j2-spring.xml
