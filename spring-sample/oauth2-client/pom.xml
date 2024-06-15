@@ -85,6 +85,22 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <outputDirectory>target/classes-java</outputDirectory>
+
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+        <testOutputDirectory>target/classes-test</testOutputDirectory>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
