@@ -18,7 +18,7 @@
     <description>Demo project for Spring Boot</description>
 
     <modules>
-        <module>web</module>
+        <module>web-api</module>
         <module>oauth2-server</module>
         <module>oauth2-client</module>
     </modules>
