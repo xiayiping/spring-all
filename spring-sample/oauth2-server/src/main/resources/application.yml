@@ -27,4 +27,23 @@ spring:
                 - "openid"
                 - "profile"
                 - "user.read"
-            require-authorization-consent: true
+              post-logout-redirect-uris:
+                - http://localhost:8080
+            require-authorization-consent: false
+          oidc-client2:
+            registration:
+              client-id: "oidc-client2"
+              client-secret: "{noop}secret2"
+              client-authentication-methods:
+                - "client_secret_basic"
+              authorization-grant-types:
+                - "client-credentials"
+                - "authorization_code"
+                - "refresh_token"
+              redirect-uris:
+                - "http://localhost:8090/login/oauth2/code/yipingx"
+              scopes:
+                - "openid"
+                - "profile"
+                - "user.read"
+            require-authorization-consent: false

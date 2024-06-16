@@ -3,9 +3,9 @@ package org.xyp.sample.spring.webapi.test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
-import org.xyp.sample.spring.webapi.WebApplication;
+import org.xyp.sample.spring.webapi.WebApiApplication;
 
-@Import(WebApplication.class)
+@Import(WebApiApplication.class)
 @SpringBootApplication
 public class WebTestRootApplication {
     public static void main(String[] args) {

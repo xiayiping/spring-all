@@ -7,13 +7,13 @@ import org.xyp.sample.spring.db.DbConfig;
 
 @ComponentScan(basePackageClasses = {
     DbConfig.class,
-    WebApplication.class,
+    WebApiApplication.class,
 })
 @SpringBootApplication
-public class WebApplication {
+public class WebApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebApplication.class, args);
+        SpringApplication.run(WebApiApplication.class, args);
     }
 
 }

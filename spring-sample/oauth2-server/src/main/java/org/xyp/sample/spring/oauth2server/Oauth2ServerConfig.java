@@ -1,53 +1,36 @@
 package org.xyp.sample.spring.oauth2server;
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
-import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Set;
-import java.util.UUID;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Slf4j
 @Configuration
 //@EnableWebSecurity
-public class Oauth2SecurityConfig {
+public class Oauth2ServerConfig {
 
     @Bean
     @Order(0)
@@ -75,44 +58,22 @@ public class Oauth2SecurityConfig {
         }
             ;
     }
-
+    void customize(WebSecurity web) {
+//
+    }
 //    @Bean
-    @Order(1)
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
-        throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-            .oidc(Customizer.withDefaults());    // Enable OpenID Connect 1.0
-        http
-            // Redirect to the login page when not authenticated from the
-            // authorization endpoint
-            .exceptionHandling(exceptions -> exceptions
-                .defaultAuthenticationEntryPointFor(
-                    new LoginUrlAuthenticationEntryPoint("/login"),
-                    new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                )
-            )
-            // Accept access tokens for User Info and/or Client Registration
-            .oauth2ResourceServer(resourceServer -> resourceServer
-                .jwt(jwtCus -> {
-                }));
+//    @Order(SecurityProperties.BASIC_AUTH_ORDER + 1)
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         return http.build();
     }
-//
-//    @Bean
-//    @Order(2)
-//    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
-//        throws Exception {
-//        http
-//            .authorizeHttpRequests(authorize -> authorize
-//                .anyRequest().authenticated()
-//            )
-//            // Form login handles the redirect to the login page from the
-//            // authorization server filter chain
-//            .formLogin(Customizer.withDefaults());
-//        return http.build();
-//    }
+
+
+    private static RequestMatcher createRequestMatcher() {
+        MediaTypeRequestMatcher requestMatcher = new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
+        requestMatcher.setIgnoredMediaTypes(Set.of(MediaType.ALL));
+        return requestMatcher;
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
