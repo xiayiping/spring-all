@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
+import org.springframework.boot.autoconfigure.security.reactive.StaticResourceRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -37,48 +38,52 @@ import static org.springframework.security.web.server.util.matcher.ServerWebExch
 
 @Slf4j
 @Configuration
-//@EnableWebFluxSecurity
-//@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+@EnableWebFluxSecurity
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public class Oauth2ClientWebConfig {
 
-//    @Bean
-//    @Order(1)
-//    SecurityWebFilterChain springSecurityFilterChain(
-//        ServerHttpSecurity http,
-//        ReactiveClientRegistrationRepository clientRegistrationRepository
-//    ) {
-//        log.info("use customized ico filter chain ......");
-//        http
-//            .securityMatcher(
-//                PathRequest.toStaticResources().atCommonLocations()
-//            )
-//
-//            .authorizeExchange((exchange) -> exchange
-//                .anyExchange().permitAll()
-//            );
-//        return http.build();
-//    }
-//
-//    @Bean
-//    @Order(2)
-//    SecurityWebFilterChain springSecurityFilterChainAll(
-//        ServerHttpSecurity http,
-//        ReactiveClientRegistrationRepository clientRegistrationRepository
-//    ) {
-//        log.info("use customized filter chain ......");
-//        http
-////            .securityMatcher(PathRequest.toStaticResources().atCommonLocations().matches())
-//            .authorizeExchange((exchange) -> exchange
-//                .anyExchange().authenticated()
-//            );
-//        http.oauth2Login(withDefaults());
-//        http.oauth2Client(withDefaults());
-//
-//        http.logout((logout) -> logout
-//            .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
-//        );
-//        return http.build();
-//    }
+    final StaticResourceRequest.StaticResourceServerWebExchange staticMatcher = PathRequest.toStaticResources().atCommonLocations();
+
+    @Bean(name = "iconFilter")
+    @Order(1)
+    SecurityWebFilterChain springSecurityFilterChain(
+        ServerHttpSecurity http
+    ) {
+        log.info("use customized ico filter chain ......");
+        http
+            .securityMatcher(staticMatcher)
+
+            .authorizeExchange((exchange) -> exchange
+                .anyExchange().permitAll()
+            );
+        return http.build();
+    }
+
+    @Bean(name = "allFilter")
+    @Order(2)
+    SecurityWebFilterChain springSecurityFilterChainAll(
+        ServerHttpSecurity http,
+        ReactiveClientRegistrationRepository clientRegistrationRepository
+    ) {
+        log.info("use customized filter chain ......");
+        http
+            .securityMatcher(ex -> staticMatcher
+                .matches(ex)
+                .filter(r -> !r.isMatch())
+                .flatMap(ignored -> MatchResult.match())
+                .switchIfEmpty(MatchResult.notMatch())
+            )
+            .authorizeExchange((exchange) -> exchange
+                .anyExchange().authenticated()
+            );
+        http.oauth2Login(withDefaults());
+        http.oauth2Client(withDefaults());
+
+        http.logout((logout) -> logout
+            .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
+        );
+        return http.build();
+    }
 
     private ServerLogoutSuccessHandler oidcLogoutSuccessHandler(
         ReactiveClientRegistrationRepository clientRegistrationRepository

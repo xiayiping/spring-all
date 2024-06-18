@@ -64,7 +64,6 @@ public class Oauth2ServerConfig {
 //    @Bean
 //    @Order(SecurityProperties.BASIC_AUTH_ORDER + 1)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-
         return http.build();
     }
 
