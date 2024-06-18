@@ -1,3 +1,5 @@
+localhost: 172.20.176.1
+
 server:
   port: 8081
 
@@ -22,13 +24,13 @@ spring:
                 - "authorization_code"
                 - "refresh_token"
               redirect-uris:
-                - "http://localhost:8080/login/oauth2/code/yipingx"
+                - "http://127.0.0.1:8080/login/oauth2/code/yipingx"
               scopes:
                 - "openid"
                 - "profile"
                 - "user.read"
               post-logout-redirect-uris:
-                - http://localhost:8080
+                - http://127.0.0.1:8080
             require-authorization-consent: false
           oidc-client2:
             registration:
@@ -41,7 +43,7 @@ spring:
                 - "authorization_code"
                 - "refresh_token"
               redirect-uris:
-                - "http://localhost:8090/login/oauth2/code/yipingx"
+                - "http://${localhost}:8090/login/oauth2/code/yipingx"
               scopes:
                 - "openid"
                 - "profile"

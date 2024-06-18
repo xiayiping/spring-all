@@ -1,3 +1,5 @@
+localhost: 127.0.0.1
+
 server:
   port: 8080
 
@@ -18,10 +20,10 @@ spring:
             clientSecret: "secret"
             authorization-grant-type: "authorization_code"
             client-authentication-method: "client_secret_basic"
-            redirect-uri: "http://localhost:8080/login/oauth2/code/yipingx"
+            redirect-uri: "http://${localhost}:8080/login/oauth2/code/yipingx"
             scope:
               - "openid"
               - "user.read"
         provider:
           yipingx:
-            issuer-uri: "http://127.0.0.1:8081"
+            issuer-uri: "http://172.20.176.1:8081"

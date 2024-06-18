@@ -1,3 +1,5 @@
+localhost: 127.0.0.1
+
 server:
   port: 8082
 
@@ -36,7 +38,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "http://127.0.0.1:8081"
+          issuer-uri: "http://172.20.176.1:8081"
 
 logging:
   config: classpath:log4j2-spring.xml

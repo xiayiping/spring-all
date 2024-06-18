@@ -32,7 +32,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 //@EnableWebSecurity
 public class Oauth2ServerConfig {
 
-    @Bean
+//    @Bean
     @Order(0)
     public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() throws Exception {
         // consent service
