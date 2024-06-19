@@ -37,6 +37,9 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: "http://${v_host}:8081"
+        opaquetoken:
+          client-secret: "secret"
+
 #          issuer-uri: https://token.actions.githubusercontent.com
 #          jwk-set-uri: https://token.actions.githubusercontent.com/.well-known/jwks
 

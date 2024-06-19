@@ -46,3 +46,4 @@ node_modules/
 .husky/
 .flattened-pom.xml
 logs/
+application-local*

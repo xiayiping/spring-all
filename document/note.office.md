@@ -17,6 +17,8 @@ sudo rpm -ivh package.rpm
 ```shell
 firewall-cmd --list-all
 sudo firewall-cmd --zone=public --add-port=8100/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=8301/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=1300/tcp --permanent
 sudo firewall-cmd --reload
 ```
 
