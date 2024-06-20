@@ -22,6 +22,7 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator {
         if (INSERT != eventType || null == owner) {
             return null;
         }
+        val dialect = session.getJdbcServices().getDialect();
         val acc = session.getJdbcConnectionAccess();
         try {
             val conn = acc.obtainConnection();
@@ -39,8 +40,8 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator {
 
     private void id(JdbcConnectionAccess connectionAccess) {
         WithCloseable.open(connectionAccess::obtainConnection)
-            .map(Fun.selfMap(c -> c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED)))
-            .map(Fun.selfMap(c -> c.setAutoCommit(false)))
+            .map(Fun.thenSelf(c -> c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED)))
+            .map(Fun.thenSelf(c -> c.setAutoCommit(false)))
             .close()
             .throwIfError(ex -> Fun.convertRte(ex, IdGenerationException.class, IdGenerationException::new));
     }

@@ -1,8 +1,8 @@
 package org.xyp.function.wrapper.exceptional;
 
+import lombok.val;
 import org.xyp.function.ExceptionalFunction;
 import org.xyp.function.FunctionException;
-import lombok.val;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -127,6 +127,23 @@ public class FunctionError<T, E extends Exception> implements ResultOrError<T> {
     public <E1 extends Exception> ResultOrErrorWrapper<T, E1> specError(
         ExceptionWrapper<E1> exceptionMapper
     ) {
+        if (exceptionMapper.exceptionClass().isAssignableFrom(error.getClass())) {
+            return ResultOrErrorWrapper.ofErr(this.error, new ExceptionWrapper<>(
+                exceptionMapper.exceptionClass(),
+                exceptionMapper.exceptionClass()::cast)
+            );
+        }
         return ResultOrErrorWrapper.ofErr(this.error, exceptionMapper);
+    }
+
+    @Override
+    public <E1 extends Exception> ResultOrErrorWrapper<T, E1> specError(
+        Class<E1> exceptionClass,
+        Function<Exception, E1> wrapper
+    ) {
+        if (exceptionClass.isAssignableFrom(error.getClass())) {
+            return ResultOrErrorWrapper.ofErr(this.error, new ExceptionWrapper<>(exceptionClass, exceptionClass::cast));
+        }
+        return ResultOrErrorWrapper.ofErr(this.error, new ExceptionWrapper<>(exceptionClass, wrapper));
     }
 }

@@ -1,6 +1,5 @@
 package org.xyp.function;
 
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -17,7 +16,7 @@ public class Fun {
         };
     }
 
-    public static <T> ExceptionalFunction<T, T> selfMap(ExceptionalConsumer<T> consumer) {
+    public static <T> ExceptionalFunction<T, T> thenSelf(ExceptionalConsumer<T> consumer) {
         return obj -> {
             consumer.accept(obj);
             return obj;
