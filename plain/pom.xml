@@ -18,16 +18,28 @@
         <revision>0.0.0</revision>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <version.kerberos.extension>2.0.0</version.kerberos.extension>
-        <version.spring.openapi>2.1.0</version.spring.openapi>
-        <version.feign.hc5>12.4</version.feign.hc5>
-        <version.httpclient5>5.2.1</version.httpclient5>
-        <version.net.ttddyy>1.9</version.net.ttddyy>
-        <version.flatten.mvn.plugin>1.5.0</version.flatten.mvn.plugin>
-        <version.spring.start.mybatis>3.0.3</version.spring.start.mybatis>
+        <version.lombok>1.18.32</version.lombok>
+
     </properties>
 
     <dependencyManagement>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${version.lombok}</version>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>2.0.13</version>
+            </dependency>
+
+        </dependencies>
+
     </dependencyManagement>
 
 </project>

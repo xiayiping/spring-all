@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.xyp.sample.spring.webapi.repository.jdbc.TaskDao;
+import org.xyp.sample.spring.webapi.repository.jdbc.TaskDaoJdbc;
 import org.xyp.sample.spring.webapi.service.GreetService;
 //import org.xyp.sample.spring.web.service.GreetService;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/hello")
 public class HelloController {
-    final TaskDao taskDao;
+    final TaskDaoJdbc taskDaoJdbc;
     final GreetService greetService;
     final ApplicationContext applicationContext;
 

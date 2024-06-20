@@ -179,6 +179,13 @@ WHERE
 
 # Spring Boot
 
+## Data
+
+- for data jdbc, for refer to other entity , using AggregateReference<ServletSecurityConfig,Long> ss;
+
+- for jpa, if you need publish event on persist, extend AbstractAggregateRoot rr;
+
+
 ## Oauth
 
 https://spring.io/guides/tutorials/spring-boot-oauth2

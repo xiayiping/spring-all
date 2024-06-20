@@ -9,10 +9,6 @@ spring:
     url: ${qa_db_url}
     username: ${qa_db_user}
     password: ${qa_db_token}
-    #    driver-class-name: ${qa_db_driver}
-    #    url: jdbc:sqlserver://10.21.110.91;databaseName=TCITEAP;schema=KYC;encrypt=false;
-    #    username: ${qa_db_user}
-    #    password: ${qa_db_token}
     hikari:
       maximum-pool-size: 3
   jpa:
@@ -29,19 +25,21 @@ spring:
             non_contextual_creation: true
         format_sql: true
         use_sql_comments: false
-        generate_statistics: false
+        generate_statistics: true
         dialect: org.hibernate.dialect.SQLServerDialect
     open-in-view: false
+    show-sql: true
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: "http://${v_host}:8081"
-        opaquetoken:
-          client-secret: "secret"
-
 #          issuer-uri: https://token.actions.githubusercontent.com
 #          jwk-set-uri: https://token.actions.githubusercontent.com/.well-known/jwks
+        opaquetoken:
+          client-id: "client-id"
+          client-secret: "secret"
+          introspection-uri: "url"
 
 logging:
   config: classpath:log4j2-spring.xml

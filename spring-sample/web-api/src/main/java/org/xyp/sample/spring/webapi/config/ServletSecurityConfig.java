@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -32,7 +34,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class ServletSecurityConfig {
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
     String introspectionUri;
-
+    AggregateReference<ServletSecurityConfig,Long> ss;
+    AbstractAggregateRoot rr;
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
     String clientId;
 
