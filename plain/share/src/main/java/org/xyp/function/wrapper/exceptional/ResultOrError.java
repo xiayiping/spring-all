@@ -84,4 +84,9 @@ public interface ResultOrError<T> {
     <E extends Exception> ResultOrErrorWrapper<T, E> specError(
         ExceptionWrapper<E> exceptionMapper
     );
+
+    <E extends Exception> ResultOrErrorWrapper<T, E> specError(
+        Class<E> exceptionClass,
+        Function<Exception, E> wrapper
+    );
 }

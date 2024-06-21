@@ -1,0 +1,45 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: web
+  datasource:
+    driver-class-name: ${test_db_driver_1}
+    url: ${test_db_url_1}
+    username: ${test_db_user_1}
+    password: ${test_db_token_1}
+    hikari:
+      maximum-pool-size: 3
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        jdbc:
+          batch_size: 100
+          lob:
+            non_contextual_creation: true
+        format_sql: true
+        use_sql_comments: false
+        generate_statistics: true
+        dialect: ${test_db_dialect_1}
+    open-in-view: false
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://${v_host}:8081"
+#          issuer-uri: https://token.actions.githubusercontent.com
+#          jwk-set-uri: https://token.actions.githubusercontent.com/.well-known/jwks
+        opaquetoken:
+          client-id: ${test_oauth_opaque_client_1}
+          client-secret: ${test_oauth_opaque_secret_1}
+          introspection-uri: ${test_oauth_introspection_url_1}
+
+logging:
+  config: classpath:log4j2-spring.xml

@@ -40,10 +40,10 @@ public class IdGeneratorLong implements IdGenerator<Long> {
         val step = holder.step();
         val map = IntStream.range(1, count + 1)
             .boxed()
-            .collect(Collectors.partitioningBy(i -> (long) i * step + holder.prev() <= holder.last()));
+            .collect(Collectors.partitioningBy(i -> (long) i * step + holder.last() <= holder.max()));
 
         val withInCurrentHolders = LongStream.range(1, map.getOrDefault(Boolean.TRUE, List.of()).size() + 1)
-            .map(idx -> holder.prev() + idx * step)
+            .map(idx -> holder.last() + idx * step)
             .boxed().toList();
 
         resultHolder.addAll(withInCurrentHolders);
@@ -54,10 +54,10 @@ public class IdGeneratorLong implements IdGenerator<Long> {
 //            val newResult = increaseIdDelegate.increaseIdInDb(entityName, extendedAmount);
 //            val extendedIds = LongStream.range(1L, needExtendSize + 1L)
 //                .boxed()
-//                .map(idx -> newResult.prev() + step * idx).toList();
+//                .map(idx -> newResult.last() + step * idx).toList();
 //            resultHolder.addAll(extendedIds);
-//            return new BatchIdResult(newResult.prev() + extendedAmount, newResult.last(), newResult.step(), newResult.fetchSize());
+//            return new BatchIdResult(newResult.last() + extendedAmount, newResult.max(), newResult.step(), newResult.fetchSize());
         }
-        return new BatchIdResult(holder.prev() + (long) step * count, holder.last(), holder.step(), holder.fetchSize());
+        return new BatchIdResult(holder.last() + (long) step * count, holder.max(), holder.step(), holder.fetchSize());
     }
 }

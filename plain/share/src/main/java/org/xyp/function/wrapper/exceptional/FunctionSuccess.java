@@ -167,4 +167,12 @@ public class FunctionSuccess<T> implements ResultOrError<T> {
     ) {
         return ResultOrErrorWrapper.of(this.result, exceptionMapper);
     }
+
+    @Override
+    public <E extends Exception> ResultOrErrorWrapper<T, E> specError(
+        Class<E> exceptionClass,
+        Function<Exception, E> wrapper
+    ) {
+        return ResultOrErrorWrapper.of(this.result, new ExceptionWrapper<>(exceptionClass, wrapper));
+    }
 }

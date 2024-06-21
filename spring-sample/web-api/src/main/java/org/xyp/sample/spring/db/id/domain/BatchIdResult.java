@@ -1,4 +1,9 @@
 package org.xyp.sample.spring.db.id.domain;
 
-public record BatchIdResult(long prev, long last, int step, int fetchSize) {
+public record BatchIdResult(
+    long last,
+    long max,
+    int step,
+    int fetchSize
+) {
 }
