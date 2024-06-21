@@ -162,17 +162,17 @@ public class FunctionSuccess<T> implements ResultOrError<T> {
     }
 
     @Override
-    public <E extends Exception> ResultOrErrorWrapper<T, E> specError(
+    public <E extends Exception> ResultOrRTE<T, E> specError(
         ExceptionWrapper<E> exceptionMapper
     ) {
-        return ResultOrErrorWrapper.of(this.result, exceptionMapper);
+        return ResultOrRTE.of(this.result, exceptionMapper);
     }
 
     @Override
-    public <E extends Exception> ResultOrErrorWrapper<T, E> specError(
+    public <E extends Exception> ResultOrRTE<T, E> specError(
         Class<E> exceptionClass,
         Function<Exception, E> wrapper
     ) {
-        return ResultOrErrorWrapper.of(this.result, new ExceptionWrapper<>(exceptionClass, wrapper));
+        return ResultOrRTE.of(this.result, new ExceptionWrapper<>(exceptionClass, wrapper));
     }
 }

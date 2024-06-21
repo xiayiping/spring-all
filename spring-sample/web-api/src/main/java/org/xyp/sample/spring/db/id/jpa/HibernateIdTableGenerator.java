@@ -1,21 +1,36 @@
 package org.xyp.sample.spring.db.id.jpa;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
+import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.generator.BeforeExecutionGenerator;
 import org.hibernate.generator.EventType;
 import org.hibernate.generator.EventTypeSets;
-import org.xyp.function.Fun;
-import org.xyp.function.wrapper.closeable.WithCloseable;
-import org.xyp.sample.spring.db.id.IdGenerationException;
+import org.hibernate.id.Configurable;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.type.Type;
+import org.xyp.sample.spring.db.id.IdGeneratorLong;
 
-import java.sql.Connection;
 import java.util.EnumSet;
+import java.util.Properties;
 
 import static org.hibernate.generator.EventType.INSERT;
 
-public class HibernateIdTableGenerator implements BeforeExecutionGenerator {
+@Slf4j
+public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Configurable {
+
+
+    transient IdGeneratorLong idGenerator = new IdGeneratorLong();
+
+    public HibernateIdTableGenerator(
+//        GenericGenerator genericGenerator
+//        CustomSequence config,
+//        Member annotatedMember,
+//        CustomIdGeneratorCreationContext context
+    ) {
+        log.info("create hibernateIdTableGenerator ......");
+    }
 
     @Override
     public Object generate(SharedSessionContractImplementor session, Object owner, Object currentValue, EventType eventType) {
@@ -23,14 +38,9 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator {
             return null;
         }
         val dialect = session.getJdbcServices().getDialect();
+        log.info("{}", dialect);
         val acc = session.getJdbcConnectionAccess();
-        try {
-            val conn = acc.obtainConnection();
-            acc.releaseConnection(conn);
-        } catch (Exception e) {
-
-        }
-        return null;
+        return idGenerator.nextId(owner.getClass(), idClass, dialect.getClass().getName(), new ConnectionFromAccess(acc));
     }
 
     @Override
@@ -38,15 +48,11 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator {
         return EventTypeSets.INSERT_ONLY;
     }
 
-    private void id(JdbcConnectionAccess connectionAccess) {
-        WithCloseable.open(connectionAccess::obtainConnection)
-            .map(Fun.thenSelf(c -> c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED)))
-            .map(Fun.thenSelf(c -> c.setAutoCommit(false)))
-            .close()
-            .throwIfError(ex -> Fun.convertRte(ex, IdGenerationException.class, IdGenerationException::new));
-    }
+    private Class<?> idClass = null;
 
-    private void id(Connection connection) {
-
+    @Override
+    public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
+        idClass = type.getReturnedClass();
+        log.info("config id generator for id class {}", idClass);
     }
 }

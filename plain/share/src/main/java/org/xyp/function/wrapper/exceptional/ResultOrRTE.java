@@ -10,41 +10,41 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public interface ResultOrErrorWrapper<T, E extends Exception> {
+public interface ResultOrRTE<T, E extends Exception> {
 
-    static <T1, E1 extends Exception> ResultOrErrorWrapper<T1, E1> of(
+    static <T1, E1 extends Exception> ResultOrRTE<T1, E1> of(
         T1 t1,
         ExceptionWrapper<E1> wrapper
     ) {
         return new FunctionSuccessSpecErr<>(t1, wrapper);
     }
 
-    static <T1, E1 extends Exception> ResultOrErrorWrapper<T1, E1> ofErr(
+    static <T1, E1 extends Exception> ResultOrRTE<T1, E1> ofErr(
         Exception exception,
         ExceptionWrapper<E1> wrapper
     ) {
         return new FunctionErrorSpecErr<>(exception, wrapper);
     }
 
-    static <R, E1 extends Exception> ResultOrErrorWrapper<R, E1> on(
+    static <R, E1 extends Exception> ResultOrRTE<R, E1> on(
         ExceptionalSupplier<R> supplier,
         ExceptionWrapper<E1> wrapper
     ) {
         try {
-            return ResultOrErrorWrapper.of(supplier.get(), wrapper);
+            return ResultOrRTE.of(supplier.get(), wrapper);
         } catch (Exception e) {
-            return ResultOrErrorWrapper.ofErr(e, wrapper);
+            return ResultOrRTE.ofErr(e, wrapper);
         }
     }
 
-    static <R, E1 extends Exception> ResultOrErrorWrapper<R, E1> onOpt(
+    static <R, E1 extends Exception> ResultOrRTE<R, E1> onOpt(
         ExceptionalSupplier<Optional<R>> supplier,
         ExceptionWrapper<E1> wrapper
     ) {
         try {
             return new FunctionSuccessSpecErr<>(supplier.get().orElse(null), wrapper);
         } catch (Exception e) {
-            return ResultOrErrorWrapper.ofErr(e, wrapper);
+            return ResultOrRTE.ofErr(e, wrapper);
         }
     }
 
@@ -62,19 +62,19 @@ public interface ResultOrErrorWrapper<T, E extends Exception> {
 
     boolean isError();
 
-    ResultOrErrorWrapper<T, E> ifPresent(Consumer<? super T> action);
+    ResultOrRTE<T, E> ifPresent(Consumer<? super T> action);
 
-    ResultOrErrorWrapper<T, E> ifError(Consumer<? super E> errAction);
+    ResultOrRTE<T, E> ifError(Consumer<? super E> errAction);
 
-    ResultOrErrorWrapper<T, E> ifEmpty(Runnable emptyAction);
+    ResultOrRTE<T, E> ifEmpty(Runnable emptyAction);
 
-    ResultOrErrorWrapper<T, E> filter(Predicate<? super T> predicate);
+    ResultOrRTE<T, E> filter(Predicate<? super T> predicate);
 
-    <U> ResultOrErrorWrapper<U, E> map(ExceptionalFunction<? super T, ? extends U> mapper);
+    <U> ResultOrRTE<U, E> map(ExceptionalFunction<? super T, ? extends U> mapper);
 
-    <U> ResultOrErrorWrapper<U, E> flatMap(ExceptionalFunction<? super T, ? extends ResultOrErrorWrapper<? extends U, E>> mapper);
+    <U> ResultOrRTE<U, E> flatMap(ExceptionalFunction<? super T, ? extends ResultOrRTE<? extends U, E>> mapper);
 
-    <U> ResultOrErrorWrapper<U, E> flatMapOpt(ExceptionalFunction<? super T, Optional<U>> mapper);
+    <U> ResultOrRTE<U, E> flatMapOpt(ExceptionalFunction<? super T, Optional<U>> mapper);
 
     Stream<T> stream();
 

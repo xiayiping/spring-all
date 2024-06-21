@@ -81,11 +81,11 @@ public interface ResultOrError<T> {
 
     Optional<T> getOptional(Function<Exception, T> exceptionMapper);
 
-    <E extends Exception> ResultOrErrorWrapper<T, E> specError(
+    <E extends Exception> ResultOrRTE<T, E> specError(
         ExceptionWrapper<E> exceptionMapper
     );
 
-    <E extends Exception> ResultOrErrorWrapper<T, E> specError(
+    <E extends Exception> ResultOrRTE<T, E> specError(
         Class<E> exceptionClass,
         Function<Exception, E> wrapper
     );

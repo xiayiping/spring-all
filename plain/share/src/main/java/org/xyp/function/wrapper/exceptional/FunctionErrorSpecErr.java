@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class FunctionErrorSpecErr<T, E extends Exception> implements ResultOrErrorWrapper<T, E> {
+public class FunctionErrorSpecErr<T, E extends Exception> implements ResultOrRTE<T, E> {
 
     private final Exception error;
     private final ExceptionWrapper<E> wrapper;
@@ -34,12 +34,12 @@ public class FunctionErrorSpecErr<T, E extends Exception> implements ResultOrErr
     }
 
     @Override
-    public ResultOrErrorWrapper<T, E> ifPresent(Consumer<? super T> action) {
+    public ResultOrRTE<T, E> ifPresent(Consumer<? super T> action) {
         return this;
     }
 
     @Override
-    public ResultOrErrorWrapper<T, E> ifError(Consumer<? super E> errAction) {
+    public ResultOrRTE<T, E> ifError(Consumer<? super E> errAction) {
         try {
             errAction.accept(wrapper.wrap(error));
             return this;
@@ -49,39 +49,39 @@ public class FunctionErrorSpecErr<T, E extends Exception> implements ResultOrErr
     }
 
     @Override
-    public ResultOrErrorWrapper<T, E> ifEmpty(Runnable emptyAction) {
+    public ResultOrRTE<T, E> ifEmpty(Runnable emptyAction) {
         return this;
     }
 
     @Override
-    public ResultOrErrorWrapper<T, E> filter(Predicate<? super T> predicate) {
+    public ResultOrRTE<T, E> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         return this;
     }
 
     @Override
-    public <U> ResultOrErrorWrapper<U, E> map(ExceptionalFunction<? super T, ? extends U> mapper) {
+    public <U> ResultOrRTE<U, E> map(ExceptionalFunction<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         @SuppressWarnings("unchecked")
-        val r = (ResultOrErrorWrapper<U, E>) this;
+        val r = (ResultOrRTE<U, E>) this;
         return r;
     }
 
     @Override
-    public <U> ResultOrErrorWrapper<U, E> flatMap(
-        ExceptionalFunction<? super T, ? extends ResultOrErrorWrapper<? extends U, E>> mapper
+    public <U> ResultOrRTE<U, E> flatMap(
+        ExceptionalFunction<? super T, ? extends ResultOrRTE<? extends U, E>> mapper
     ) {
         Objects.requireNonNull(mapper);
         @SuppressWarnings("unchecked")
-        val r = (ResultOrErrorWrapper<U, E>) this;
+        val r = (ResultOrRTE<U, E>) this;
         return r;
     }
 
     @Override
-    public <U> ResultOrErrorWrapper<U, E> flatMapOpt(ExceptionalFunction<? super T, Optional<U>> mapper) {
+    public <U> ResultOrRTE<U, E> flatMapOpt(ExceptionalFunction<? super T, Optional<U>> mapper) {
         Objects.requireNonNull(mapper);
         @SuppressWarnings("unchecked")
-        val r = (ResultOrErrorWrapper<U, E>) this;
+        val r = (ResultOrRTE<U, E>) this;
         return r;
     }
 

@@ -17,15 +17,15 @@ import org.xyp.sample.spring.db.id.IdValidatorLong;
 @Data
 @Builder
 @AllArgsConstructor
-@Table(schema = "KYC", name = "KycTask")
+@Table(name = "task")
 public class Task implements IdHolder<Long, Task> {
     @Id
     TaskId id;
-    @Column("companyId")
+    @Column("company_id")
     final int companyId;
-    @Column("employeeId")
+    @Column("employee_id")
     final String employeeId;
-    @Column("batchId")
+    @Column("batch_id")
     final AggregateReference<Batch, Long> batch;
 
 

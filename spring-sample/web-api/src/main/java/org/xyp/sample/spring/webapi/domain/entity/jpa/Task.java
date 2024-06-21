@@ -1,23 +1,31 @@
 package org.xyp.sample.spring.webapi.domain.entity.jpa;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.xyp.sample.spring.db.id.IdValidatorLong;
+import org.xyp.sample.spring.db.id.domain.IdHolder;
+import org.xyp.sample.spring.db.id.jpa.HibernateIdTableGenerator;
 
 import java.util.Objects;
 
 @AllArgsConstructor
+@Builder
 @Entity
-@Table(schema = "KYC", name = "KycTask")
+@Getter
+@Setter
+@Table(name = "task")
 public class Task {
+
+    // @IdGeneratorType not supported yet
+    // @CustomSequence(name = "sss", target = TaskId.class)
+    // https://hibernate.atlassian.net/jira/software/c/projects/HHH/issues/HHH-18276?jql=project%20%3D%20%22HHH%22%20ORDER%20BY%20created%20DESC
     @EmbeddedId
+    @GeneratedValue(generator = "sss")
+    @GenericGenerator(name = "sss", type = HibernateIdTableGenerator.class)
     private TaskId id;
-    @Column(name = "companyId")
+
     final int companyId;
-    @Column(name = "employeeId")
     final String employeeId;
 
     public Task() {
@@ -29,10 +37,23 @@ public class Task {
         return new Task(null, companyId, employeeId/*, batchId.toAggregateReference()*/);
     }
 
-    public static record TaskId(long id) {
+    @Embeddable
+//    @Data
+    public record TaskId(
+        @Column
+        long id
+    ) {
+
         public TaskId {
             IdValidatorLong.validate(id);
         }
+//        public TaskId(Long id) {
+//            this.id = id;
+//        }
+
+//        public TaskId() {
+//            this.id = null;
+//        }
 
         public static TaskId of(Long id) {
             return new TaskId(id);

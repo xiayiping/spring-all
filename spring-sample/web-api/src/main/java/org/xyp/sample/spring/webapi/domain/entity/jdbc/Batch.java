@@ -19,19 +19,19 @@ import java.util.Set;
 @Data
 @Builder
 @AllArgsConstructor
-@Table(schema = "KYC", name = "KycBatch")
+@Table(name = "batch")
 public class Batch {
 
     @Id
-    private String id;
+    private BatchId id;
 
-    @Column("companyId")
+    @Column("company_id")
     final int companyId;
 
-    @Column("batchName")
+    @Column("batch_name")
     final String batchName;
 
-    @MappedCollection(keyColumn = "batchId", idColumn = "id")
+    @MappedCollection(keyColumn = "batch_id", idColumn = "id")
     private Set<Task> tasks;
 
     public static record BatchId(

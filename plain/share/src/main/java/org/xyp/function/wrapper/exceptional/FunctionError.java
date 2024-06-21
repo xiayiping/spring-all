@@ -124,26 +124,26 @@ public class FunctionError<T, E extends Exception> implements ResultOrError<T> {
     }
 
     @Override
-    public <E1 extends Exception> ResultOrErrorWrapper<T, E1> specError(
+    public <E1 extends Exception> ResultOrRTE<T, E1> specError(
         ExceptionWrapper<E1> exceptionMapper
     ) {
         if (exceptionMapper.exceptionClass().isAssignableFrom(error.getClass())) {
-            return ResultOrErrorWrapper.ofErr(this.error, new ExceptionWrapper<>(
+            return ResultOrRTE.ofErr(this.error, new ExceptionWrapper<>(
                 exceptionMapper.exceptionClass(),
                 exceptionMapper.exceptionClass()::cast)
             );
         }
-        return ResultOrErrorWrapper.ofErr(this.error, exceptionMapper);
+        return ResultOrRTE.ofErr(this.error, exceptionMapper);
     }
 
     @Override
-    public <E1 extends Exception> ResultOrErrorWrapper<T, E1> specError(
+    public <E1 extends Exception> ResultOrRTE<T, E1> specError(
         Class<E1> exceptionClass,
         Function<Exception, E1> wrapper
     ) {
         if (exceptionClass.isAssignableFrom(error.getClass())) {
-            return ResultOrErrorWrapper.ofErr(this.error, new ExceptionWrapper<>(exceptionClass, exceptionClass::cast));
+            return ResultOrRTE.ofErr(this.error, new ExceptionWrapper<>(exceptionClass, exceptionClass::cast));
         }
-        return ResultOrErrorWrapper.ofErr(this.error, new ExceptionWrapper<>(exceptionClass, wrapper));
+        return ResultOrRTE.ofErr(this.error, new ExceptionWrapper<>(exceptionClass, wrapper));
     }
 }

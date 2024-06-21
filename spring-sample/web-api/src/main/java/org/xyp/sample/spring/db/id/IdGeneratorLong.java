@@ -4,60 +4,48 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Service;
-import org.xyp.sample.spring.db.id.domain.BatchIdResult;
+import org.xyp.function.wrapper.exceptional.ResultOrError;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class IdGeneratorLong implements IdGenerator<Long> {
 
-    private final ConcurrentHashMap<String, BatchIdResult> idHolder = new ConcurrentHashMap<>();
-
-//    private final IncreaseIdDelegate increaseIdDelegate;
+    private final IdGeneratorLongDelegateDbTable delegateDbTable = new IdGeneratorLongDelegateDbTable();
 
     @Override
-    public <T> Long nextId(Class<T> entityClass) {
-        return nextId(entityClass.getName());
+    public <T, W> W nextId(
+        Class<T> entityClass,
+        Class<W> idWrapperClass,
+        String dialect,
+        JdbcConnectionAccessorFactory connectionGetter
+    ) {
+        return nextId(entityClass, idWrapperClass, 1, dialect, connectionGetter).stream().findFirst().orElseThrow(() -> new IdGenerationException(
+            "not able to generate id for " + entityClass.getName()));
     }
 
-    public Long nextId(String entityName) {
-//        idHolder.computeIfAbsent(entityName, increaseIdDelegate::initHolder);
-        final List<Long> resultHolder = new ArrayList<>();
-        val result = idHolder.compute(entityName, (eName, holder) ->
-            calcNextId(eName, holder, 1, resultHolder));
-        log.info("nextId of entityName : {} {} ", entityName, result);
-        return resultHolder.get(0);
-    }
-
-    private BatchIdResult calcNextId(String entityName, final BatchIdResult holder, int count, List<Long> resultHolder) {
-        val step = holder.step();
-        val map = IntStream.range(1, count + 1)
-            .boxed()
-            .collect(Collectors.partitioningBy(i -> (long) i * step + holder.last() <= holder.max()));
-
-        val withInCurrentHolders = LongStream.range(1, map.getOrDefault(Boolean.TRUE, List.of()).size() + 1)
-            .map(idx -> holder.last() + idx * step)
-            .boxed().toList();
-
-        resultHolder.addAll(withInCurrentHolders);
-
-        final int needExtendSize = map.getOrDefault(Boolean.FALSE, List.of()).size();
-        final long extendedAmount = (long) needExtendSize * step;
-        if (extendedAmount > 0) {
-//            val newResult = increaseIdDelegate.increaseIdInDb(entityName, extendedAmount);
-//            val extendedIds = LongStream.range(1L, needExtendSize + 1L)
-//                .boxed()
-//                .map(idx -> newResult.last() + step * idx).toList();
-//            resultHolder.addAll(extendedIds);
-//            return new BatchIdResult(newResult.last() + extendedAmount, newResult.max(), newResult.step(), newResult.fetchSize());
+    @Override
+    public <T, W> List<W> nextId(
+        Class<T> entityClass,
+        Class<W> idWrapperClass,
+        int fetchSize,
+        String dialect,
+        JdbcConnectionAccessorFactory connectionGetter
+    ) {
+        val ids = delegateDbTable.nextId(entityClass, fetchSize, dialect, connectionGetter);
+        if (idWrapperClass.isAssignableFrom(Long.class)) {
+            return ids.stream().map(idWrapperClass::cast).toList();
         }
-        return new BatchIdResult(holder.last() + (long) step * count, holder.max(), holder.step(), holder.fetchSize());
+        return ResultOrError.on(() -> {
+                val constructor = idWrapperClass.getConstructor(Long.TYPE);
+                return ids.stream()
+                    .map(id -> ResultOrError.on(() -> constructor.newInstance(id)).get())
+                    .toList();
+            }).specError(IdGenerationException.class, IdGenerationException::new)
+            .get();
+
     }
+
 }
