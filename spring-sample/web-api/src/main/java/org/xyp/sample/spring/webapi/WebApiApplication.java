@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.xyp.sample.spring.db.JdbcDbConfig;
-import org.xyp.sample.spring.webapi.domain.entity.jdbc.Task;
+import org.xyp.sample.spring.webapi.domain.entity.task.Task;
 
 @ComponentScan(basePackageClasses = {
     JdbcDbConfig.class,

@@ -6,7 +6,7 @@ public class IdValidatorLong {
     private IdValidatorLong() {}
 
     public static void validate(Long id) {
-        if (null == id || id <= 0) {
+        if (null == id || id < 0) {
             throw new ValidateException("id must be greater than 0");
         }
     }

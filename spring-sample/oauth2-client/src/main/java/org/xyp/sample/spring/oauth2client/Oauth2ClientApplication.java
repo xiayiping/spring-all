@@ -21,9 +21,9 @@ public class Oauth2ClientApplication {
     RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
             .route(rs -> rs
-                .path("/hello")
+                .path("/hello", "/api/**")
                 .filters(GatewayFilterSpec::tokenRelay)
-                .uri("http://localhost:8082")
+                .uri("http://127.0.0.1:8082")
             )
             .build();
     }

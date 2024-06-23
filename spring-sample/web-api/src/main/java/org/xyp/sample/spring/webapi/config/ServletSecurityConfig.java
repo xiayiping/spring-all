@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -32,15 +33,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity // this is for traditional web app
 //@EnableWebFluxSecurity // this is for webflux
 public class ServletSecurityConfig {
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
-    String introspectionUri;
-    AggregateReference<ServletSecurityConfig,Long> ss;
-    AbstractAggregateRoot rr;
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
-    String clientId;
 
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
-    String clientSecret;
+    //    @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
+//    String introspectionUri;
+
+//    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
+//    String clientId;
+
+//    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
+//    String clientSecret;
 
     //
     public ServletSecurityConfig() {
@@ -75,13 +76,17 @@ public class ServletSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http
             .authorizeHttpRequests((authorize) -> authorize
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
-            .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
-                        .introspectionUri(this.introspectionUri)
-                        .introspectionClientCredentials(this.clientId, this.clientSecret)
-                )
-            );
+            .oauth2ResourceServer(
+                config -> config.jwt(Customizer.withDefaults())
+            )
+//            .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
+//                        .introspectionUri(this.introspectionUri)
+//                        .introspectionClientCredentials(this.clientId, this.clientSecret)
+//                )
+//            )
+        ;
 
         return http.build();
     }

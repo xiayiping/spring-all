@@ -1,33 +1,34 @@
 package org.xyp.sample.spring.db;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
-import org.xyp.sample.spring.webapi.domain.entity.jdbc.Task;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.xyp.sample.spring.webapi.repository.jdbc.TaskDaoJdbc;
+import org.xyp.sample.spring.webapi.repository.jpa.TaskDaoJpa;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@AllArgsConstructor
+//@AllArgsConstructor
 @Configuration(
     proxyBeanMethods = false
 )
+@EnableJdbcRepositories(basePackageClasses = TaskDaoJdbc.class)
+@EnableJpaRepositories(basePackageClasses = TaskDaoJpa.class)
 public class JdbcDbConfig extends AbstractJdbcConfiguration {
+    List<?> converters = null;
 
-    final Task.TaskId.TaskIdReadingConverter taskIdReadingConverter;
-    final Task.TaskId.TaskIdWritingConverter taskIdWritingConverter;
+    public JdbcDbConfig(List<Converter<?, ?>> converters) {
+        this.converters = converters;
+    }
 
     @Override
     protected List<?> userConverters() {
-        val idConverters = Arrays.asList(
-            taskIdReadingConverter,
-            taskIdWritingConverter
-        );
 
-        log.info("create id converters {}", idConverters.stream().map(c -> c.getClass().getName()).toList());
-        return idConverters;
+        log.info("create id converters {}", converters.stream().map(c -> c.getClass().getName()).toList());
+        return converters;
     }
 }

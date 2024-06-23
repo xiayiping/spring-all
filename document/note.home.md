@@ -1,6 +1,63 @@
 <!-- Wrap your entire content in a div with a style attribute -->
 <div style="font-size: 1.2em;">
 
+# JPA
+
+## PrePersist action and domain events
+
+```java
+import org.springframework.data.domain.DomainEvents;
+
+@Entity
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String customerName;
+
+    private LocalDateTime creationDate;
+
+    @Transient
+    private List<Object> domainEvents = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        this.creationDate = LocalDateTime.now();
+        // Add the domain event to the list
+        domainEvents.add(new OrderCreatedEvent(this));
+    }
+
+    @DomainEvents
+    protected Collection<Object> domainEvents() {
+        return domainEvents;
+    }
+
+    @AfterDomainEventPublication
+    protected void clearDomainEvents() {
+        domainEvents.clear();
+    }
+}
+```
+
+```java
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public class OrderEventListener {
+
+    @EventListener
+    public void handleOrderCreatedEvent(OrderCreatedEvent event) {
+        Order order = event.getOrder();
+        // Handle the event (e.g., send a notification, update a status, etc.)
+        System.out.println("Order created: " + order.getId() + " for customer " + order.getCustomerName());
+    }
+}
+```
+
+# Encryption
+
 ## PKCE (Proof Key for Code Exchange) and SCRAM-SHA-256
 
 PKCE (Proof Key for Code Exchange) and SCRAM-SHA-256 (Salted Challenge Response Authentication Mechanism using SHA-256) are both mechanisms used to enhance security in authentication processes, but they serve different purposes and are used in different contexts.

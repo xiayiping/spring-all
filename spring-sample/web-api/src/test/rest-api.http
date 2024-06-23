@@ -1,0 +1,87 @@
+### POST Batch
+POST http://localhost:8082/api/batch
+Content-Type: application/json
+Accept: application/json
+
+{
+  "companyId": 222,
+  "batchName": "batch 222",
+  "batchRules": [
+    {
+      "ruleName": "efgh"
+    },
+    {
+      "ruleName": "abcd"
+    }
+  ]
+}
+
+### PUT Batch
+PUT http://localhost:8082/api/batch/351
+Content-Type: application/json
+Accept: application/json
+
+{
+  "companyId": 201,
+  "batchName": "batch 334",
+  "batchRules": [
+    {
+      "ruleName": "efgh",
+      "batchRuleDescriptions" : [{
+        "description" : "disc2"
+      }]
+    },
+    {
+      "ruleName": "abcd",
+      "batchRuleDescriptions" : [{
+        "description" : "disc222"
+      }]
+    }
+  ]
+}
+
+### PUT Task
+PUT http://localhost:8082/api/task/52851
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 52851,
+  "companyId": 1,
+  "employeeId": "effm",
+  "batch": {
+    "id": 2151,
+    "companyId": 2,
+    "batchName": "batch",
+    "batch": {
+      "id": 2151
+    }
+  }
+}
+
+### POST Task
+POST http://localhost:8082/api/task
+Content-Type: application/json
+Accept: application/json
+
+{
+  "companyId": 40,
+  "employeeId": "em40",
+  "batch": {
+    "id": 3151
+  }
+}
+
+### GET Batch
+GET http://localhost:8082/api/batch/1
+Accept: application/json
+
+### GET Task
+GET http://localhost:8082/api/task/63501
+Accept: application/json
+
+### GET Tasks
+GET http://localhost:8082/api/tasks?ids=53253,53201,53203
+Accept: application/json
+
+

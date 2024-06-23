@@ -1,14 +1,16 @@
 server:
   port: 8082
+  servlet:
+    context-path: /api
 
 spring:
   application:
     name: web
   datasource:
-    driver-class-name: ${qa_db_driver}
-    url: ${qa_db_url}
-    username: ${qa_db_user}
-    password: ${qa_db_token}
+    driver-class-name: ${test_db_driver_1}
+    url: ${test_db_url_1}
+    username: ${test_db_user_1}
+    password: ${test_db_token_1}
     hikari:
       maximum-pool-size: 3
   jpa:
@@ -26,7 +28,8 @@ spring:
         format_sql: true
         use_sql_comments: false
         generate_statistics: true
-        dialect: org.hibernate.dialect.SQLServerDialect
+        dialect: ${test_db_dialect_1}
+        default_schema: test
     open-in-view: false
     show-sql: true
   security:
@@ -36,10 +39,10 @@ spring:
           issuer-uri: "http://${v_host}:8081"
 #          issuer-uri: https://token.actions.githubusercontent.com
 #          jwk-set-uri: https://token.actions.githubusercontent.com/.well-known/jwks
-        opaquetoken:
-          client-id: "client-id"
-          client-secret: "secret"
-          introspection-uri: "url"
+#        opaquetoken:
+#          client-id: "client-id"
+#          client-secret: "secret"
+#          introspection-uri: "url"
 
 logging:
   config: classpath:log4j2-spring.xml
