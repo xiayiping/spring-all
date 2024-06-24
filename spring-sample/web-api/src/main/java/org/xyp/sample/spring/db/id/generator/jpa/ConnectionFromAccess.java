@@ -22,17 +22,17 @@ class ConnectionFromAccess implements /*ConnectionHolder,*/ JdbcConnectionAccess
         log.debug("</jdbcConnection action=\"release\" to=\"JdbcConnectionAccess\">");
         access.releaseConnection(connection);
     }
-//
-//    @Override
-//    public Connection connection() {
-//        return connection;
-//    }
 
     @Override
-    public Connection open() throws SQLException {
+    public Connection connection() {
+        return connection;
+    }
+
+    @Override
+    public ConnectionHolder open() throws SQLException {
         log.debug("<jdbcConnection action=\"obtain\" from=\"JdbcConnectionAccess\">");
         if (null == this.connection)
             this.connection = access.obtainConnection();
-        return connection;
+        return this;
     }
 }

@@ -18,17 +18,35 @@ import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
 
 import java.util.*;
 
+/**
+ * 实践下来，spring DATA jdbc并不好用 <br/>
+ * 1. strong typed id, 侵入式必须写writer/reader converter，<br/>
+ * 2. aggregate reference必须要类本身自带 generic type parameter，即使父类有，自己没有也不行 <br/>
+ * 3. aggregate leaf，不能有自己的id ，如必须要有，则只能为 List <br/>
+ * 4. 深aggregate leaf 查询时我发现会有 ambiguous id 问题 (sql server express ,  postgre 即使重复id field也没问题)<br/>
+ * 5. 默认不会为aggregate leaf生成 id ，即使已经定义了@Id 列
+ */
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
-// 并不能解决所有问题， 如果对方又在many side，又在本身List side 容易将最外层的变为ref
+@Data
+// 完整的object只会出现一次，且是第一次出现， 如果是第二次出现， 只会只有id reference
+// 并不能解决所有问题， 如果第一次出现是在某个aggregate root的leaf中， 那么第二次即使是个跟高层级的Object ， 也只会变成ref
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@org.springframework.data.relational.core.mapping.Table("batch")
+@org.springframework.data.relational.core.mapping.Table(schema = "test", name = "batch")
 @Entity
-@Table(name = "batch")
+@Table(schema = "test", name = "batch")
+@SqlResultSetMapping(
+    name = "batch",
+    classes = @ConstructorResult(
+        targetClass = Batch.class,
+        columns = {
+            @ColumnResult(name = "company_id", type = Integer.class),
+            @ColumnResult(name = "batch_name", type = String.class),
+        }
+    )
+)
 public class Batch implements HasId<Batch, Long> {
 
     @SuppressWarnings("deprecation")
@@ -59,36 +77,37 @@ public class Batch implements HasId<Batch, Long> {
         orphanRemoval = true
     )
     @JoinColumn(name = BatchRef.COLUMN)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     // have to be a 'List' for data-jdbc in order to force refresh the id
     // in data-jdbc the id for aggregate leaf is not needed, so have to do this tricky
     private List<BatchRule> batchRules;
 
     @PrePersist
     public void onPersist() {
-//        if (null == tasks) {
-//            return;
-//        }
         log.info("setup child rules refer to batch ......");
-//        if (null != batchRules) {
-//            batchRules.forEach(r -> r.setBatch(this));
-//        }
-//        tasks.forEach(t -> t.setBatch(this));
+        // can also put something in to event collection for being used by @DomainEvents
     }
 
     @DomainEvents
     protected Collection<Object> domainEvents() {
         log.info("fetch domain events ......");
+        // return the event
         return List.of();
     }
 
     @AfterDomainEventPublication
     protected void clearDomainEvents() {
         log.info("clear domain events ......");
-//        domainEvents.clear();
+//      clear the domain event :
     }
 
     @PersistenceCreator
-    public Batch(int companyId, String batchName) {
+    public Batch(Integer companyId, String batchName) {
+        log.info("create using parameterized constructure");
+        log.info("create using parameterized constructure");
+        log.info("create using parameterized constructure");
+        log.info("create using parameterized constructure");
         this.companyId = companyId;
         this.batchName = batchName;
     }
@@ -154,19 +173,6 @@ public class Batch implements HasId<Batch, Long> {
             ", batchName='" + batchName + '\'' +
             ", batchRules=" + batchRules +
             '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Batch batch = (Batch) o;
-        return companyId == batch.companyId && Objects.equals(id, batch.id) && Objects.equals(batchName, batch.batchName) && Objects.equals(batchRules, batch.batchRules);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, companyId, batchName, batchRules);
     }
 
     @Component

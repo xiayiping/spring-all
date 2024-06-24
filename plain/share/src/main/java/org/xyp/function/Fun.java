@@ -16,7 +16,14 @@ public class Fun {
         };
     }
 
-    public static <T> ExceptionalFunction<T, T> thenSelf(ExceptionalConsumer<T> consumer) {
+    public static <T> ExceptionalFunction<T, T> updateSelf(ExceptionalConsumer<T> consumer) {
+        return obj -> {
+            consumer.accept(obj);
+            return obj;
+        };
+    }
+
+    public static <T> ExceptionalFunction<T, T> consumeSelf(Consumer<T> consumer) {
         return obj -> {
             consumer.accept(obj);
             return obj;

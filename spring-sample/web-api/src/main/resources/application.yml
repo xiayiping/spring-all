@@ -44,5 +44,8 @@ spring:
 #          client-secret: "secret"
 #          introspection-uri: "url"
 
+mybatis:
+  mapper-locations: classpath:/mybatis/*.xml
+
 logging:
   config: classpath:log4j2-spring.xml

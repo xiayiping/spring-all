@@ -7,11 +7,10 @@ import org.springframework.data.relational.core.mapping.event.BeforeConvertCallb
 import org.springframework.stereotype.Service;
 import org.xyp.sample.spring.db.id.JdbcConnectionAccessorFactory;
 import org.xyp.sample.spring.db.id.domain.HasId;
+import org.xyp.sample.spring.db.id.generator.DatasourceConnectionHolderFactory;
 import org.xyp.sample.spring.db.id.generator.specific.IdGeneratorLong;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 @Slf4j
 @Service
@@ -50,23 +49,4 @@ public class BeforeConvertCallbackForLong<T> implements BeforeConvertCallback<Ha
         return aggregate;
     }
 
-    class DatasourceConnectionHolderFactory implements JdbcConnectionAccessorFactory {
-        private final DataSource dataSource;
-        private Connection connection;
-
-        DatasourceConnectionHolderFactory(DataSource dataSource) {
-            this.dataSource = dataSource;
-        }
-
-        @Override
-        public void close() throws Exception {
-            connection.close();
-        }
-
-        @Override
-        public Connection open() throws SQLException {
-            this.connection = dataSource.getConnection();
-            return connection;
-        }
-    }
 }

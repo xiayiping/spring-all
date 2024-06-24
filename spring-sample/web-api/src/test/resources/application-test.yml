@@ -6,17 +6,23 @@ spring:
     name: web
   datasource:
 #    driver-class-name: net.sourceforge.jtds.jdbc.Driver
-    driver-class-name: ${test_db_driver_1}
-    #    url: "jdbc:jtds:sqlserver://localhost/dev;instance=SQLEXPRESS;databaseName=dev;schema=test"
+#    url: "jdbc:jtds:sqlserver://localhost/dev;instance=SQLEXPRESS;databaseName=dev;schema=test"
+#    username: 'sa'
+#    password: 'matt.xia.12345'
+
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test
+    username: 'postgres'
+    password: 'matt.xia.12345'
+
+#    driver-class-name: ${test_db_driver_1}
 #    url: ${test_db_url_1}
-    username: ${test_db_user_1}
-    password: ${test_db_token_1}
+#    username: ${test_db_user_1}
+#    password: ${test_db_token_1}
     hikari:
       maximum-pool-size: 3
       connection-test-query: "select 1 "
-      schema: test
-#      jdbc-url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test
+#      schema: test
   jpa:
     hibernate:
       naming:
@@ -24,7 +30,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        default_batch_fetch_size: 100
+        default_batch_fetch_size: 20
         jdbc:
           batch_size: 100
           lob:
@@ -33,7 +39,8 @@ spring:
         use_sql_comments: false
         generate_statistics: true
 #        dialect: org.hibernate.dialect.SQLServerDialect
-        dialect: ${test_db_dialect_1}
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        dialect: ${test_db_dialect_1}
         default_schema: test
     open-in-view: false
     show-sql: true

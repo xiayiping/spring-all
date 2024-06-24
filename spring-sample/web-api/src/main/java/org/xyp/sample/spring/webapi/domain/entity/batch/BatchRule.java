@@ -23,9 +23,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@org.springframework.data.relational.core.mapping.Table("batch_rule")
+@org.springframework.data.relational.core.mapping.Table(schema = "test", name = "batch_rule")
 @Entity
-@Table(name = "batch_rule")
+@Table(schema = "test", name = "batch_rule")
 public class BatchRule implements HasId<BatchRule, Long> {
 
     // JPA need an ID field
@@ -43,15 +43,30 @@ public class BatchRule implements HasId<BatchRule, Long> {
 
 
     @MappedCollection(
-        idColumn = "rule_id"
-//        keyColumn = "id"
+        idColumn = "rule_id",
+        keyColumn = "description"
     )
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "batch_rule_desc", joinColumns = @JoinColumn(name = "rule_id"))
+    @CollectionTable(schema = "test", name = "batch_rule_desc", joinColumns = @JoinColumn(name = "rule_id"))
     private Set<BatchRuleDesc> batchRuleDescriptions;
-
     // don't need many to one here, because there's already @JoinColumn in @OneToMany side
+    // user below for one to one embedded with fk
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "address_id")
+//    @Embedded
+/////////////////////////////////////////////////
 
+
+    public BatchRule(BatchRuleId id, String ruleName) {
+        this.id = id;
+        this.ruleName = ruleName;
+    }
+
+    public BatchRule(Long id, String ruleName) {
+        if (null != id)
+            this.id = new BatchRuleId(id);
+        this.ruleName = ruleName;
+    }
 
     @Override
     public void refreshId(Long id) {
@@ -120,6 +135,14 @@ public class BatchRule implements HasId<BatchRule, Long> {
         public Long convert(IdWrapper<Long> source) {
             return source.id();
         }
+    }
+
+    public static void main(String[] args) {
+        val b = Batch.builder()
+            .batchName("1");
+        System.out.println(b.batchName("2"));
+        System.out.println(b.batchName("3"));
+        System.out.println(b.batchName("4"));
     }
 }
 

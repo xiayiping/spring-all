@@ -136,6 +136,7 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
                 return state.withLast(newLast);
             } else {
                 return WithCloseable.open(factory::open)
+                    .map(ConnectionHolder::connection)
                     .map(connection -> fetchAndUpdateIdInDB(
                         entityName,
                         fetchSize,
@@ -208,6 +209,7 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
      */
     private BatchIdResult fetchOrCreateIdBatchStateFromDB(String entityName, String dialect, JdbcConnectionAccessorFactory factory) {
         return WithCloseable.open(factory::open)
+            .map(ConnectionHolder::connection)
             .map(connection -> fetchOrCreateIdBatchStateFromDB(entityName, dialect, connection))
             .closeAndGet(IdGenerationException.class, IdGenerationException::new)
             ;
@@ -239,8 +241,8 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
     private BatchIdResult fetchIdBatchFromDB(String entityName, String dialect, Connection connection) {
         val getLastIdSql = getLastIdSqlByDialect(dialect);
         return WithCloseable.open(() -> connection.prepareStatement(getLastIdSql))
-            .map(Fun.thenSelf(ps -> log.info("fetch next id of entity {} {}", entityName, getLastIdSql)))
-            .map(Fun.thenSelf(ps -> ps.setString(1, entityName)))
+            .map(Fun.updateSelf(ps -> log.info("fetch next id of entity {} {}", entityName, getLastIdSql)))
+            .map(Fun.updateSelf(ps -> ps.setString(1, entityName)))
             .map(this::fetchIdBatchFromDB)
             .closeAndGetResult(IdGenerationException.class, IdGenerationException::new)
             .get()
@@ -270,15 +272,15 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
     private void initIdValueToTable(String entityName, BatchIdResult initBatch, String dialect, Connection connection) {
         val initIdValueSql = getInitIdValueSqlByDialect(dialect);
         WithCloseable.open(() -> connection.prepareStatement(initIdValueSql))
-            .map(Fun.thenSelf(ps -> log.info("init id info for entity {} {}", entityName, initIdValueSql)))
-            .map(Fun.thenSelf(ps -> {
+            .map(Fun.updateSelf(ps -> log.info("init id info for entity {} {}", entityName, initIdValueSql)))
+            .map(Fun.updateSelf(ps -> {
                 ps.setString(1, entityName);
                 ps.setLong(2, (long) initBatch.stepSize() * initBatch.fetchSize());
                 ps.setInt(3, initBatch.stepSize());
                 ps.setInt(4, initBatch.fetchSize());
             }))
-            .map(Fun.thenSelf(ps -> log.info("init id of entity {}", entityName)))
-            .map(Fun.thenSelf(this::initIdValueToTable))
+            .map(Fun.updateSelf(ps -> log.info("init id of entity {}", entityName)))
+            .map(Fun.updateSelf(this::initIdValueToTable))
             .closeAndGetResult(IdGenerationException.class, IdGenerationException::new)
             .get()
         ;
@@ -286,7 +288,7 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
 
     private void initIdValueToTable(PreparedStatement preparedStatement) {
         ResultOrError.on(preparedStatement::executeUpdate)
-            .map(Fun.thenSelf(i -> log.info("init id of entity, inserted row count {}", i)))
+            .map(Fun.updateSelf(i -> log.info("init id of entity, inserted row count {}", i)))
             .getResult(IdGenerationException.class, IdGenerationException::new)
             .get()
         ;
@@ -295,8 +297,8 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
     private void updateIdBatch(String entityName, long last, String dialect, Connection connection) {
         final var updateIdSql = getUpdateIdSqlByDialect(dialect);
         WithCloseable.open(() -> connection.prepareStatement(updateIdSql))
-            .map(Fun.thenSelf(ps -> log.info("update id for entity {} {} ", entityName, updateIdSql)))
-            .map(Fun.thenSelf(ps -> {
+            .map(Fun.updateSelf(ps -> log.info("update id for entity {} {} ", entityName, updateIdSql)))
+            .map(Fun.updateSelf(ps -> {
                 ps.setLong(1, last);
                 ps.setString(2, entityName);
             }))
@@ -308,7 +310,7 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
 
     private void updateIdBatch(PreparedStatement preparedStatement) {
         ResultOrError.on(preparedStatement::executeUpdate)
-            .map(Fun.thenSelf(i -> log.info("update id, updated row count {}", i)))
+            .map(Fun.updateSelf(i -> log.info("update id, updated row count {}", i)))
             .getResult(IdGenerationException.class, IdGenerationException::new)
             .get()
         ;
