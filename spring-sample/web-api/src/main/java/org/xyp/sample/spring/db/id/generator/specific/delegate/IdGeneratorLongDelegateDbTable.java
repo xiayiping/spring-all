@@ -223,7 +223,7 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
             final var holder = fetchIdBatchFromDB(entityName, dialect, connection);
 
             if (null == holder) {
-                val newHolder = new BatchIdResult(0L, DEFAULT_STEP_SIZE, DEFAULT_BATCH_SIZE);
+                val newHolder = new BatchIdResult(entityName, 0L, DEFAULT_STEP_SIZE, DEFAULT_BATCH_SIZE);
                 initIdValueToTable(entityName, newHolder, dialect, connection);
                 connection.commit();
                 return newHolder;
@@ -243,13 +243,13 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
         return WithCloseable.open(() -> connection.prepareStatement(getLastIdSql))
             .map(Fun.updateSelf(ps -> log.info("fetch next id of entity {} {}", entityName, getLastIdSql)))
             .map(Fun.updateSelf(ps -> ps.setString(1, entityName)))
-            .map(this::fetchIdBatchFromDB)
+            .map(ps -> this.fetchIdBatchFromDB(entityName, ps))
             .closeAndGetResult(IdGenerationException.class, IdGenerationException::new)
             .get()
             ;
     }
 
-    private BatchIdResult fetchIdBatchFromDB(PreparedStatement preparedStatement) {
+    private BatchIdResult fetchIdBatchFromDB(String entityName, PreparedStatement preparedStatement) {
         return WithCloseable.open(preparedStatement::executeQuery)
             .map(resultSet -> {
                 if (resultSet.next()) {
@@ -257,6 +257,7 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
                     val step = resultSet.getInt(2);
                     val fetchSize = resultSet.getInt(3);
                     return new BatchIdResult(
+                        entityName,
                         last,
                         step,
                         fetchSize

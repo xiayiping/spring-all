@@ -1,5 +1,6 @@
 package org.xyp.function.wrapper;
 
+import lombok.Getter;
 import org.xyp.function.Fun;
 import org.xyp.function.FunctionException;
 
@@ -9,6 +10,7 @@ import java.util.function.Function;
 
 public class ReturnResult<R, E extends Exception> {
     private final R result;
+    @Getter
     private final E exception;
 
     private ReturnResult(R result) {
@@ -31,7 +33,7 @@ public class ReturnResult<R, E extends Exception> {
 
     public R get() {
         if (null != exception) {
-            throw Fun.convertRte(exception, FunctionException.class, FunctionException::new);
+            throw Fun.convertRte(exception, RuntimeException.class, FunctionException::new);
         }
         return result;
     }
@@ -45,7 +47,7 @@ public class ReturnResult<R, E extends Exception> {
 
     public Optional<R> getOption() {
         if (null != exception) {
-            throw Fun.convertRte(exception, FunctionException.class, FunctionException::new);
+            throw Fun.convertRte(exception, RuntimeException.class, FunctionException::new);
         }
         return Optional.ofNullable(result);
     }
@@ -69,4 +71,9 @@ public class ReturnResult<R, E extends Exception> {
             consumer.accept(exception);
         }
     }
+
+    public boolean isSuccess() {
+        return null == exception;
+    }
+
 }

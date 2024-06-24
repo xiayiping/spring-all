@@ -4,29 +4,30 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 public class BatchIdResult {
-
+    final String name;
     final long prev;
     final long max;
     final int stepSize;
     final int fetchSize;
 
-    private BatchIdResult(long prev, long max, int stepSize, int fetchSize) {
+    private BatchIdResult(String name, long prev, long max, int stepSize, int fetchSize) {
+        this.name = name;
         this.prev = prev;
         this.max = max;
         this.stepSize = stepSize;
         this.fetchSize = fetchSize;
     }
 
-    public BatchIdResult(long prev, int stepSize, int fetchSize) {
-        this(prev, prev + (long) stepSize * fetchSize, stepSize, fetchSize);
+    public BatchIdResult(String name, long prev, int stepSize, int fetchSize) {
+        this(name, prev, prev + (long) stepSize * fetchSize, stepSize, fetchSize);
     }
 
     public BatchIdResult withLast(long newLast) {
-        return new BatchIdResult(newLast, max, stepSize, fetchSize);
+        return new BatchIdResult(name, newLast, max, stepSize, fetchSize);
     }
 
     public BatchIdResult withLastAndMax(long newLast, long newMax) {
-        return new BatchIdResult(newLast, newMax, stepSize, fetchSize);
+        return new BatchIdResult(name, newLast, newMax, stepSize, fetchSize);
     }
 
     public long prev() {

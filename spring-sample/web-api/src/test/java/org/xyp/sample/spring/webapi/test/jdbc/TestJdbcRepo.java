@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.xyp.sample.plain.share.All;
 import org.xyp.sample.spring.webapi.domain.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.entity.batch.BatchRule;
 import org.xyp.sample.spring.webapi.domain.entity.batch.BatchRuleDesc;
@@ -41,12 +40,6 @@ class TestJdbcRepo {
 
     @Autowired
     BatchDaoJdbc batchDaoJdbc;
-
-    @DisplayName("fetch from other project")
-    @Test
-    void testFetchFromPlainProj() {
-        Assertions.assertThat(All.ALL).isEqualTo(110);
-    }
 
     Task.TaskId id;
     Batch.BatchId bid;

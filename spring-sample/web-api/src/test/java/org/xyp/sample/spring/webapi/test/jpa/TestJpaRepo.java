@@ -94,7 +94,7 @@ class TestJpaRepo {
         batch.setBatchName("jpa new batck");
         batch.setBatchRules(
             batch.getBatchRules().stream()
-                .map(r -> Fun.update(r, rr -> rr.setRuleName(rr.getRuleName() + " dd")))
+                .map(Fun.consumeSelf(rr -> rr.setRuleName(rr.getRuleName() + " dd")))
                 .toList()
         );
         val savedBatch = batchDaoJpa.save(batch);

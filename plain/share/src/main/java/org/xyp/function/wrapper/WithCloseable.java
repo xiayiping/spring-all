@@ -62,7 +62,7 @@ public class WithCloseable<C extends AutoCloseable, T> {
         try (var closeable = closeableSupplier.get()) {
             return innerMapper.apply(closeable);
         } catch (Exception e) {
-            throw new FunctionException(e);
+            throw Fun.convertRte(e, RuntimeException.class, FunctionException::new);
         }
     }
 

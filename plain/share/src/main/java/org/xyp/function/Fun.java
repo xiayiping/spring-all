@@ -1,20 +1,10 @@
 package org.xyp.function;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Fun {
-    public static <T> T update(T t, Consumer<T> consumer) {
-        consumer.accept(t);
-        return t;
-    }
-
-    public static <T> ExceptionalSupplier<T> updateWithConsumer(T t, Consumer<T> consumer) {
-        return () -> {
-            consumer.accept(t);
-            return t;
-        };
-    }
 
     public static <T> ExceptionalFunction<T, T> updateSelf(ExceptionalConsumer<T> consumer) {
         return obj -> {
@@ -23,7 +13,7 @@ public class Fun {
         };
     }
 
-    public static <T> ExceptionalFunction<T, T> consumeSelf(Consumer<T> consumer) {
+    public static <T> Function<T, T> consumeSelf(Consumer<T> consumer) {
         return obj -> {
             consumer.accept(obj);
             return obj;
@@ -36,4 +26,19 @@ public class Fun {
         }
         return converter.apply(e);
     }
+
+    public static <R> Optional<R> cast(Object o, Class<R> target) {
+        if (null == o) {
+            return Optional.empty();
+        }
+        if (target.isAssignableFrom(o.getClass())) {
+            return Optional.of(target.cast(o));
+        }
+        return Optional.empty();
+    }
+
+    public static <R> Function<Object, Optional<R>> cast(Class<R> target) {
+        return o -> cast(o, target);
+    }
+
 }

@@ -42,7 +42,7 @@ public class ResultOrError<R> {
         );
     }
 
-    public ResultOrError<Optional<R>> mapToOptional(Predicate<? super R> predicate) {
+    public ResultOrError<Optional<R>> mapToOptional() {
         return new ResultOrError<>(
             () -> Optional.ofNullable(supplier.get())
         );
@@ -60,11 +60,44 @@ public class ResultOrError<R> {
         );
     }
 
+    public <U> ResultOrError<U> noExMap(Function<? super R, ? extends U> mapper) {
+        return new ResultOrError<>(
+            () -> {
+                val innerResult = supplier.get();
+                if (null != innerResult) {
+                    return mapper.apply(innerResult);
+                }
+                return null;
+            }
+        );
+    }
+
+    public <U> ResultOrError<U> flatMap(ExceptionalFunction<? super R, Optional<U>> mapper) {
+        return new ResultOrError<>(
+            () -> {
+                val innerResult = supplier.get();
+                if (null != innerResult) {
+                    val optional = mapper.apply(innerResult);
+                    return optional.orElse(null);
+                }
+                return null;
+            }
+        );
+    }
+
     public R get() {
         try {
             return supplier.get();
         } catch (Exception e) {
-            throw new FunctionException(e);
+            throw Fun.convertRte(e, RuntimeException.class, FunctionException::new);
+        }
+    }
+
+    public <E extends RuntimeException> Optional<R> getOption() {
+        try {
+            return Optional.ofNullable(supplier.get());
+        } catch (Exception e) {
+            throw Fun.convertRte(e, RuntimeException.class, FunctionException::new);
         }
     }
 
@@ -76,15 +109,19 @@ public class ResultOrError<R> {
         }
     }
 
-    public ReturnResult<R, FunctionException> getResult() {
+    public <E extends RuntimeException> Optional<R> getOption(Class<E> target, Function<Exception, E> exceptionMapper) {
+        try {
+            return Optional.ofNullable(supplier.get());
+        } catch (Exception e) {
+            throw Fun.convertRte(e, target, exceptionMapper);
+        }
+    }
+
+    public ReturnResult<R, Exception> getResult() {
         try {
             return ReturnResult.ofResult(supplier.get());
         } catch (Exception e) {
-            return ReturnResult.ofError(Fun.convertRte(
-                e,
-                FunctionException.class,
-                FunctionException::new
-            ));
+            return ReturnResult.ofError(e);
         }
     }
 
