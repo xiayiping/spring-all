@@ -59,6 +59,7 @@ class TestJpaRepo {
     void testTask() {
         val taskOpt = taskDaoJpa.findById(Task.TaskId.of(103L));
         System.out.println(taskOpt);
+        Assertions.assertThat(taskOpt).isNotEmpty();
 
     }
 
@@ -117,17 +118,17 @@ class TestJpaRepo {
     @Order(10)
     @DisplayName("test save many tasks")
     void testSaveTask() {
-        val bt = batchDaoJpa.findById(id).get();
+        val btch = batchDaoJpa.findById(id).get();
         val tasks1 = IntStream.range(0, 97)
             .mapToObj(i -> Task.builder().companyId(i).employeeId("em")
-                .batch(Batch.BatchRef.of(bt))
+                .batch(Batch.BatchRef.of(btch))
                 .build())
             .toList();
         taskDaoJpa.saveAll(tasks1);
 
         val tasks2 = IntStream.range(0, 98)
             .mapToObj(i -> Task.builder().companyId(i).employeeId("em")
-                .batch(Batch.BatchRef.of(bt))
+                .batch(Batch.BatchRef.of(btch))
                 .build())
             .toList();
         val last = taskDaoJpa.saveAll(tasks2).getLast();
@@ -156,7 +157,6 @@ class TestJpaRepo {
     @Order(30)
     @DisplayName("test fetch last saved batch")
     void testSaveBatch2() {
-//        val fetchedBatch = batchDaoJpa.findById(id);
         val fetchedBatch = batchDaoJpa.findWithRulesById(id);
         Assertions.assertThat(fetchedBatch).isNotEmpty();
     }
@@ -190,6 +190,6 @@ class TestJpaRepo {
         log.info("find by id {}", id);
         Assertions.assertThatThrownBy(() -> {
             batchRecordDaoJpa.findWithRulesById(id);
-        });
+        }).isInstanceOf(RuntimeException.class);
     }
 }

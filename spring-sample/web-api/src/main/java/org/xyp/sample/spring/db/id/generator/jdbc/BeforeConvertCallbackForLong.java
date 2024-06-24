@@ -36,7 +36,7 @@ public class BeforeConvertCallbackForLong<T> implements BeforeConvertCallback<Ha
         return setIds(aggregate, factory);
     }
 
-    private <TT> HasId<TT, Long> setIds(HasId<TT, Long> aggregate, JdbcConnectionAccessorFactory factory) {
+    private <U> HasId<U, Long> setIds(HasId<U, Long> aggregate, JdbcConnectionAccessorFactory factory) {
         if (null == aggregate.peekId()) {
             val id = idGenerator.nextId(aggregate.identityGeneratorName(), dialect, factory);
             log.debug("set id for {} to {}", aggregate, id);

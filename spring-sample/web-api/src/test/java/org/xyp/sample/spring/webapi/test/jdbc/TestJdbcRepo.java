@@ -114,8 +114,4 @@ class TestJdbcRepo {
         Assertions.assertThat(task.get().getBatch()).isNotNull();
     }
 
-    @Test
-    @DisplayName("fetch task")
-    void testBatch() {
-    }
 }

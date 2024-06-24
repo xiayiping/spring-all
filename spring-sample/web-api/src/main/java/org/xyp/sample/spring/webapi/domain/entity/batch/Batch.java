@@ -105,9 +105,6 @@ public class Batch implements HasId<Batch, Long> {
     @PersistenceCreator
     public Batch(Integer companyId, String batchName) {
         log.info("create using parameterized constructure");
-        log.info("create using parameterized constructure");
-        log.info("create using parameterized constructure");
-        log.info("create using parameterized constructure");
         this.companyId = companyId;
         this.batchName = batchName;
     }

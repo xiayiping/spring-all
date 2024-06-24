@@ -3,6 +3,7 @@ package org.xyp.sample.spring.webapi.domain.entity.batch;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
@@ -13,11 +14,11 @@ import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.domain.IdWrapper;
 import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Getter
 @Setter
 @AllArgsConstructor
@@ -135,14 +136,6 @@ public class BatchRule implements HasId<BatchRule, Long> {
         public Long convert(IdWrapper<Long> source) {
             return source.id();
         }
-    }
-
-    public static void main(String[] args) {
-        val b = Batch.builder()
-            .batchName("1");
-        System.out.println(b.batchName("2"));
-        System.out.println(b.batchName("3"));
-        System.out.println(b.batchName("4"));
     }
 }
 
