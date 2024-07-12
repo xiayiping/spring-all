@@ -17,6 +17,9 @@
 
     * [Authenticate with JWT](#authenticate-with-jwt)
 <!-- TOC -->
+<!-- Wrap your entire content in a div with a style attribute -->
+<div style="font-size: 1.4em;">
+
 
 # spring-all
 
@@ -538,13 +541,22 @@ WB is Waiting
     - 租户
     - 公司
     - 个人
+- 运维考虑
+  - 数据备份
 
 - exception
   - 需要有初始化message
+  - 或者有root cause exception
 - batch 处理的接口
   - 按每个步骤处理所有的item，再接下去下一个步骤
     - 此方法便于将每个步骤分别设置一个单独的接口，并且某些步骤批量处理性能会好
 - controller
   - 如果有按controller path配置authorization的情况，可以考虑抽出一层controller shared service，作为分发
-    因为可能两个conroller有同样的接口。
+    因为可能两个controller有同样的接口。
     如果有一层抽象的controller-service dispatcher 层，那么controller层代码就很简化，@preauth注释可以考虑放在代码里面，减少代码复杂性
+
+
+
+
+
+</div>

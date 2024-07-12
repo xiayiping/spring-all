@@ -1,37 +1,18 @@
 package org.xyp.sample.spring.oauth2client;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.boot.autoconfigure.security.reactive.StaticResourceRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebSession;
-import org.springframework.web.server.session.WebSessionManager;
-import reactor.core.publisher.Mono;
-
-import java.net.URI;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher.MatchResult;
@@ -52,8 +33,7 @@ public class Oauth2ClientWebConfig {
         log.info("use customized ico filter chain ......");
         http
             .securityMatcher(staticMatcher)
-
-            .authorizeExchange((exchange) -> exchange
+            .authorizeExchange(exchange -> exchange
                 .anyExchange().permitAll()
             );
         return http.build();

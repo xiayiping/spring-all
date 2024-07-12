@@ -7,11 +7,18 @@ spring:
   application:
     name: web
   datasource:
-    driver-class-name: ${test_db_driver_1}
-    url: ${test_db_url_1}
-    username: ${test_db_user_1}
-    password: ${test_db_token_1}
+#    driver-class-name: ${test_db_driver_1}
+#    url: ${test_db_url_1}
+#    username: ${test_db_user_1}
+#    password: ${test_db_token_1}
+
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test
+    username: 'postgres'
+    password: 'matt.xia.12345'
+
     hikari:
+      connection-test-query: "select 1 "
       maximum-pool-size: 3
   jpa:
     hibernate:
@@ -28,7 +35,8 @@ spring:
         format_sql: true
         use_sql_comments: false
         generate_statistics: true
-        dialect: ${test_db_dialect_1}
+#        dialect: ${test_db_dialect_1}
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: test
     open-in-view: false
     show-sql: true
@@ -43,6 +51,15 @@ spring:
 #          client-id: "client-id"
 #          client-secret: "secret"
 #          introspection-uri: "url"
+
+management:
+  health:
+    influxdb:
+      enabled: false
+  influx:
+    metrics:
+      export:
+        enabled: false
 
 mybatis:
   mapper-locations: classpath:/mybatis/*.xml

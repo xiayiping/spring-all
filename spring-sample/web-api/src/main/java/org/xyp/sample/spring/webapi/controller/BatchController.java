@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.web.bind.annotation.*;
+import org.xyp.sample.spring.tracing.Trace;
 import org.xyp.sample.spring.webapi.domain.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.entity.task.Task;
 import org.xyp.sample.spring.webapi.repository.jpa.BatchDaoJpa;
@@ -37,8 +38,10 @@ public class BatchController {
         return taskDaoJpa.save(task);
     }
 
+    @Trace(value = "batch.get")
     @GetMapping("/batch/{id}")
     public Batch batch(@PathVariable Long id) {
+        batchService.dummy();
         return batchDaoJpa.findWithRulesById(Batch.BatchId.of(id)).get();
     }
 

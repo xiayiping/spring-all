@@ -25,6 +25,11 @@ public class Oauth2ClientApplication {
                 .filters(GatewayFilterSpec::tokenRelay)
                 .uri("http://127.0.0.1:8082")
             )
+            .route(rs -> rs
+                .path("/**")
+                .filters(GatewayFilterSpec::tokenRelay)
+                .uri("http://127.0.0.1:3000")
+            )
             .build();
     }
 }

@@ -19,7 +19,7 @@ firewall-cmd --list-all
 sudo firewall-cmd --zone=public --add-port=8100/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=8301/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=1300/tcp --permanent
-sudo firewall-cmd --reload
+sudo firewall-cmd --reloadsudo firewall-cmd --reloadsudo firewall-cmd --reload
 ```
 
 ## selinux
@@ -218,3 +218,5 @@ providing a standardized way to authenticate users and obtain identity tokens.
      - exp (expiration): The expiration time of the token.
 6. User Information:
    - The OIDC client can use the access token to request additional user information from the OpenID provider's userinfo endpoint.
+
+SpringOpaqueTokenIntrospector is used for obtain opa

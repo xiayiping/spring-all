@@ -185,7 +185,7 @@ vault read -ca-path=${v_ca} \
   ${pki_path}/issuer/$(vault list -ca-path=${v_ca} \
                         -format=json ${pki_path}/issuers/ \
                         | jq -r '.[0]') \
-  | tail -n 6
+                    | tail -n 6
 ### ckeck done
 
 # create role
@@ -441,3 +441,97 @@ vault read -ca-path=./ca.pem -format=json \
 ----
 
 https://www.hashicorp.com/blog/certificate-management-with-vault
+
+
+== practice
+
+=== CA ROOT
+[source, shell]
+----
+## PKI means Public Key Infrastructure
+export pki_path="pki/xyp"
+vault secrets disable ${pki_path}
+# can the secrets engine name contains '/' ?
+vault secrets enable -path=${pki_path} pki
+vault secrets tune -max-lease-ttl=3650d  -description="localhost certificate" ${pki_path}
+vault write -format=json ${pki_path}/root/generate/internal common_name=myvault.com ttl=3650d   # must be /root/generate/internal ? YES !
+# When you enable a secrets engine in Vault, you specify a mount path. All operations for that secrets engine are relative to this mount path.
+# For example, if you mount the PKI secrets engine at the default path pki/, the full path to generate a root certificate becomes pki/root/generate/internal.
+
+# if you access below 2 urls, vault will make you down load the cer and crl files.
+# the the url of the file is FIXED, so that's wired, probably you can keep the file on your own web-site rather than vaults'
+vault write -format=json ${pki_path}/config/urls issuing_certificates="${VAULT_ADDR}/v1/${pki_path}/ca" crl_distribution_points="${VAULT_ADDR}/${pki_path}/crl"
+
+# issuer commands
+## below will create a new issuer, comment out to avoid really create
+#vault write ${pki_path}/root/generate/internal common_name='127.0.0.1' ttl=3650d
+# list issuers (root certificate)
+vault list -format=json ${pki_path}/issuers
+vault read -format=json ${pki_path}/issuer/$(vault list -format=json ${pki_path}/issuers | jq -r '.[0]' )
+vault read -format=json ${pki_path}/issuer/$(vault list -format=json ${pki_path}/issuers | jq -r '.[0]' ) | jq -r '.data.certificate' | openssl x509 -text -noout
+## when you create a root certificate, you create an issuer at the mean time.
+
+
+# Configure a role
+export role_name='example-localhost'
+vault write -format=json ${pki_path}/roles/${role_name} allowed_domains='myvault.com' allow_subdomains=true allow_ip_sans=true max_ttl=72h
+# role issue certificate, will issue a cert directly under root ca, so comment it out
+#vault write ${pki_path}/issue/${role_name} common_name=abc.myvault.com ip_sans='127.0.0.1,192.168.1.1'
+
+#################################
+
+## delete issuer
+## https://developer.hashicorp.com/vault/api-docs/secret/pki#delete-issuer
+vault delete ${pki_path}/issuer/88b7dbb8-e226-fd1f-e45c-72c0d6e3ce80
+## set default issuer
+vault write $pki_path/config/issuers default=2c556a8e-50a2-f554-4422-784981155811
+
+## revoke certificate
+vault list ${pki_path}/certs
+vault write ${pki_path}/revoke serial_number=77:73:c1:18:ab:59:0d:3c:e2:ee:f6:f0:b0:e6:ad:5c:e3:4f:57:1f
+vault delete ${pki_path}/certs/77:73:c1:18:ab:59:0d:3c:e2:ee:f6:f0:b0:e6:ad:5c:e3:4f:57:1f
+----
+
+=== CA INTERMEDIATE
+[source,shell]
+----
+export pki_int_path="pki/xyp-int"
+vault secrets disable ${pki_int_path}
+vault secrets enable -path=${pki_int_path} pki
+# can't use pki/xyp/int ,  path is already in use at pki/xyp/
+
+vault secrets tune -max-lease-ttl=3650d ${pki_int_path}
+
+vault write -format=json ${pki_int_path}/config/urls issuing_certificates="${VAULT_ADDR}/v1/${pki_int_path}/ca" crl_distribution_points="${VAULT_ADDR}/${pki_int_path}/crl"
+
+# create the key
+vault write -format=json ${pki_int_path}/intermediate/generate/internal common_name="myvault.com Intermediate Authority" ttl=43800h > key.resp.json
+cat ./key.resp.json
+cat ./key.resp.json | jq -r '.data.csr'
+cat ./key.resp.json | jq -r '.data.csr' > pki_int.csr
+
+#Take the signing request from the intermediate authority and sign it using another certificate authority, in this case the root certificate authority generated in the first example.
+vault write -format=json ${pki_path}/root/sign-intermediate csr=@pki_int.csr format=pem_bundle ttl=43800h > signed.json
+cat ./signed.json | jq -r '.data.certificate'
+cat ./signed.json | jq -r '.data.certificate' > signed_cert.pem
+#Now set the intermediate certificate authorities signing certificate to the root-signed certificate.
+vault write -format=json ${pki_int_path}/intermediate/set-signed certificate=@signed_cert.pem
+
+# create role
+#     allowed_domains="myvault.com" \
+export role_name_int='int-localhost'
+vault write -format=json ${pki_int_path}/roles/${role_name_int} \
+    issuer_ref="$(vault read -field=default ${pki_int_path}/config/issuers)" \
+    allow_subdomains=true \
+    allowed_domains=myvault.com \
+    allow_ip_sans=true \
+    max_ttl="720h"
+
+#vault delete  ${pki_int_path}/roles/example-dot-com
+
+# issue certificate
+vault write -format=json ${pki_int_path}/issue/${role_name_int} \
+    common_name=blah.myvault.com \
+    ip_sans='127.0.0.1,192.168.1.1' > leaf.cert.json
+
+----

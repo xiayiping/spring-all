@@ -34,14 +34,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 //@EnableWebFluxSecurity // this is for webflux
 public class ServletSecurityConfig {
 
-    //    @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
-//    String introspectionUri;
+    @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
+    String introspectionUri;
 
-//    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
-//    String clientId;
+    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
+    String clientId;
 
-//    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
-//    String clientSecret;
+    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
+    String clientSecret;
 
     //
     public ServletSecurityConfig() {
@@ -54,13 +54,13 @@ public class ServletSecurityConfig {
         HttpSecurity http
     ) throws Exception {
         log.info("creating webflux springSecurityFilterChain ......");
-//        http.authorizeHttpRequests(
-//            cus -> cus.requestMatchers("/hello").authenticated()
-//                .requestMatchers("/*").permitAll()
-//        )
-////            .oauth2Login(Customizer.withDefaults())
-////            .formLogin(Customizer.withDefaults())
-//        ;
+        http.authorizeHttpRequests(
+            cus -> cus.requestMatchers("/hello").authenticated()
+                .requestMatchers("/*").permitAll()
+        )
+//            .oauth2Login(Customizer.withDefaults())
+//            .formLogin(Customizer.withDefaults())
+        ;
 //        http.addFilterBefore(new SomeServletFilter(), AuthorizationFilter.class);
 //        http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(
@@ -78,14 +78,14 @@ public class ServletSecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                 .anyRequest().permitAll()
             )
-            .oauth2ResourceServer(
-                config -> config.jwt(Customizer.withDefaults())
-            )
-//            .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
-//                        .introspectionUri(this.introspectionUri)
-//                        .introspectionClientCredentials(this.clientId, this.clientSecret)
-//                )
+//            .oauth2ResourceServer(
+//                config -> config.jwt(Customizer.withDefaults())
 //            )
+            .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
+                        .introspectionUri(this.introspectionUri)
+                        .introspectionClientCredentials(this.clientId, this.clientSecret)
+                )
+            )
         ;
 
         return http.build();

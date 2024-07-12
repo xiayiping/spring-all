@@ -27,7 +27,7 @@ import java.util.Set;
 @org.springframework.data.relational.core.mapping.Table(schema = "test", name = "batch_rule")
 @Entity
 @Table(schema = "test", name = "batch_rule")
-public class BatchRule implements HasId<BatchRule, Long> {
+public class BatchRule implements HasId<Long> {
 
     // JPA need an ID field
     @SuppressWarnings("deprecation")
@@ -70,7 +70,7 @@ public class BatchRule implements HasId<BatchRule, Long> {
     }
 
     @Override
-    public void refreshId(Long id) {
+    public void putGeneratedId(Long id) {
         this.id = BatchRuleId.of(id);
     }
 

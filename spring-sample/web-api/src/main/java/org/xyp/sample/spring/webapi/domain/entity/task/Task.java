@@ -29,7 +29,7 @@ import java.util.Optional;
 @org.springframework.data.relational.core.mapping.Table("task")
 @Entity
 @Table(name = "task")
-public class Task implements HasId<Task, Long> {
+public class Task implements HasId<Long> {
 
     // @IdGeneratorType not supported yet
     // @CustomSequence(name = "sss", target = TaskId.class)
@@ -71,7 +71,7 @@ public class Task implements HasId<Task, Long> {
     }
 
     @Override
-    public void refreshId(Long id) {
+    public void putGeneratedId(Long id) {
         this.id = TaskId.of(id);
     }
 

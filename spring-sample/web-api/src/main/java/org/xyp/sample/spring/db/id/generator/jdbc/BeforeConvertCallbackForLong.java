@@ -1,10 +1,11 @@
 package org.xyp.sample.spring.db.id.generator.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.data.relational.core.mapping.event.BeforeConvertCallback;
 import org.springframework.stereotype.Service;
+import org.xyp.function.Fun;
+import org.xyp.function.wrapper.ResultOrError;
 import org.xyp.sample.spring.db.id.JdbcConnectionAccessorFactory;
 import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.generator.DatasourceConnectionHolderFactory;
@@ -14,7 +15,7 @@ import javax.sql.DataSource;
 
 @Slf4j
 @Service
-public class BeforeConvertCallbackForLong<T> implements BeforeConvertCallback<HasId<T, Long>> {
+public class BeforeConvertCallbackForLong implements BeforeConvertCallback<HasId<Long>> {
 
     final IdGeneratorLong idGenerator;
     final DataSource dataSource;
@@ -31,21 +32,20 @@ public class BeforeConvertCallbackForLong<T> implements BeforeConvertCallback<Ha
     }
 
     @Override
-    public HasId<T, Long> onBeforeConvert(HasId<T, Long> aggregate) {
-        val factory = new DatasourceConnectionHolderFactory(dataSource);
-        return setIds(aggregate, factory);
+    public HasId<Long> onBeforeConvert(HasId<Long> aggregate) {
+        return setIds(aggregate, new DatasourceConnectionHolderFactory(dataSource));
     }
 
-    private <U> HasId<U, Long> setIds(HasId<U, Long> aggregate, JdbcConnectionAccessorFactory factory) {
+    private HasId<Long> setIds(HasId<Long> aggregate, JdbcConnectionAccessorFactory factory) {
         if (null == aggregate.peekId()) {
-            val id = idGenerator.nextId(aggregate.identityGeneratorName(), dialect, factory);
-            log.debug("set id for {} to {}", aggregate, id);
-            aggregate.refreshId(id);
+            ResultOrError.on(() -> idGenerator.nextId(aggregate.identityGeneratorName(), dialect, factory))
+                .map(Fun.updateSelf(id -> log.info("set id for {} to {}", aggregate, id)))
+                .map(Fun.updateSelf(aggregate::putGeneratedId))
+                .get();
         }
-        val leaves = aggregate.leaves();
-        if (null != leaves) {
-            leaves.forEach(lv -> setIds(lv, factory));
-        }
+        ResultOrError.on(aggregate::leaves)
+            .map(Fun.updateSelf(leaves -> leaves.forEach(lv -> setIds(lv, factory))))
+            .get();
         return aggregate;
     }
 

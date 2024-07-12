@@ -25,7 +25,7 @@ public class HelloController {
     final ApplicationContext applicationContext;
 
     @GetMapping("")
-    public Map<String, String> hello(Authentication authentication) {
+    public Map<String, Object> hello(Authentication authentication) {
         if (applicationContext.containsBean("dispatcherServlet")) {
             System.out.println("Running in Spring MVC mode.");
         }

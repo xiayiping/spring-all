@@ -13,6 +13,7 @@ import org.springframework.data.domain.AfterDomainEventPublication;
 import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.stereotype.Component;
+import org.xyp.function.Fun;
 import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
 
@@ -47,7 +48,7 @@ import java.util.*;
         }
     )
 )
-public class Batch implements HasId<Batch, Long> {
+public class Batch implements HasId<Long> {
 
     @SuppressWarnings("deprecation")
     @org.springframework.data.annotation.Id
@@ -110,10 +111,11 @@ public class Batch implements HasId<Batch, Long> {
     }
 
     @Override
-    public void refreshId(Long id) {
+    public void putGeneratedId(Long id) {
         this.id = BatchId.of(id);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<BatchRule> leaves() {
         return batchRules;

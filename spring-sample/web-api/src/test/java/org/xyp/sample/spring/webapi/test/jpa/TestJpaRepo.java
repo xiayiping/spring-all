@@ -54,15 +54,6 @@ class TestJpaRepo {
     @Autowired
     BatchDaoMybatis batchDaoMybatis;
 
-    @Test
-    @DisplayName("test 0")
-    void testTask() {
-        val taskOpt = taskDaoJpa.findById(Task.TaskId.of(103L));
-        System.out.println(taskOpt);
-        Assertions.assertThat(taskOpt).isNotEmpty();
-
-    }
-
     Batch.BatchId id = null;
     Batch bt = null;
 

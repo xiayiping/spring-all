@@ -55,4 +55,6 @@
 
     </dependencyManagement>
 
+    <build></build>
+
 </project>

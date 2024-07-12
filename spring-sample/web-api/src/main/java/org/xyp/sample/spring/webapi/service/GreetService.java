@@ -12,7 +12,7 @@ import java.util.Map;
 public class GreetService {
 
     @PreAuthorize("hasAnyAuthority('SCOPE_user.read')")
-    public Map<String, String> greet() {
+    public Map<String, Object> greet() {
         val jwt = SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
         return Map.of("message", "hello, " + jwt);

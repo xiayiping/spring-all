@@ -22,6 +22,10 @@ groups username
 id user
 ```
 
+## add user 
+```shell
+useradd -g group_name -m -s /bin/bash -d /home/username username
+```
 
 ## Create a Systemd Service File
 Create a systemd service file for your Node.js application. This file tells systemd how to manage your application.

@@ -1,6 +1,7 @@
 package org.xyp.function.wrapper;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.xyp.function.Fun;
 import org.xyp.function.FunctionException;
 
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Slf4j
 public class ReturnResult<R, E extends Exception> {
     private final R result;
     @Getter
@@ -52,6 +54,14 @@ public class ReturnResult<R, E extends Exception> {
         return Optional.ofNullable(result);
     }
 
+    public Optional<R> getOptionEvenErr() {
+        if (null != exception) {
+            log.warn("return empty optional for error {}", exception.getClass().getName(), exception);
+            return Optional.empty();
+        }
+        return Optional.ofNullable(result);
+    }
+
     public <RTE extends RuntimeException> Optional<R> getOption(Function<E, RTE> exceptionMapper) {
         if (null != exception) {
             throw exceptionMapper.apply(exception);
@@ -75,5 +85,4 @@ public class ReturnResult<R, E extends Exception> {
     public boolean isSuccess() {
         return null == exception;
     }
-
 }
