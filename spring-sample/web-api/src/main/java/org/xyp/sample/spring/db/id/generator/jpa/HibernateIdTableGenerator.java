@@ -54,7 +54,7 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
                 val constructor = idClass.getConstructor(id.getClass()); // Long.TYPE for long
                 return constructor.newInstance(id);
             })
-            .get(IdGenerationException.class, IdGenerationException::new)
+            .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
             ;
     }
 

@@ -22,11 +22,11 @@ public class JwtConverter {
 
     public JwtAuthentication convertJwtToken(String token) {
         val signedJWT = ResultOrError.on(() -> SignedJWT.parse(token))
-            .get(IllegalArgumentException.class, IllegalArgumentException::new);
+            .getOrSpecError(IllegalArgumentException.class, IllegalArgumentException::new);
 
         val verified = ResultOrError.on(() -> new MACVerifier(Optional.ofNullable(jwtSecret).orElse(DEFAULT_SECRET)))
             .map(signedJWT::verify)// Create HMAC verifier
-            .get(IllegalArgumentException.class, IllegalArgumentException::new);
+            .getOrSpecError(IllegalArgumentException.class, IllegalArgumentException::new);
 
         if (verified) {
             return ResultOrError.on(() -> {
@@ -45,7 +45,7 @@ public class JwtConverter {
                     claimsSet.getStringClaim("name"),
                     roles
                 );
-            }).get(IllegalArgumentException.class, IllegalArgumentException::new);
+            }).getOrSpecError(IllegalArgumentException.class, IllegalArgumentException::new);
         } else {
             throw new IllegalArgumentException();
         }

@@ -6,6 +6,7 @@ import org.xyp.function.*;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * map 函数为递归 lazy 调用，可以保留链式调用的调用栈<br/>
@@ -42,9 +43,15 @@ public class ResultOrError<R> {
         );
     }
 
-    public ResultOrError<Optional<R>> mapToOptional() {
+    public ResultOrError<R> switchIfEmpty(Supplier<R> emptySupplier) {
         return new ResultOrError<>(
-            () -> Optional.ofNullable(supplier.get())
+            () -> {
+                val innerResult = supplier.get();
+                if (null != innerResult) {
+                    return innerResult;
+                }
+                return emptySupplier.get();
+            }
         );
     }
 
@@ -101,7 +108,7 @@ public class ResultOrError<R> {
         }
     }
 
-    public <E extends RuntimeException> R get(Class<E> target, Function<Throwable, E> exceptionMapper) {
+    public <E extends RuntimeException> R getOrSpecError(Class<E> target, Function<Throwable, E> exceptionMapper) {
         try {
             return supplier.get();
         } catch (Throwable e) {
@@ -109,7 +116,7 @@ public class ResultOrError<R> {
         }
     }
 
-    public <E extends RuntimeException> Optional<R> getOption(Class<E> target, Function<Throwable, E> exceptionMapper) {
+    public <E extends RuntimeException> Optional<R> getOptionOrSpecError(Class<E> target, Function<Throwable, E> exceptionMapper) {
         try {
             return Optional.ofNullable(supplier.get());
         } catch (Throwable e) {
@@ -125,10 +132,10 @@ public class ResultOrError<R> {
         }
     }
 
-    public <E extends RuntimeException> Result<R, E> getResult(Class<E> target, Function<Throwable, E> exceptionMapper) {
+    public <E extends RuntimeException> Result<R, E> getResultOrSpecError(Class<E> target, Function<Throwable, E> exceptionMapper) {
         try {
             return Result.success(supplier.get());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return Result.failure(Fun.convertRte(e, target, exceptionMapper));
         }
     }
