@@ -170,7 +170,7 @@ class ResultOrErrorTest {
             .getResult(ValidateException.class, ex -> new ValidateException(ex.getMessage()));
         Assertions.assertThat(opt.getOption()).isNotEmpty();
         Assertions.assertThat(opt.get()).isEqualTo(996);
-        Assertions.assertThat(opt.get(ex -> new RuntimeException())).isEqualTo(996);
+        Assertions.assertThat(opt.getOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isEqualTo(996);
         Assertions.assertThat(opt.getOptionEvenErr()).isNotEmpty();
         Assertions.assertThat(opt.getOptionEvenErr().get()).isEqualTo(996);
     }
@@ -186,13 +186,11 @@ class ResultOrErrorTest {
             .map(o -> o.orElse(996))
             .getResult();
         Assertions.assertThat(opt.getOption()).isNotEmpty();
-        Assertions.assertThat(opt.getOption(ex -> new RuntimeException())).isNotEmpty();
+        Assertions.assertThat(opt.getOptionOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isNotEmpty();
         Assertions.assertThat(opt.get()).isEqualTo(996);
         ValueHolder<Integer> vh = new ValueHolder<>(0);
         opt.ifError(er -> vh.setValue(100));
         Assertions.assertThat(vh.value()).isZero();
-        opt.specError(RuntimeException.class, ex -> new RuntimeException(ex.getMessage()));
-        Assertions.assertThat(opt.getException()).isNull();
         Assertions.assertThat(opt.isSuccess()).isTrue();
     }
 
@@ -214,10 +212,8 @@ class ResultOrErrorTest {
         opt.ifError(er -> vh.setValue(100));
         Assertions.assertThat(vh.value()).isEqualTo(100);
 
-        Assertions.assertThatThrownBy(() -> opt.getOption(ex -> new IllegalArgumentException()))
+        Assertions.assertThatThrownBy(() -> opt.getOptionOrSpecError(IllegalArgumentException.class, ex -> new IllegalArgumentException()))
             .isInstanceOf(IllegalArgumentException.class);
-        opt.specError(RuntimeException.class, ex -> new RuntimeException(ex.getMessage()));
-        Assertions.assertThat(opt.getException()).isNotNull();
     }
 
     @Test
@@ -232,7 +228,7 @@ class ResultOrErrorTest {
             .map(o -> o / 0)
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
-        Assertions.assertThatThrownBy(() -> opt.get(ex -> new ValidateException(ex.getMessage())))
+        Assertions.assertThatThrownBy(() -> opt.getOrSpecError(ValidateException.class, ex -> new ValidateException(ex.getMessage())))
             .isInstanceOf(ValidateException.class);
 
         Assertions.assertThatThrownBy(opt::get)

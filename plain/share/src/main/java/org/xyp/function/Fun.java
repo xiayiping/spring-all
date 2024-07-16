@@ -20,7 +20,7 @@ public class Fun {
         };
     }
 
-    public static <E extends RuntimeException> E convertRte(Exception e, Class<E> target, Function<Exception, E> converter) {
+    public static <E extends RuntimeException> E convertRte(Throwable e, Class<E> target, Function<Throwable, E> converter) {
         if (target.isAssignableFrom(e.getClass())) {
             return (target.cast(e));
         }

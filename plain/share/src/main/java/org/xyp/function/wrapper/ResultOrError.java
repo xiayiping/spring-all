@@ -88,7 +88,7 @@ public class ResultOrError<R> {
     public R get() {
         try {
             return supplier.get();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw Fun.convertRte(e, RuntimeException.class, FunctionException::new);
         }
     }
@@ -96,40 +96,40 @@ public class ResultOrError<R> {
     public <E extends RuntimeException> Optional<R> getOption() {
         try {
             return Optional.ofNullable(supplier.get());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw Fun.convertRte(e, RuntimeException.class, FunctionException::new);
         }
     }
 
-    public <E extends RuntimeException> R get(Class<E> target, Function<Exception, E> exceptionMapper) {
+    public <E extends RuntimeException> R get(Class<E> target, Function<Throwable, E> exceptionMapper) {
         try {
             return supplier.get();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw Fun.convertRte(e, target, exceptionMapper);
         }
     }
 
-    public <E extends RuntimeException> Optional<R> getOption(Class<E> target, Function<Exception, E> exceptionMapper) {
+    public <E extends RuntimeException> Optional<R> getOption(Class<E> target, Function<Throwable, E> exceptionMapper) {
         try {
             return Optional.ofNullable(supplier.get());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw Fun.convertRte(e, target, exceptionMapper);
         }
     }
 
-    public ReturnResult<R, Exception> getResult() {
+    public Result<R, Throwable> getResult() {
         try {
-            return ReturnResult.ofResult(supplier.get());
-        } catch (Exception e) {
-            return ReturnResult.ofError(e);
+            return Result.success(supplier.get());
+        } catch (Throwable e) {
+            return Result.failure(e);
         }
     }
 
-    public <E extends RuntimeException> ReturnResult<R, E> getResult(Class<E> target, Function<Exception, E> exceptionMapper) {
+    public <E extends RuntimeException> Result<R, E> getResult(Class<E> target, Function<Throwable, E> exceptionMapper) {
         try {
-            return ReturnResult.ofResult(supplier.get());
+            return Result.success(supplier.get());
         } catch (Exception e) {
-            return ReturnResult.ofError(Fun.convertRte(e, target, exceptionMapper));
+            return Result.failure(Fun.convertRte(e, target, exceptionMapper));
         }
     }
 }

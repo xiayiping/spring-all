@@ -68,31 +68,31 @@ public class WithCloseable<C extends AutoCloseable, T> {
 
     public <E extends RuntimeException> T closeAndGet(
         Class<E> target,
-        Function<Exception, E> exceptionMapper
+        Function<Throwable, E> exceptionMapper
     ) {
         try (var closeable = closeableSupplier.get()) {
             return innerMapper.apply(closeable);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw Fun.convertRte(e, target, exceptionMapper);
         }
     }
 
-    public ReturnResult<T, Exception> closeAndGetResult() {
+    public Result<T, Throwable> closeAndGetResult() {
         try (var closeable = closeableSupplier.get()) {
-            return ReturnResult.ofResult(innerMapper.apply(closeable));
-        } catch (Exception e) {
-            return ReturnResult.ofError(e);
+            return Result.success(innerMapper.apply(closeable));
+        } catch (Throwable e) {
+            return Result.failure(e);
         }
     }
 
-    public <E extends RuntimeException> ReturnResult<T, E> closeAndGetResult(
+    public <E extends RuntimeException> Result<T, E> closeAndGetResult(
         Class<E> target,
-        Function<Exception, E> exceptionMapper
+        Function<Throwable, E> exceptionMapper
     ) {
         try (var closeable = closeableSupplier.get()) {
-            return ReturnResult.ofResult(innerMapper.apply(closeable));
-        } catch (Exception e) {
-            return ReturnResult.ofError(Fun.convertRte(e, target, exceptionMapper));
+            return Result.success(innerMapper.apply(closeable));
+        } catch (Throwable e) {
+            return Result.failure(Fun.convertRte(e, target, exceptionMapper));
         }
     }
 }
