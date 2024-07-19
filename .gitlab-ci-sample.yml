@@ -1,0 +1,231 @@
+cache:
+  key: "tcghl-service-trex-report"
+  paths:
+    - .owasp/data
+    - .sonar/cache
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Dowasp.dataDirectory=.owasp/data -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS"
+  SONAR_USER_HOME: ".sonar"
+  GIT_DEPTH: "0"
+  PROJECT_KEY: "msa-service-trade-restrict"
+  ENV_FILE_FOLDER: .owasp/data
+  QA_RELEASE_ENV_FILE: qa_release.env
+  USER_INPUT_ENV_FILE: user_input.env
+
+stages:
+  - test
+  - tag
+  - package
+  - release
+
+# to avoid duplicated pipeline (commit + merge-request)
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+# developers commit to their own branch, only run test
+unit_test:
+  stage: test
+  tags:
+    - zulujava1709
+  artifacts:
+    expire_in: 1 week
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME !~ /^release\//
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH !~ /^release\//
+  script: # $CI_COMMIT_BRANCH exists in post_merge, a commit event, CI_MERGE_REQUEST_TARGET_BRANCH_NAME exists in merge event
+    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - echo $CI_COMMIT_BRANCH
+    - printenv
+    - echo $CI_BUILD_REF_NAME
+    - pwd && ls pom.xml
+    - echo "unit_test"
+    - mvn clean compile test -P-coverage $MAVEN_OPT
+
+sonar_scan_manual:
+  stage: test
+  tags:
+    - zulujava1709
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  artifacts:
+    expire_in: 1 week
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME !~ /^release\//
+      when: manual
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH !~ /^release\//
+      when: manual
+  allow_failure: true
+  script:
+    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - echo $CI_COMMIT_BRANCH
+    - printenv
+    - echo $CI_BUILD_REF_NAME
+    - pwd && ls pom.xml
+    - echo "sonar_scan_manual"
+    - mvn clean compile test verify sonar:sonar -Dsonar.projectKey=$PROJECT_KEY $MAVEN_OPTS
+
+sonar_scan:
+  stage: test
+  tags:
+    - zulujava1709
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  artifacts:
+    expire_in: 1 week
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release\//
+    - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH =~ /^release\//
+  allow_failure: true
+  script:
+    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - echo $CI_COMMIT_BRANCH
+    - printenv
+    - echo $CI_BUILD_REF_NAME
+    - pwd && ls pom.xml
+    - echo "sonar_scan"
+    - mvn clean compile test verify sonar:sonar -Dsonar.projectKey=$PROJECT_KEY $MAVEN_OPTS
+
+tag:
+  stage: tag
+  tags:
+    - zulujava1709
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  artifacts:
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+  script:
+    - echo $CI_BUILD_REF_NAME
+    - echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p'
+    - echo ${CI_COMMIT_MESSAGE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p'
+    - from_branch=$(echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p')
+    - echo $from_branch
+    - echo "tag $from_branch ${from_branch#release/}"
+    - revision=${from_branch#release/}
+    - if [ -z "$revision" ]; then echo "reversion not provided" && exit 1; fi
+    - if [ ! -d ${ENV_FILE_FOLDER} ]; then mkdir -p ${ENV_FILE_FOLDER}/ ; fi
+    - echo "revision=$revision" > ${ENV_FILE_FOLDER}/${USER_INPUT_ENV_FILE}
+  release:
+    tag_name: "$revision"
+    description: "release $revision"
+    ref: '$CI_COMMIT_SHA'
+
+artifact_SNAPSHOT_then_release:
+  stage: package
+  tags:
+    - zulujava1709
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  artifacts:
+    expire_in: 1 week
+  allow_failure: false
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release\//
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^release\//
+      when: manual
+  script:
+    - echo $CI_BUILD_REF_NAME
+    - pwd && ls pom.xml
+    - echo "package_artifact_SNAPSHOT $CI_COMMIT_BRANCH ${CI_COMMIT_BRANCH#release/}"
+    - echo "package_artifact_SNAPSHOT $CI_MERGE_REQUEST_TARGET_BRANCH_NAME ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME#release/}"
+    - revision="${CI_COMMIT_BRANCH#release/}"
+    - if [ -z "${revision}" ]; then revision="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME#release/}" ; fi
+    - if [ ! -d ${ENV_FILE_FOLDER} ]; then mkdir -p ${ENV_FILE_FOLDER} ; fi
+    - echo "qa_release_ts=$(date +"%Y%m%d-%H%M%S")" > ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
+    - cat ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
+    - source ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
+    - echo $revision
+    - echo ${qa_release_ts}
+    - mvn clean deploy source:jar -P-coverage,skipTest,deploy $MAVEN_OPTS -Drevision=$revision -Dsha1= -Dchangelist="-${qa_release_ts}-SNAPSHOT"
+
+artifact_prod_release:
+  stage: package
+  tags:
+    - zulujava1709
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  artifacts:
+    expire_in: 1 week
+  allow_failure: true
+  needs:
+    - tag
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  script:
+    - from_branch=$(echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p')
+    - echo "tag $from_branch ${from_branch#release/}"
+    - revision=${from_branch#release/}
+    - if [ -z "$revision" ]; then echo "reversion not provided" && exit 1; fi
+    - echo $revision
+    - echo "package_artifact_release $CI_COMMIT_BRANCH ${CI_COMMIT_BRANCH#release/}"
+    - echo $revision
+    - mvn clean deploy source:jar -P-coverage,skipTest,deploy $MAVEN_OPTS -Drevision=$revision -Dsha1= -Dchangelist=
+
+release_qa:
+  stage: release
+  tags:
+    - zulujava1709
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  artifacts:
+    expire_in: 1 week
+  needs:
+    - artifact_SNAPSHOT_then_release
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release\//
+    - if: $CI_COMMIT_BRANCH =~ /^release\//
+  script:
+    - echo $CI_BUILD_REF_NAME
+    - pwd && ls pom.xml
+    - echo "release_qa $CI_COMMIT_BRANCH ${CI_COMMIT_BRANCH#release/}"
+    - echo "release_qa $CI_MERGE_REQUEST_TARGET_BRANCH_NAME ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME#release/}"
+    - revision="${CI_COMMIT_BRANCH#release/}"
+    - if [ -z "${revision}" ]; then revision="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME#release/}" ; fi
+    - if [ -z "$revision" ]; then echo "reversion not provided" && exit 1; fi
+    - cat ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
+    - source ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
+    - echo $revision
+    - echo ${qa_release_ts}
+    - scp ./_script/deploy.sh trex@10.21.100.111:/apps/trex-report
+    - ssh trex@10.21.100.111 "chmod u+x /apps/trex-report/deploy.sh"
+    - ssh trex@10.21.100.111 "/apps/trex-report/deploy.sh ${revision}-${qa_release_ts}-SNAPSHOT RUN"
+
+release_prod:
+  stage: release
+  tags:
+    - zulujava1709
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+  artifacts:
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+  script:
+    - echo $CI_COMMIT_BRANCH
+    - echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p'
+    - echo ${CI_COMMIT_MESSAGE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p'
+    - from_branch=$(echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p')
+    - echo $from_branch
+    - echo "tag $from_branch ${from_branch#release/}"
+    - revision=${from_branch#release/}
+    - if [ -z "$revision" ]; then echo "reversion not provided" && exit 1; fi
+    - echo $revision
+    - echo $revision
+    - if [ -z "$prod_deploy_token" ]; then echo "prod_deploy_token not provided" && exit 1; fi
+    - scp ./_script/deploy.sh trex@10.30.100.181:/apps/trex-report
+    - ssh trex@10.30.100.181 "chmod u+x /apps/trex-report/deploy.sh"
+    - ssh trex@10.30.100.181 "/apps/trex-report/deploy.sh $revision"
+    - scp ./_script/deploy.sh trex@10.1.100.181:/apps/trex-report
+    - ssh trex@10.1.100.181 "chmod u+x /apps/trex-report/deploy.sh"
+    - ssh trex@10.1.100.181  "/apps/trex-report/deploy.sh $revision RUN"

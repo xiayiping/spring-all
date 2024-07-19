@@ -5,18 +5,12 @@ server:
 
 spring:
   application:
-    name: web
+    name: web-api
   datasource:
-#    driver-class-name: ${test_db_driver_1}
-#    url: ${test_db_url_1}
-#    username: ${test_db_user_1}
-#    password: ${test_db_token_1}
-
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test
-    username: 'postgres'
-    password: 'matt.xia.12345'
-
+    driver-class-name: ${db_driver_1}
+    url: ${db_url_1}
+    username: ${db_user_1}
+    password: ${db_token_1}
     hikari:
       connection-test-query: "select 1 "
       maximum-pool-size: 3
@@ -35,22 +29,21 @@ spring:
         format_sql: true
         use_sql_comments: false
         generate_statistics: true
-#        dialect: ${test_db_dialect_1}
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: ${db_dialect_1}
         default_schema: test
     open-in-view: false
     show-sql: true
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuer-uri: "http://${v_host}:8081"
+        opaquetoken:
+          introspection-uri: "https://uat-sso.mysmartadvisor.com/connect/introspect"
+          client-id: "msa-esop-participant-api"
+          client-secret: "S0tJQ9qTVxtCZMVL6meUXCZzjH6OpaY2FEroGDs7uZM="
+#        jwt:
+#          issuer-uri: "http://${v_host}:8081"
 #          issuer-uri: https://token.actions.githubusercontent.com
 #          jwk-set-uri: https://token.actions.githubusercontent.com/.well-known/jwks
-#        opaquetoken:
-#          client-id: "client-id"
-#          client-secret: "secret"
-#          introspection-uri: "url"
 
 management:
   health:
@@ -60,6 +53,10 @@ management:
     metrics:
       export:
         enabled: false
+  metrics:
+    tags:
+      app-name: ${spring.application.name}
+      hostname: ${hostname:-}
 
 mybatis:
   mapper-locations: classpath:/mybatis/*.xml

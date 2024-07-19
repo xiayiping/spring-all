@@ -1,3 +1,4 @@
+<div style="font-size: 1.2em;">
 # linux
 
 ## user
@@ -220,3 +221,7 @@ providing a standardized way to authenticate users and obtain identity tokens.
    - The OIDC client can use the access token to request additional user information from the OpenID provider's userinfo endpoint.
 
 SpringOpaqueTokenIntrospector is used for obtain opa
+
+
+
+</div>

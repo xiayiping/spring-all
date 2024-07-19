@@ -7,7 +7,7 @@
         <Property name="profiles" value="${spring:spring.profiles.active:-default}"/>
         <Property name="logDir" value="${spring:logging.file.path:-logs}"/>
 
-        <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{bright_yellow} %highlight{[%-5level]}
+        <Property name="CONSOLE_LOG_PATTERN" value="%style{%d{HH:mm:ss.SSS}}{bright_yellow} %highlight{[%-5level]}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}
 %msg %style{$}{bright_yellow}
 %style{[${appName}]}{bright_magenta} %style{[%pid]}{blue}
 %style{[%mdc{trace_id}%X{traceId},%mdc{span_id}%X{spanId}]}{bright_magenta}

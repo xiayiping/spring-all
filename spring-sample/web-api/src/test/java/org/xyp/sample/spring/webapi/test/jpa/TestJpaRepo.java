@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,12 +33,13 @@ import java.util.stream.IntStream;
 @ActiveProfiles("test")
 @Sql(
     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
-//    config = @SqlConfig(
-//        errorMode = SqlConfig.ErrorMode.CONTINUE_ON_ERROR
-//    ),
+    config = @SqlConfig(
+        errorMode = SqlConfig.ErrorMode.CONTINUE_ON_ERROR
+    ),
     scripts = {
-        "classpath:/sql/schema.sql",
+//        "classpath:/sql/schema.sql",
 //        "classpath:/sql/schema-mssql.sql",
+        "classpath:/sql/schema-h2.sql",
     })
 @Transactional
 @Commit

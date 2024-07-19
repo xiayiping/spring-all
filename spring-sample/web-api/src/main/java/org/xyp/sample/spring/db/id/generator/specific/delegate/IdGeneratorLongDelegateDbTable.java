@@ -2,15 +2,16 @@ package org.xyp.sample.spring.db.id.generator.specific.delegate;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.hibernate.community.dialect.PostgreSQLLegacyDialect;
+import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.springframework.util.StringUtils;
 import org.xyp.exceptions.ValidateException;
 import org.xyp.function.Fun;
 import org.xyp.function.ValueHolder;
-import org.xyp.function.wrapper.WithCloseable;
 import org.xyp.function.wrapper.ResultOrError;
-import org.xyp.sample.spring.db.id.ConnectionHolder;
+import org.xyp.function.wrapper.WithCloseable;
 import org.xyp.sample.spring.db.id.JdbcConnectionAccessorFactory;
 import org.xyp.sample.spring.db.id.dialect.IdGenDialect;
 import org.xyp.sample.spring.db.id.dialect.IdGenDialectPostgre;
@@ -56,6 +57,8 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
     static {
         dialectMap.put(SQLServerDialect.class.getName(), new IdGenDialect());
         dialectMap.put(PostgreSQLDialect.class.getName(), new IdGenDialectPostgre());
+        dialectMap.put(PostgreSQLLegacyDialect.class.getName(), new IdGenDialectPostgre());
+        dialectMap.put(H2Dialect.class.getName(), new IdGenDialectPostgre());
     }
 
     public IdGeneratorLongDelegateDbTable() {
@@ -136,7 +139,6 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
                 return state.withLast(newLast);
             } else {
                 return WithCloseable.open(factory::open)
-                    .map(ConnectionHolder::connection)
                     .map(connection -> fetchAndUpdateIdInDB(
                         entityName,
                         fetchSize,
@@ -209,7 +211,6 @@ public class IdGeneratorLongDelegateDbTable implements IdGenerator<Long> {
      */
     private BatchIdResult fetchOrCreateIdBatchStateFromDB(String entityName, String dialect, JdbcConnectionAccessorFactory factory) {
         return WithCloseable.open(factory::open)
-            .map(ConnectionHolder::connection)
             .map(connection -> fetchOrCreateIdBatchStateFromDB(entityName, dialect, connection))
             .closeAndGet(IdGenerationException.class, IdGenerationException::new)
             ;

@@ -10,8 +10,12 @@ import static org.springframework.core.env.AbstractEnvironment.DEFAULT_PROFILES_
 @Import(WebApiApplication.class)
 @SpringBootApplication
 public class WebApiTestApplication {
+
+    public static final String SCHEMA_SUFFIX = "-pg";
+
     public static void main(String[] args) {
-        System.setProperty(DEFAULT_PROFILES_PROPERTY_NAME, "test");
+//        org.hibernate.community.dialect.PostgreSQLLegacyDialect
+//        System.setProperty(DEFAULT_PROFILES_PROPERTY_NAME, "test");
         SpringApplication.run(WebApiTestApplication.class, args);
     }
 }

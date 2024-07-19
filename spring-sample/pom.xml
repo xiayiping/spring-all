@@ -155,6 +155,13 @@
                 <version>3.25.2</version>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-community-dialects -->
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-community-dialects</artifactId>
+                <version>6.5.2.Final</version>
+            </dependency>
+
             <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>

@@ -10,7 +10,6 @@ create table if not exists id_table
     fetch_size  integer      not null
 );
 
-alter table id_table owner to postgres;
 
 alter table if exists batch_rule drop constraint fk__batch_rule__batch;
 alter table if exists task drop constraint fk__task__batch;
@@ -24,7 +23,6 @@ create table if not exists batch
     batch_name varchar(256)
 );
 
-alter table batch owner to postgres;
 
 drop table if exists batch_rule;
 create table if not exists batch_rule
@@ -33,8 +31,6 @@ create table if not exists batch_rule
     batch_id  bigint constraint fk__batch_rule__batch references batch,
     rule_name varchar(256)
 );
-
-alter table batch_rule owner to postgres;
 
 
 drop table if exists batch_rule_desc;
@@ -45,8 +41,6 @@ create table if not exists batch_rule_desc
     description varchar(256)
 );
 
-alter table batch_rule_desc owner to postgres;
-
 
 drop table if exists task;
 create table if not exists task
@@ -56,6 +50,4 @@ create table if not exists task
     company_id  integer not null,
     employee_id varchar(256)
 );
-
-alter table task owner to postgres;
 
