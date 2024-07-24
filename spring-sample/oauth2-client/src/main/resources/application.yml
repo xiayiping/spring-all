@@ -1,22 +1,8 @@
-server:
-  port: 8080
-
 spring:
-  application:
-    name: oauth2-client
   security:
     oauth2:
       client:
         registration:
-          github:
-            ## setup in github
-            clientId: cc30276322adbf59445b
-            clientSecret: f98fc5deb9ecd3af6da5e376264dcaea8b73adde
-            authorization-grant-type: "authorization_code"
-            client-authentication-method: "client_secret_basic"
-            redirect-uri: "http://localhost:8080/login/oauth2/code/github"
-            scope:
-              - "user.read"
           yipingx:
             provider: "yipingx"
             clientId: "oidc-client"
@@ -29,4 +15,30 @@ spring:
               - "user.read"
         provider:
           yipingx:
-            issuer-uri: "http://${local_host}:8081"
+            issuer-uri: "http://${v_host}:8081"
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            kyc:
+              - uri: http://1.2.3.4:8100
+                instance-id: kyc
+                service-id: kyc
+              - uri: http://2.1.3.4:8100
+                instance-id: kyc
+                service-id: kyc
+    gateway:
+      routes:
+        - id: kyc
+          uri: lb://kyc
+          filters:
+            - TokenRelay=
+          predicates:
+            - Path=/kyc/api/**
+        - id: mycoreinfo-participant
+          uri: http://3.2.1.4:7002
+          filters:
+            - TokenRelay=
+          predicates:
+            - Path=/mycoreinfo-participant/graphql

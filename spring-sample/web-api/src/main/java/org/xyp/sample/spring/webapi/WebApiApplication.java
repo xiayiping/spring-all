@@ -1,12 +1,10 @@
 package org.xyp.sample.spring.webapi;
 
-import lombok.val;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.xyp.sample.spring.db.JdbcDbConfig;
 import org.xyp.sample.spring.tracing.TracingConfig;
-import org.xyp.sample.spring.webapi.domain.entity.task.Task;
 
 import static org.springframework.core.env.AbstractEnvironment.DEFAULT_PROFILES_PROPERTY_NAME;
 

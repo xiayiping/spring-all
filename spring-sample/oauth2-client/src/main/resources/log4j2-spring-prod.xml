@@ -51,7 +51,7 @@
         <Logger name="reactor.ipc.netty.channel" level="trace"/>
 <!--        <Logger name="org.xyp.sample" level="debug"/>-->
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
 </Configuration>

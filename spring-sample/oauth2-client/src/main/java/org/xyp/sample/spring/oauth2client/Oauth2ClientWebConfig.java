@@ -7,11 +7,13 @@ import org.springframework.boot.autoconfigure.security.reactive.StaticResourceRe
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -45,7 +47,8 @@ public class Oauth2ClientWebConfig {
         ServerHttpSecurity http,
         ReactiveClientRegistrationRepository clientRegistrationRepository
     ) {
-        log.info("use customized filter chain ......");
+        log.info("use customized filter chain 4 ......");
+        http.csrf(ServerHttpSecurity.CsrfSpec::disable);
         http
             .securityMatcher(ex -> staticMatcher
                 .matches(ex)
@@ -54,8 +57,11 @@ public class Oauth2ClientWebConfig {
                 .switchIfEmpty(MatchResult.notMatch())
             )
             .authorizeExchange((exchange) -> exchange
+                .pathMatchers("logout").permitAll()
                 .anyExchange().authenticated()
-            );
+            )
+            .exceptionHandling(cus -> cus.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.FORBIDDEN)))
+        ;
         http.oauth2Login(withDefaults());
         http.oauth2Client(withDefaults());
 
