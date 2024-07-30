@@ -1,5 +1,5 @@
 cache:
-  key: "tcghl-service-trex-report"
+  key: "cache-service-app"
   paths:
     - .owasp/data
     - .sonar/cache
@@ -13,11 +13,12 @@ variables:
   QA_RELEASE_ENV_FILE: qa_release.env
   USER_INPUT_ENV_FILE: user_input.env
 
+
 stages:
   - test
   - tag
   - package
-  - release
+  - deploy
 
 # to avoid duplicated pipeline (commit + merge-request)
 workflow:
@@ -110,14 +111,11 @@ tag:
     - from_branch=$(echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p')
     - echo $from_branch
     - echo "tag $from_branch ${from_branch#release/}"
-    - revision=${from_branch#release/}
+    - export revision=${from_branch#release/}
     - if [ -z "$revision" ]; then echo "reversion not provided" && exit 1; fi
     - if [ ! -d ${ENV_FILE_FOLDER} ]; then mkdir -p ${ENV_FILE_FOLDER}/ ; fi
     - echo "revision=$revision" > ${ENV_FILE_FOLDER}/${USER_INPUT_ENV_FILE}
-  release:
-    tag_name: "$revision"
-    description: "release $revision"
-    ref: '$CI_COMMIT_SHA'
+    - release-cli create --description "tag $revision" --tag-name $revision
 
 artifact_SNAPSHOT_then_release:
   stage: package
@@ -142,6 +140,7 @@ artifact_SNAPSHOT_then_release:
     - if [ -z "${revision}" ]; then revision="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME#release/}" ; fi
     - if [ ! -d ${ENV_FILE_FOLDER} ]; then mkdir -p ${ENV_FILE_FOLDER} ; fi
     - echo "qa_release_ts=$(date +"%Y%m%d-%H%M%S")" > ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
+    - echo "deploy_token=$deploy_token" >> ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
     - cat ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
     - source ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
     - echo $revision
@@ -171,8 +170,8 @@ artifact_prod_release:
     - echo $revision
     - mvn clean deploy source:jar -P-coverage,skipTest,deploy $MAVEN_OPTS -Drevision=$revision -Dsha1= -Dchangelist=
 
-release_qa:
-  stage: release
+deploy_qa:
+  stage: deploy
   tags:
     - zulujava1709
   image:
@@ -196,12 +195,11 @@ release_qa:
     - source ${ENV_FILE_FOLDER}/${QA_RELEASE_ENV_FILE}
     - echo $revision
     - echo ${qa_release_ts}
-    - scp ./_script/deploy.sh trex@10.21.100.111:/apps/trex-report
-    - ssh trex@10.21.100.111 "chmod u+x /apps/trex-report/deploy.sh"
-    - ssh trex@10.21.100.111 "/apps/trex-report/deploy.sh ${revision}-${qa_release_ts}-SNAPSHOT RUN"
+    - scp ./_script/deploy.sh user@1.2.3.4:/apps/app
+    - scp "echo deploy" user@1.2.3.4:/apps/app
 
-release_prod:
-  stage: release
+deploy_prod:
+  stage: deploy
   tags:
     - zulujava1709
   image:
@@ -211,6 +209,8 @@ release_prod:
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       when: manual
+  environment:
+    name: prod
   script:
     - echo $CI_COMMIT_BRANCH
     - echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p'
@@ -218,14 +218,9 @@ release_prod:
     - from_branch=$(echo ${CI_COMMIT_TITLE} | sed -n 's/^merge \([^ ]\+\) .*/\1/p')
     - echo $from_branch
     - echo "tag $from_branch ${from_branch#release/}"
-    - revision=${from_branch#release/}
+    - if [ -z "$revision" ]; then revision=${from_branch#release/}; fi
     - if [ -z "$revision" ]; then echo "reversion not provided" && exit 1; fi
     - echo $revision
-    - echo $revision
     - if [ -z "$prod_deploy_token" ]; then echo "prod_deploy_token not provided" && exit 1; fi
-    - scp ./_script/deploy.sh trex@10.30.100.181:/apps/trex-report
-    - ssh trex@10.30.100.181 "chmod u+x /apps/trex-report/deploy.sh"
-    - ssh trex@10.30.100.181 "/apps/trex-report/deploy.sh $revision"
-    - scp ./_script/deploy.sh trex@10.1.100.181:/apps/trex-report
-    - ssh trex@10.1.100.181 "chmod u+x /apps/trex-report/deploy.sh"
-    - ssh trex@10.1.100.181  "/apps/trex-report/deploy.sh $revision RUN"
+    - scp ./_script/deploy.sh user@1.2.3.4:/apps/app
+    - scp "echo deploy" user@1.2.3.4:/apps/app
