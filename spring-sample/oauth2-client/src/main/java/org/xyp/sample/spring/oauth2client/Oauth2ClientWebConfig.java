@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.registration.ReactiveClientReg
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher.MatchResult;
@@ -32,7 +33,7 @@ public class Oauth2ClientWebConfig {
     SecurityWebFilterChain springSecurityFilterChain(
         ServerHttpSecurity http
     ) {
-        log.info("use customized ico filter chain ......");
+        log.info("use customized ico filter chain 2 ......");
         http
             .securityMatcher(staticMatcher)
             .authorizeExchange(exchange -> exchange
@@ -40,6 +41,8 @@ public class Oauth2ClientWebConfig {
             );
         return http.build();
     }
+
+    boolean use403ThanLoginPage = false;
 
     @Bean(name = "allFilter")
     @Order(2)
@@ -60,9 +63,12 @@ public class Oauth2ClientWebConfig {
                 .pathMatchers("logout").permitAll()
                 .anyExchange().authenticated()
             )
-            .exceptionHandling(cus -> cus.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.FORBIDDEN)))
         ;
-        http.oauth2Login(withDefaults());
+        
+        if (use403ThanLoginPage) {
+            http.exceptionHandling(cus -> cus.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.FORBIDDEN)));
+        }
+        http.oauth2Login(login-> login.authenticationMatcher(new PathPatternParserServerWebExchangeMatcher("/oauth2/login/code/{registrationId}")));
         http.oauth2Client(withDefaults());
 
         http.logout((logout) -> logout

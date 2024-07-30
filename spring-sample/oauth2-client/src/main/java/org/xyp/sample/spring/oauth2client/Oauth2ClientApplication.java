@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Oauth2ClientApplication {
 
     public static void main(String[] args) {
-        System.out.println("starting gateway 3 ......");
+        System.out.println("starting gateway 4 ......");
         SpringApplication.run(Oauth2ClientApplication.class, args);
     }
 

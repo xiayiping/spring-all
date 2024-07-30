@@ -1,4 +1,9 @@
+server:
+  port: 8080
+
 spring:
+  application:
+    name: oauth2-client
   security:
     oauth2:
       client:
@@ -9,13 +14,14 @@ spring:
             clientSecret: "secret"
             authorization-grant-type: "authorization_code"
             client-authentication-method: "client_secret_basic"
-            redirect-uri: "http://${local_host}:8080/login/oauth2/code/yipingx"
+#            redirect-uri: "http://localhost:8080/login/oauth2/code/yipingx"
+            redirect-uri: "http://localhost:8080/oauth2/login/code/yipingx"
             scope:
               - "openid"
               - "user.read"
         provider:
           yipingx:
-            issuer-uri: "http://${v_host}:8081"
+            issuer-uri: "http://localhost:8081"
   cloud:
     discovery:
       client:
