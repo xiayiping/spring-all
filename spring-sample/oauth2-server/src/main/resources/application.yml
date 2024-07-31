@@ -29,7 +29,7 @@ spring:
                 - "profile"
                 - "user.read"
               post-logout-redirect-uris:
-                - http://localhost:8080
+                - http://localhost:8080/oauth2/authorization/yipingx
             require-authorization-consent: false
           oidc-client2:
             registration:

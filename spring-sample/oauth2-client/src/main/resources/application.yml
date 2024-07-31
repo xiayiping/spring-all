@@ -1,5 +1,8 @@
 server:
   port: 8080
+  reactive:
+    session:
+      timeout: 3s
 
 spring:
   application:
