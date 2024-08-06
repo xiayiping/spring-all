@@ -48,7 +48,7 @@ class ResultOrErrorTest {
     void test3() {
         val opt = ResultOrError.on(() -> 1)
             .filter(i -> i > 0)
-//            .noExMap(i -> i - 4)
+            .map(i -> i - 4)
             .filter(i -> i > 0)
             .filter(i -> i > 0)
             .map(i -> i + 100)
