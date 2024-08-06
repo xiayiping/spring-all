@@ -42,7 +42,7 @@ public class ResultOrError<R> {
         );
     }
 
-    public ResultOrError<R> switchIfEmpty(Supplier<R> emptySupplier) {
+    public ResultOrError<R> fallbackForEmpty(Supplier<R> emptySupplier) {
         return new ResultOrError<>(
             () -> {
                 final R innerResult = supplier.get();
@@ -54,19 +54,19 @@ public class ResultOrError<R> {
         );
     }
 
-    public <U> ResultOrError<U> map(ExceptionalFunction<? super R, ? extends U> mapper) {
+    public ResultOrError<R> consume(ExceptionalConsumer<? super R> consumer) {
         return new ResultOrError<>(
             () -> {
                 final R innerResult = supplier.get();
                 if (null != innerResult) {
-                    return mapper.apply(innerResult);
+                    consumer.accept(innerResult);
                 }
-                return null;
+                return innerResult;
             }
         );
     }
 
-    public <U> ResultOrError<U> noExMap(Function<? super R, ? extends U> mapper) {
+    public <U> ResultOrError<U> map(ExceptionalFunction<? super R, ? extends U> mapper) {
         return new ResultOrError<>(
             () -> {
                 final R innerResult = supplier.get();

@@ -36,7 +36,7 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .getResult()
             .getOption();
 
@@ -48,7 +48,7 @@ class ResultOrErrorTest {
     void test3() {
         val opt = ResultOrError.on(() -> 1)
             .filter(i -> i > 0)
-            .noExMap(i -> i - 4)
+//            .noExMap(i -> i - 4)
             .filter(i -> i > 0)
             .filter(i -> i > 0)
             .map(i -> i + 100)
@@ -63,9 +63,9 @@ class ResultOrErrorTest {
             .filter(i -> i > 0)
             .map(i -> i - 4)
             .filter(i -> i > 0)
-            .noExMap(i -> i)
+//            .noExMap(i -> i)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .getOption();
 
         Assertions.assertThat(opt).isNotEmpty();
@@ -79,7 +79,7 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .map(i -> new Person("nn", i))
             .map(Fun.updateSelf(p -> p.setAge(77)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(77)))
@@ -98,7 +98,7 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .map(i -> new Person("nn", i))
             .map(Fun.updateSelf(p -> p.setAge(77)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(77)))
@@ -120,13 +120,13 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .map(i -> new Person("nn", i))
             .map(Fun.updateSelf(p -> p.setAge(77)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(77)))
             .map(Fun.updateSelf(p -> p.setAge(66)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(66)))
-            .noExMap(Fun.cast(Integer.class))
+            .map(o -> Fun.cast(Integer.class).apply(o))
             .flatMap(i -> i)
             .getOption();
         Assertions.assertThat(opt).isEmpty();
@@ -139,13 +139,13 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .map(i -> new Person("nn", i))
-            .map(Fun.updateSelf(p -> p.setAge(77)))
+            .consume(p -> p.setAge(77))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(77)))
             .map(Fun.updateSelf(p -> p.setAge(66)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(66)))
-            .map(r -> Fun.cast(Object.class).apply(r))
+            .map(Fun.castTo(Object.class))
             .flatMap(i -> i)
             .getOption();
         Assertions.assertThat(opt).isNotEmpty();
@@ -159,13 +159,15 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .getResultOrSpecError(ValidateException.class, ex -> new ValidateException(ex.getMessage()));
         Assertions.assertThat(opt.getOption()).isNotEmpty();
         Assertions.assertThat(opt.get()).isEqualTo(996);
         Assertions.assertThat(opt.getOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isEqualTo(996);
-        Assertions.assertThat(opt.getOptionEvenErr(e->{})).isNotEmpty();
-        Assertions.assertThat(opt.getOptionEvenErr(e->{}).get()).isEqualTo(996);
+        Assertions.assertThat(opt.getOptionEvenErr(e -> {
+        })).isNotEmpty();
+        Assertions.assertThat(opt.getOptionEvenErr(e -> {
+        }).get()).isEqualTo(996);
     }
 
     @Test
@@ -175,7 +177,7 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .getResult();
         Assertions.assertThat(opt.getOption()).isNotEmpty();
         Assertions.assertThat(opt.getOptionOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isNotEmpty();
@@ -193,11 +195,11 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .map(o -> o / 0)
             .getResultOrSpecError(ValidateException.class, ex -> new ValidateException(ex.getMessage()));
         Assertions.assertThat(opt.isSuccess()).isFalse();
-        Assertions.assertThatThrownBy(() -> opt.getOption())
+        Assertions.assertThatThrownBy(opt::getOption)
             .isInstanceOf(ValidateException.class);
         ValueHolder<Integer> vh = new ValueHolder<>(0);
         opt.ifError(er -> vh.setValue(100));
@@ -214,7 +216,7 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .switchIfEmpty(() -> 996)
+            .fallbackForEmpty(() -> 996)
             .map(o -> o / 0)
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
@@ -229,10 +231,12 @@ class ResultOrErrorTest {
     @Test
     void test13() {
         val opt = ResultOrError.of(1)
-            .noExMap(i -> i)
+//            .noExMap(i -> i)
             .filter(i -> i > 1000)
             .flatMap(Optional::ofNullable)
-            .switchIfEmpty(() -> 1)
+            .fallbackForEmpty(() -> 1)
+            .consume(i -> {
+            })
             .get();
         Assertions.assertThat(opt).isOne();
     }
@@ -240,7 +244,7 @@ class ResultOrErrorTest {
     @Test
     void test14() {
         val lazy = ResultOrError.of(1)
-            .noExMap(i -> i)
+//            .noExMap(i -> i)
             .map(i -> i / 0);
         Assertions.assertThatThrownBy(lazy::get)
             .isInstanceOf(ArithmeticException.class);
@@ -253,14 +257,15 @@ class ResultOrErrorTest {
     @Test
     void test15() {
         val lazy = ResultOrError.of(1)
-            .noExMap(i -> i)
+//            .noExMap(i -> i)
             .map(i -> i / 0);
         Assertions.assertThatThrownBy(lazy::getOption)
             .isInstanceOf(ArithmeticException.class);
         Assertions.assertThatThrownBy(() -> lazy.getOptionOrSpecError(IllegalArgumentException.class, ex -> new IllegalArgumentException()))
             .isInstanceOf(IllegalArgumentException.class);
 
-        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e->{})).isEmpty();
+        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e -> {
+        })).isEmpty();
         ;
     }
 

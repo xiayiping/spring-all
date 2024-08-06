@@ -41,4 +41,8 @@ public class Fun {
         return o -> cast(o, target);
     }
 
+    public static <R> ExceptionalFunction<Object, Optional<R>> castTo(Class<R> target) {
+        return o -> cast(o, target);
+    }
+
 }
