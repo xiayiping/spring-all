@@ -1,12 +1,9 @@
 package org.xyp.function.wrapper;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.xyp.function.*;
 
 import java.util.function.Function;
 
-@Slf4j
 public class WithCloseable<C extends AutoCloseable, T> {
 
     public static <L extends AutoCloseable> WithCloseable<L, L> open(ExceptionalSupplier<L> open) {
@@ -31,7 +28,7 @@ public class WithCloseable<C extends AutoCloseable, T> {
         return new WithCloseable<>(
             closeableSupplier,
             closeable -> {
-                val inner = innerMapper.apply(closeable);
+                final T inner = innerMapper.apply(closeable);
                 if (null != inner)
                     return function.apply(inner);
                 return null;
@@ -43,7 +40,7 @@ public class WithCloseable<C extends AutoCloseable, T> {
         return new WithCloseable<>(
             closeableSupplier,
             closeable -> {
-                val item = innerMapper.apply(closeable);
+                final T item = innerMapper.apply(closeable);
                 if (null != item)
                     consumer.accept(item);
                 return item;

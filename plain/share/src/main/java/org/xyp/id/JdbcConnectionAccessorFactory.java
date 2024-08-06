@@ -1,4 +1,4 @@
-package org.xyp.sample.spring.db.id;
+package org.xyp.id;
 
 import java.sql.Connection;
 import java.sql.SQLException;

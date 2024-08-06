@@ -27,7 +27,7 @@ public record Success<T, E extends Throwable>(T value) implements Result<T, E> {
     }
 
     @Override
-    public Optional<T> getOptionEvenErr() {
+    public Optional<T> getOptionEvenErr(Consumer<E> exceptionConsumer) {
         return Optional.ofNullable(value);
     }
 

@@ -11,9 +11,9 @@ import org.hibernate.id.Configurable;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 import org.xyp.function.wrapper.ResultOrError;
-import org.xyp.sample.spring.db.id.generator.IdGenerationException;
-import org.xyp.sample.spring.db.id.generator.IdGenerator;
-import org.xyp.sample.spring.db.id.generator.specific.IdGeneratorLong;
+import org.xyp.id.IdGenerator;
+import org.xyp.id.exception.IdGenerationException;
+import org.xyp.sample.spring.db.JpaDbConfig;
 
 import java.util.EnumSet;
 import java.util.Properties;
@@ -40,12 +40,11 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
             return null;
         }
         if (null == idGenerator) {
-            idGenerator = IdGeneratorLong.SPRING_BEAN;
+            idGenerator = JpaDbConfig.SPRING_BEAN;
         }
-        val dialect = session.getJdbcServices().getDialect();
 
         val acc = session.getJdbcConnectionAccess();
-        val id = idGenerator.nextId(idName, dialect.getClass().getName(), new ConnectionFromAccess(acc));
+        val id = idGenerator.nextId(idName, new ConnectionFromAccess(acc));
 
         if (idClass.isAssignableFrom(Long.class)) {
             return idClass.cast(id);
@@ -70,7 +69,7 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
     public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
         idClass = type.getReturnedClass();
         idName = params.getProperty(IdGenerator.GENERATOR_NAME);
-        idGenerator = IdGeneratorLong.SPRING_BEAN;
-        log.info("config id generator for id class {}", idClass);
+        idGenerator = JpaDbConfig.SPRING_BEAN;
+        log.info("config id generator for id class {} {}", idClass, idGenerator);
     }
 }

@@ -17,7 +17,6 @@ import java.util.List;
     proxyBeanMethods = false
 )
 @EnableJdbcRepositories(basePackageClasses = TaskDaoJdbc.class)
-@EnableJpaRepositories(basePackageClasses = TaskDaoJpa.class)
 public class JdbcDbConfig extends AbstractJdbcConfiguration {
     List<?> converters = null;
 

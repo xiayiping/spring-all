@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 @Sql(
     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
     config = @SqlConfig(
-        errorMode = SqlConfig.ErrorMode.CONTINUE_ON_ERROR
+        errorMode = SqlConfig.ErrorMode.FAIL_ON_ERROR//CONTINUE_ON_ERROR
     ),
     scripts = {
 //        "classpath:/sql/schema.sql",
