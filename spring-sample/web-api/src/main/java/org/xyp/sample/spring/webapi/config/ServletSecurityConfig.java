@@ -2,27 +2,15 @@ package org.xyp.sample.spring.webapi.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.autoconfigure.security.servlet.StaticResourceRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.domain.AbstractAggregateRoot;
-import org.springframework.data.jdbc.core.mapping.AggregateReference;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.SecurityFilterChain;
 
 //import org.xyp.sample.spring.web.filter.SomeFilter;
 //import org.xyp.sample.spring.web.filter.SomeServletFilter;
@@ -43,39 +31,34 @@ public class ServletSecurityConfig {
     @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
     String clientSecret;
 
+    final StaticResourceRequest.StaticResourceRequestMatcher staticMatcher = PathRequest.toStaticResources().atCommonLocations();
+
     //
     public ServletSecurityConfig() {
         log.info("using servlet SecurityConfig ......");
     }
 
-    //
-//    @Bean
-    public SecurityFilterChain createSecurityFilterChain(
+    @Bean(name = "iconFilter")
+    @Order(1)
+    SecurityFilterChain springSecurityFilterChain(
         HttpSecurity http
     ) throws Exception {
-        log.info("creating webflux springSecurityFilterChain ......");
-        http.authorizeHttpRequests(
-            cus -> cus.requestMatchers("/hello").authenticated()
-                .requestMatchers("/*").permitAll()
-        )
-//            .oauth2Login(Customizer.withDefaults())
-//            .formLogin(Customizer.withDefaults())
-        ;
-//        http.addFilterBefore(new SomeServletFilter(), AuthorizationFilter.class);
-//        http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.authorizeHttpRequests(
-            c -> c.requestMatchers("/favicon.ico").permitAll()
-        );
+        log.info("use customized ico filter chain 2 ......");
+        http
+            .securityMatcher(staticMatcher)
+            .authorizeHttpRequests(exchange -> exchange
+                .anyRequest().permitAll()
+            );
         return http.build();
     }
 
-
-    @Bean
+    @Bean(name = "allFilter")
     SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
         log.info("creating servlet springSecurityFilterChain ......");
         http.csrf(AbstractHttpConfigurer::disable);
         http
-            .authorizeHttpRequests((authorize) -> authorize
+            .securityMatcher(d-> !staticMatcher.matches(d))
+            .authorizeHttpRequests(authorize -> authorize
                 .anyRequest().permitAll()
             )
 //            .oauth2ResourceServer(
@@ -90,6 +73,4 @@ public class ServletSecurityConfig {
 
         return http.build();
     }
-//
-//
 }
