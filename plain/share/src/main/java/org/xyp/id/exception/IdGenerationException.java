@@ -1,4 +1,4 @@
-package org.xyp.sample.spring.db.id.generator;
+package org.xyp.id.exception;
 
 public class IdGenerationException extends RuntimeException {
     public IdGenerationException(Throwable cause) {

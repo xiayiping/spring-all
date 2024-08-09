@@ -9,7 +9,7 @@ spring:
       name: user
       password: password
     oauth2:
-      authorization server:
+      authorization-server:
         client:
           oidc-client:
             registration:
@@ -29,7 +29,7 @@ spring:
                 - "profile"
                 - "user.read"
               post-logout-redirect-uris:
-                - http://localhost:8080
+                - http://localhost:8080/oauth2/authorization/yipingx
             require-authorization-consent: false
           oidc-client2:
             registration:

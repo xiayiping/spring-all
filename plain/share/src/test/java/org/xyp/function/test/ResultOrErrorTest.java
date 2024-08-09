@@ -164,8 +164,8 @@ class ResultOrErrorTest {
         Assertions.assertThat(opt.getOption()).isNotEmpty();
         Assertions.assertThat(opt.get()).isEqualTo(996);
         Assertions.assertThat(opt.getOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isEqualTo(996);
-        Assertions.assertThat(opt.getOptionEvenErr()).isNotEmpty();
-        Assertions.assertThat(opt.getOptionEvenErr().get()).isEqualTo(996);
+        Assertions.assertThat(opt.getOptionEvenErr(e->{})).isNotEmpty();
+        Assertions.assertThat(opt.getOptionEvenErr(e->{}).get()).isEqualTo(996);
     }
 
     @Test
@@ -260,7 +260,7 @@ class ResultOrErrorTest {
         Assertions.assertThatThrownBy(() -> lazy.getOptionOrSpecError(IllegalArgumentException.class, ex -> new IllegalArgumentException()))
             .isInstanceOf(IllegalArgumentException.class);
 
-        Assertions.assertThat(lazy.getResult().getOptionEvenErr()).isEmpty();
+        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e->{})).isEmpty();
         ;
     }
 

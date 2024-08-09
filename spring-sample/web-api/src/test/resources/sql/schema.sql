@@ -1,5 +1,5 @@
 create schema if not exists test;
-set schema test;
+-- set schema test;
 
 -- drop table if exists id_table;
 create table if not exists id_table

@@ -1,6 +1,5 @@
 package org.xyp.function.wrapper;
 
-import lombok.extern.slf4j.Slf4j;
 import org.xyp.function.Fun;
 import org.xyp.function.FunctionException;
 
@@ -8,7 +7,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@Slf4j
 public record Failure<T, E extends Throwable>(
     E throwable
 ) implements Result<T, E> {
@@ -36,8 +34,8 @@ public record Failure<T, E extends Throwable>(
     }
 
     @Override
-    public Optional<T> getOptionEvenErr() {
-        log.warn("return empty optional for error {}", throwable.getClass().getName(), throwable);
+    public Optional<T> getOptionEvenErr(Consumer<E> exceptionConsumer) {
+        exceptionConsumer.accept(throwable);
         return Optional.empty();
     }
 

@@ -5,13 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>org.xyp.sample</groupId>
+        <artifactId>xyp-demo-all</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.xyp.sample</groupId>
     <artifactId>spring</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>

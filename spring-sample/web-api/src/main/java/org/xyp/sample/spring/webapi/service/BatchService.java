@@ -10,6 +10,7 @@ import org.xyp.sample.spring.webapi.domain.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.repository.jpa.BatchDaoJpa;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @AllArgsConstructor
@@ -22,17 +23,24 @@ public class BatchService {
 
         log.info("update batch id:{}", id);
         batch.setId(Batch.BatchId.of(id));
-
-//        return batchDaoJpa.save(batch);
+        batch.getBatchRules().forEach(f -> f.setRuleName("ss " + System.currentTimeMillis()));
 
         val tmp = batchDaoJpa.findWithRulesById(batch.getId());
-        tmp.get().getBatchRules().clear();
-        tmp.get().getBatchRules().addAll(batch.getBatchRules());
-        val newTmp = batchDaoJpa.save(tmp.get());
+//        tmp.get().getBatchRules().clear();
+//        tmp.get().getBatchRules().addAll(batch.getBatchRules());
+//        val newTmp = batchDaoJpa.save(tmp.get());
 //        newTmp.getBatchRules().forEach(r -> {}
 //            log.debug("{}", Optional.ofNullable(r.getBatchRuleDescriptions()).map(l -> l.size()).orElse(0))
 //        );
-        return newTmp;
+//        return newTmp;
+
+        return tmp.map(bb -> {
+
+            bb.setBatchName(UUID.randomUUID().toString());
+            bb.setBatchRules(batch.getBatchRules());
+            return batchDaoJpa.save(bb);
+        }).orElse(null);
+//        return batchDaoJpa.save(batch);
     }
 
     @Trace("batchService.dummy")

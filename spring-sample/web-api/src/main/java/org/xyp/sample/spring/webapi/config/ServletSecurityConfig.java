@@ -7,9 +7,11 @@ import org.springframework.boot.autoconfigure.security.servlet.StaticResourceReq
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 //import org.xyp.sample.spring.web.filter.SomeFilter;
@@ -53,11 +55,14 @@ public class ServletSecurityConfig {
     }
 
     @Bean(name = "allFilter")
-    SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
+    SecurityFilterChain apiSecurity(
+        HttpSecurity http,
+        Oauth2AuthenticationFailureHandler authenticationFailureHandler
+    ) throws Exception {
         log.info("creating servlet springSecurityFilterChain ......");
         http.csrf(AbstractHttpConfigurer::disable);
         http
-            .securityMatcher(d-> !staticMatcher.matches(d))
+            .securityMatcher(d -> !staticMatcher.matches(d))
             .authorizeHttpRequests(authorize -> authorize
                 .anyRequest().permitAll()
             )
@@ -67,10 +72,20 @@ public class ServletSecurityConfig {
             .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
                         .introspectionUri(this.introspectionUri)
                         .introspectionClientCredentials(this.clientId, this.clientSecret)
-                )
+                    )
+                    .addObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
+                        @Override
+                        public <O extends BearerTokenAuthenticationFilter> O postProcess(O object) {
+                            object.setAuthenticationFailureHandler(authenticationFailureHandler);
+                            return object;
+                        }
+                    })
             )
         ;
 
+//        bearerTokenAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+
+//        http.oauth2Login(login -> login.failureHandler(authenticationFailureHandler));
         return http.build();
     }
 }

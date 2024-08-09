@@ -22,7 +22,7 @@ public interface Result<T, E extends Throwable> {
 
     Optional<T> getOption();
 
-    Optional<T> getOptionEvenErr();
+    Optional<T> getOptionEvenErr(Consumer<E> exceptionConsumer);
 
     <RTE extends RuntimeException> Optional<T>
     getOptionOrSpecError(Class<RTE> rteClass, Function<E, RTE> exceptionMapper);

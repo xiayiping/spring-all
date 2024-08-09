@@ -1,5 +1,8 @@
 server:
   port: 8080
+  reactive:
+    session:
+      timeout: 3s
 
 spring:
   application:
@@ -48,3 +51,4 @@ spring:
             - TokenRelay=
           predicates:
             - Path=/mycoreinfo-participant/graphql
+

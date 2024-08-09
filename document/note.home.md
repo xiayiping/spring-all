@@ -1,5 +1,5 @@
 <!-- Wrap your entire content in a div with a style attribute -->
-<div style="font-size: 1.2em;">
+<div style="font-size: 1.4em;">
 
 # JPA
 
@@ -154,6 +154,87 @@ While PKCE and SCRAM-SHA-256 both enhance security in different authentication s
 
 
 org.springframework.boot.autoconfigure.web.reactive.WebSessionIdResolverAutoConfiguration
-org.springframework.boot.autoconfigure.web.reactive.WebSessionIdResolverAutoConfiguration
 
+
+## Functional Programme
+
+### Monoid
+
+- closure (set of values + combination operator)  : useful for collection folder
+- Associativity   : useful for parallel
+- Identity Element    : first element in collection folder | Empty element
+
+The combination of Monoid is also a Monoid.
+
+### Monad
+
+#### Effect
+List<_>  Option<_>  Resunt<>  Task<>  Async<>  etc......
+
+### Design pattern
+
+- map: map a non-monoid to a Monoid
+- map: map inside Effect. Sample:
+```javascript
+    let add42ToEach = List.map (+42)
+    add42ToEach [1,2,3]
+```
+
+
+
+# SELinux
+
+## config file
+one can only modify config and reboot to enable the change for selinux
+
+```shell
+vim /etc/selinux
+sestatus
+setenforce
+getenforce
+```
+
+```shell
+SELINUX=permissive
+# targeted - targeted processes are protected
+# minium - Modificatio of targeted, only selected processes are protected.
+# mls - Multi level security protection (too high level, military maybe need this)
+SELINUXTYPE=targeted
+```
+
+```shell
+
+ls -lZ   ## Z will show you the linux label of the file
+# like:
+# unconfined_u:object_r:httpd_sys_content_t:s0
+# user:role:target:security(for mls)
+
+# -t for change type
+chcon -t httpd_sys_content_t move.html
+# will move file move.html to httpd_sys_content_t type
+
+restorecon move.html
+restorecon -R * # recursive
+# auto restore file to correct context type
+
+# -a means add
+semanage fcontext -a -t httpd_sys_content_t "/web(/.*)?"
+# will set default type under the /web folder to a spec type
+
+semanage boolean --list
+semanage boolean --modify --on httpd_enable_homedirs
+# will change current and default boolean to on
+# if you want to only change for current session (not default)
+setsebool httpd_enable_homedirs 1
+# use -P also set the default value
+setsebool -P httpd_enable_homedirs 1
+```
+```shell
+/etc/selinux/targeted/contexts/file_content.*
+# is where selinux file labels definitions are stored
+
+# file labels are usually stored in the inode Xattrs
+matchpathcon /path # tells you what the label should be
+
+```
 </div>

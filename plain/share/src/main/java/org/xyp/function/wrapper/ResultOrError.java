@@ -1,6 +1,5 @@
 package org.xyp.function.wrapper;
 
-import lombok.val;
 import org.xyp.function.*;
 
 import java.util.Optional;
@@ -34,7 +33,7 @@ public class ResultOrError<R> {
     public ResultOrError<R> filter(Predicate<? super R> predicate) {
         return new ResultOrError<>(
             () -> {
-                val innerResult = supplier.get();
+                final R innerResult = supplier.get();
                 if (null != innerResult && predicate.test(innerResult)) {
                     return innerResult;
                 }
@@ -46,7 +45,7 @@ public class ResultOrError<R> {
     public ResultOrError<R> switchIfEmpty(Supplier<R> emptySupplier) {
         return new ResultOrError<>(
             () -> {
-                val innerResult = supplier.get();
+                final R innerResult = supplier.get();
                 if (null != innerResult) {
                     return innerResult;
                 }
@@ -58,7 +57,7 @@ public class ResultOrError<R> {
     public <U> ResultOrError<U> map(ExceptionalFunction<? super R, ? extends U> mapper) {
         return new ResultOrError<>(
             () -> {
-                val innerResult = supplier.get();
+                final R innerResult = supplier.get();
                 if (null != innerResult) {
                     return mapper.apply(innerResult);
                 }
@@ -70,7 +69,7 @@ public class ResultOrError<R> {
     public <U> ResultOrError<U> noExMap(Function<? super R, ? extends U> mapper) {
         return new ResultOrError<>(
             () -> {
-                val innerResult = supplier.get();
+                final R innerResult = supplier.get();
                 if (null != innerResult) {
                     return mapper.apply(innerResult);
                 }
@@ -82,9 +81,9 @@ public class ResultOrError<R> {
     public <U> ResultOrError<U> flatMap(ExceptionalFunction<? super R, Optional<U>> mapper) {
         return new ResultOrError<>(
             () -> {
-                val innerResult = supplier.get();
+                final R innerResult = supplier.get();
                 if (null != innerResult) {
-                    val optional = mapper.apply(innerResult);
+                    final Optional<U> optional = mapper.apply(innerResult);
                     return optional.orElse(null);
                 }
                 return null;

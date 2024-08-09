@@ -29,7 +29,6 @@ spring:
         format_sql: true
         use_sql_comments: false
         generate_statistics: true
-        dialect: ${db_dialect_1}
         default_schema: test
     open-in-view: false
     show-sql: true
@@ -61,5 +60,16 @@ management:
 mybatis:
   mapper-locations: classpath:/mybatis/*.xml
 
+org:
+  xyp:
+    id-gen:
+      schema: test
+      table: id_table
+      entity-name-column: entity_name
+      prev-value-column: prev_value
+      step-size-column: step_size
+      fetch-size-column: fetch_size
+
 logging:
   config: classpath:log4j2-spring.xml
+
