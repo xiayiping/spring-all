@@ -6,6 +6,7 @@ server:
 spring:
   application:
     name: web-api
+
   datasource:
     driver-class-name: ${db_driver_1}
     url: ${db_url_1}

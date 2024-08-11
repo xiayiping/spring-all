@@ -85,9 +85,8 @@ public class ServletSecurityConfig {
         http
             .authorizeHttpRequests((authorize) -> authorize
                     .anyRequest()
-                    .authenticated()
-
-//                .permitAll()
+//                    .authenticated()
+                .permitAll()
             )
 //            .oauth2ResourceServer(
 //                config -> config.jwt(Customizer.withDefaults())

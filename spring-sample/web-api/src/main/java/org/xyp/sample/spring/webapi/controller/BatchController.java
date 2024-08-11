@@ -23,6 +23,17 @@ public class BatchController {
     final TaskDaoJpa taskDaoJpa;
     final BatchService batchService;
 
+    @PatchMapping("/batch/{id}")
+    public Batch patch(@PathVariable("id") Long id, @RequestParam("name") String name) {
+        val origin = batchDaoJpa.findWithRulesById(Batch.BatchId.of(id));
+        return origin.map(
+            o -> {
+                o.setBatchName(name);
+                return batchDaoJpa.save(o);
+            }
+        ).orElseThrow();
+    }
+
     @PostMapping("/batch")
     public Batch batch(@RequestBody Batch batch) {
         return batchDaoJpa.save(batch);
