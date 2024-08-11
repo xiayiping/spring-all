@@ -51,3 +51,4 @@ spring:
             - TokenRelay=
           predicates:
             - Path=/mycoreinfo-participant/graphql
+

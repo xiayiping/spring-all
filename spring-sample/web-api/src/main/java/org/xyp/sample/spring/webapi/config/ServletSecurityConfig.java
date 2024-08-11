@@ -10,17 +10,21 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.xyp.sample.spring.webapi.filter.SomeServletFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -71,12 +75,19 @@ public class ServletSecurityConfig {
 
 
     @Bean
-    SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
+    SecurityFilterChain apiSecurity(
+        HttpSecurity http,
+//        BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter,
+        Oauth2AuthenticationFailureHandler authenticationFailureHandler
+    ) throws Exception {
         log.info("creating servlet springSecurityFilterChain ......");
         http.csrf(AbstractHttpConfigurer::disable);
         http
             .authorizeHttpRequests((authorize) -> authorize
-                .anyRequest().permitAll()
+                    .anyRequest()
+                    .authenticated()
+
+//                .permitAll()
             )
 //            .oauth2ResourceServer(
 //                config -> config.jwt(Customizer.withDefaults())
@@ -84,10 +95,20 @@ public class ServletSecurityConfig {
             .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
                         .introspectionUri(this.introspectionUri)
                         .introspectionClientCredentials(this.clientId, this.clientSecret)
-                )
+                    )
+                    .addObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
+                        @Override
+                        public <O extends BearerTokenAuthenticationFilter> O postProcess(O object) {
+                            object.setAuthenticationFailureHandler(authenticationFailureHandler);
+                            return object;
+                        }
+                    })
             )
         ;
 
+//        bearerTokenAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+
+//        http.oauth2Login(login -> login.failureHandler(authenticationFailureHandler));
         return http.build();
     }
 //

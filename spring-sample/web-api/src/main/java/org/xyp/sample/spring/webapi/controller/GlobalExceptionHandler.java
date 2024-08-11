@@ -6,6 +6,7 @@ import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,6 +17,19 @@ public class GlobalExceptionHandler {
 
     // Handle global exceptions
 //    @ExceptionHandler(Exception.class)
+
+    @ExceptionHandler(InvalidBearerTokenException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidBearerTokenException(
+        InvalidBearerTokenException ex,
+        HttpServletRequest request
+    ) {
+        log.error(ex.getMessage(), ex);
+        log.info("{}", request);
+        val pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        pd.setTitle("unauthenticated");
+        pd.setDetail("unauthenticated");
+        return new ResponseEntity<>(pd, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGlobalException(
