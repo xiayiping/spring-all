@@ -42,6 +42,14 @@ public class BatchController {
         return taskDaoJpa.save(task);
     }
 
+    @PatchMapping("/batch{id}")
+    public Batch patch(@PathVariable long id, @RequestParam("name") String name) {
+        return batchDaoJpa.findById(Batch.BatchId.of(id))
+            .map(b -> b.setBatchName(name))
+            .map(batchDaoJpa::save)
+            .orElse(null);
+    }
+
     @Trace(value = "batch.get")
     @GetMapping("/batch/{id}")
     public EntityModel<Batch> batch(@PathVariable Long id) {

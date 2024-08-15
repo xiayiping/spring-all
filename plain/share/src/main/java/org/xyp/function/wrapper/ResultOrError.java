@@ -99,7 +99,7 @@ public class ResultOrError<R> {
         }
     }
 
-    public <E extends RuntimeException> Optional<R> getOption() {
+    public Optional<R> getOption() {
         try {
             return Optional.ofNullable(supplier.get());
         } catch (Throwable e) {
