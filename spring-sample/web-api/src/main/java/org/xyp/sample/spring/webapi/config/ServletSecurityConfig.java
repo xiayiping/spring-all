@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 
 //import org.xyp.sample.spring.web.filter.SomeFilter;
 //import org.xyp.sample.spring.web.filter.SomeServletFilter;
@@ -60,7 +62,11 @@ public class ServletSecurityConfig {
         Oauth2AuthenticationFailureHandler authenticationFailureHandler
     ) throws Exception {
         log.info("creating servlet springSecurityFilterChain ......");
-        http.csrf(AbstractHttpConfigurer::disable);
+//        http.csrf(AbstractHttpConfigurer::disable);
+        http.csrf(csrfSpec -> csrfSpec
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//            .csrfTokenRequestHandler(new XorServerCsrfTokenRequestAttributeHandler())
+        );
         http
             .securityMatcher(d -> !staticMatcher.matches(d))
             .authorizeHttpRequests(authorize -> authorize
@@ -69,18 +75,18 @@ public class ServletSecurityConfig {
 //            .oauth2ResourceServer(
 //                config -> config.jwt(Customizer.withDefaults())
 //            )
-            .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
-                        .introspectionUri(this.introspectionUri)
-                        .introspectionClientCredentials(this.clientId, this.clientSecret)
-                    )
-                    .addObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
-                        @Override
-                        public <O extends BearerTokenAuthenticationFilter> O postProcess(O object) {
-                            object.setAuthenticationFailureHandler(authenticationFailureHandler);
-                            return object;
-                        }
-                    })
-            )
+//            .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
+//                        .introspectionUri(this.introspectionUri)
+//                        .introspectionClientCredentials(this.clientId, this.clientSecret)
+//                    )
+//                    .addObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
+//                        @Override
+//                        public <O extends BearerTokenAuthenticationFilter> O postProcess(O object) {
+//                            object.setAuthenticationFailureHandler(authenticationFailureHandler);
+//                            return object;
+//                        }
+//                    })
+//            )
         ;
 
 //        bearerTokenAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);

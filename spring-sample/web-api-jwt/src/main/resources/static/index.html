@@ -15,12 +15,17 @@
 <h1>Demo</h1>
 <div class="container">
 
-    <form action="/api/batch" method="post">
-        <textarea>
+    <form action="/api/jwt/hello/say" method="post">
+        <textarea name="say">
 werwer
         </textarea>
+        <input type="text" value="" name="_csrf">
+        <input type="submit">
     </form>
 
 </div>
 </body>
+<script type="application/javascript">
+    alert(document.cookie)
+</script>
 </html>
