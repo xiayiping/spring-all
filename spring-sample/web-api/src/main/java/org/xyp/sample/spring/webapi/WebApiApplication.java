@@ -17,7 +17,6 @@ import static org.springframework.core.env.AbstractEnvironment.DEFAULT_PROFILES_
 public class WebApiApplication {
 
     public static void main(String[] args) {
-        System.setProperty(DEFAULT_PROFILES_PROPERTY_NAME, "local");
         SpringApplication.run(WebApiApplication.class, args);
     }
 

@@ -1,4 +1,5 @@
 <div style="font-size: 1.4em;">
+
 # linux
 
 ## user
@@ -16,7 +17,7 @@ sudo rpm -ivh package.rpm
 ## filewall
 
 ```shell
-firewall-cmd --list-all
+sudo firewall-cmd --list-all
 sudo firewall-cmd --zone=public --add-port=8100/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=8301/tcp --permanent
@@ -24,6 +25,21 @@ sudo firewall-cmd --zone=public --add-port=1300/tcp --permanent
 sudo firewall-cmd --reload
 sudo firewall-cmd --reload
 sudo firewall-cmd --reload
+```
+
+## systemctl
+
+```shell
+
+sudo systemctl daemon-reload
+
+```
+
+## sudo-er add
+```shell
+
+sudo visudo
+
 ```
 
 ## selinux

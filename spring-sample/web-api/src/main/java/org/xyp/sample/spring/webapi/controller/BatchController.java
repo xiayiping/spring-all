@@ -3,6 +3,8 @@ package org.xyp.sample.spring.webapi.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 import org.xyp.sample.spring.tracing.Trace;
 import org.xyp.sample.spring.webapi.domain.entity.batch.Batch;
@@ -12,6 +14,8 @@ import org.xyp.sample.spring.webapi.repository.jpa.TaskDaoJpa;
 import org.xyp.sample.spring.webapi.service.BatchService;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -23,15 +27,9 @@ public class BatchController {
     final TaskDaoJpa taskDaoJpa;
     final BatchService batchService;
 
-    @PatchMapping("/batch/{id}")
-    public Batch patch(@PathVariable("id") Long id, @RequestParam("name") String name) {
-        val origin = batchDaoJpa.findWithRulesById(Batch.BatchId.of(id));
-        return origin.map(
-            o -> {
-                o.setBatchName(name);
-                return batchDaoJpa.save(o);
-            }
-        ).orElseThrow();
+    @PostMapping("/say")
+    public String batch(@RequestParam("say") String batch) {
+        return batch;
     }
 
     @PostMapping("/batch")
@@ -49,11 +47,28 @@ public class BatchController {
         return taskDaoJpa.save(task);
     }
 
+    @PatchMapping("/batch{id}")
+    public Batch patch(@PathVariable long id, @RequestParam("name") String name) {
+        return batchDaoJpa.findById(Batch.BatchId.of(id))
+            .map(b -> b.setBatchName(name))
+            .map(batchDaoJpa::save)
+            .orElse(null);
+    }
+
     @Trace(value = "batch.get")
     @GetMapping("/batch/{id}")
-    public Batch batch(@PathVariable Long id) {
+    public EntityModel<Batch> batch(@PathVariable Long id) {
         batchService.dummy();
-        return batchDaoJpa.findWithRulesById(Batch.BatchId.of(id)).get();
+        val afford = afford(methodOn(HelloController.class).hello(null));
+        val link = linkTo(methodOn(BatchController.class).batch(id)).withSelfRel();
+        val linkPut = linkTo(methodOn(BatchController.class).batchUpdate(id, null))
+            .withRel("update_key") // it's the key name
+            .withType(HttpMethod.PUT.name())
+            .withName("update_key_name")
+            .withAffordances(List.of(afford))
+            ;
+        val batch = batchDaoJpa.findWithRulesById(Batch.BatchId.of(id)).get();
+        return EntityModel.of(batch, link, linkPut);
     }
 
     @GetMapping("/task/{id}")
