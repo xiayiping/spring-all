@@ -33,4 +33,9 @@ public class HelloController {
     public String batch(@RequestParam("say") String batch) {
         return batch;
     }
+
+    @PostMapping("/say2")
+    public String batch2(@RequestParam("say") String batch) {
+        return batch + "_2";
+    }
 }
