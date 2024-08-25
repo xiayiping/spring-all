@@ -11,7 +11,6 @@ import org.xyp.function.FunctionException;
 import org.xyp.function.ValueHolder;
 import org.xyp.function.wrapper.ResultOrError;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -107,7 +106,7 @@ class ResultOrErrorTest {
             .map(Fun.updateSelf(p -> p.setAge(66)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(66)))
             .map(r -> Fun.cast(Person.class).apply(r))
-            .flatMap(i -> i)
+            .flatMap(i -> ResultOrError.of(i.orElse(null)))
             .getOption();
         Assertions.assertThat(opt).isNotEmpty();
         Assertions.assertThat(opt.get().getName()).isEqualTo("nn");
@@ -125,9 +124,9 @@ class ResultOrErrorTest {
             .map(Fun.updateSelf(p -> p.setAge(77)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(77)))
             .map(Fun.updateSelf(p -> p.setAge(66)))
-            .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(66)))
+            .consume(p -> Assertions.assertThat(p.getAge()).isEqualTo(66))
             .map(o -> Fun.cast(Integer.class).apply(o))
-            .flatMap(i -> i)
+            .flatMap(i -> ResultOrError.on(() -> i.orElse(null)))
             .getOption();
         Assertions.assertThat(opt).isEmpty();
     }
@@ -146,7 +145,7 @@ class ResultOrErrorTest {
             .map(Fun.updateSelf(p -> p.setAge(66)))
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(66)))
             .map(Fun.castTo(Object.class))
-            .flatMap(i -> i)
+            .flatMap(i -> ResultOrError.on(() -> i.orElse(null)))
             .getOption();
         Assertions.assertThat(opt).isNotEmpty();
         Assertions.assertThat(opt.get().getClass()).isEqualTo(Person.class);
@@ -167,7 +166,7 @@ class ResultOrErrorTest {
         Assertions.assertThat(opt.getOptionEvenErr(e -> {
         })).isNotEmpty();
         Assertions.assertThat(opt.getOptionEvenErr(e -> {
-        }).get()).isEqualTo(996);
+        }).orElse(null)).isEqualTo(996);
     }
 
     @Test
@@ -233,7 +232,7 @@ class ResultOrErrorTest {
         val opt = ResultOrError.of(1)
 //            .noExMap(i -> i)
             .filter(i -> i > 1000)
-            .flatMap(Optional::ofNullable)
+            .flatMap(ResultOrError::of)
             .fallbackForEmpty(() -> 1)
             .consume(i -> {
             })
@@ -257,7 +256,6 @@ class ResultOrErrorTest {
     @Test
     void test15() {
         val lazy = ResultOrError.of(1)
-//            .noExMap(i -> i)
             .map(i -> i / 0);
         Assertions.assertThatThrownBy(lazy::getOption)
             .isInstanceOf(ArithmeticException.class);
@@ -299,5 +297,4 @@ class ResultOrErrorTest {
             this.age = age;
         }
     }
-
 }

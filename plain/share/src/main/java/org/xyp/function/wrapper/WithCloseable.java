@@ -4,7 +4,7 @@ import org.xyp.function.*;
 
 import java.util.function.Function;
 
-public class WithCloseable<C extends AutoCloseable, T> {
+public final class WithCloseable<C extends AutoCloseable, T> {
 
     public static <L extends AutoCloseable> WithCloseable<L, L> open(ExceptionalSupplier<L> open) {
         return new WithCloseable<>(

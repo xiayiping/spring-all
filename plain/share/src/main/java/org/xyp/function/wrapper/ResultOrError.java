@@ -14,20 +14,31 @@ import java.util.function.Supplier;
  *
  * @param <R>
  */
-public class ResultOrError<R> {
+public final class ResultOrError<R> {
 
     private final ExceptionalSupplier<R> supplier;
+    private final StackWalker.StackFrame stackStep;
 
-    private ResultOrError(ExceptionalSupplier<R> supplier) {
+    private ResultOrError(ExceptionalSupplier<R> supplier, StackWalker.StackFrame stackStep) {
         this.supplier = supplier;
+        this.stackStep = stackStep;
+    }
+
+    private static StackWalker.StackFrame getStackStep() {
+        final var stack = StackWalker.getInstance()
+            .walk(stream -> stream.filter(s -> !s.toStackTraceElement().getClassName().equals(ResultOrError.class.getName()))
+                .findFirst())
+            .orElse(null);
+        System.out.println(stack);
+        return stack;
     }
 
     public static <T1> ResultOrError<T1> of(T1 t1) {
-        return new ResultOrError<>(() -> t1);
+        return new ResultOrError<>(() -> t1, getStackStep());
     }
 
     public static <R> ResultOrError<R> on(ExceptionalSupplier<R> supplier) {
-        return new ResultOrError<>(supplier);
+        return new ResultOrError<>(supplier, getStackStep());
     }
 
     public ResultOrError<R> filter(Predicate<? super R> predicate) {
@@ -38,7 +49,7 @@ public class ResultOrError<R> {
                     return innerResult;
                 }
                 return null;
-            }
+            }, getStackStep()
         );
     }
 
@@ -50,7 +61,7 @@ public class ResultOrError<R> {
                     return innerResult;
                 }
                 return emptySupplier.get();
-            }
+            }, getStackStep()
         );
     }
 
@@ -62,11 +73,12 @@ public class ResultOrError<R> {
                     consumer.accept(innerResult);
                 }
                 return innerResult;
-            }
+            }, getStackStep()
         );
     }
 
     public <U> ResultOrError<U> map(ExceptionalFunction<? super R, ? extends U> mapper) {
+
         return new ResultOrError<>(
             () -> {
                 final R innerResult = supplier.get();
@@ -74,20 +86,20 @@ public class ResultOrError<R> {
                     return mapper.apply(innerResult);
                 }
                 return null;
-            }
+            }, getStackStep()
         );
     }
 
-    public <U> ResultOrError<U> flatMap(ExceptionalFunction<? super R, Optional<U>> mapper) {
+    public <U> ResultOrError<U> flatMap(ExceptionalFunction<? super R, ResultOrError<U>> mapper) {
         return new ResultOrError<>(
             () -> {
                 final R innerResult = supplier.get();
                 if (null != innerResult) {
-                    final Optional<U> optional = mapper.apply(innerResult);
-                    return optional.orElse(null);
+                    final ResultOrError<U> optional = mapper.apply(innerResult);
+                    return optional.get();
                 }
                 return null;
-            }
+            }, getStackStep()
         );
     }
 
