@@ -19,6 +19,7 @@
     <modules>
         <module>web-api</module>
         <module>web-api-jwt</module>
+        <module>web-vaadin</module>
         <module>oauth2-server</module>
         <module>oauth2-client</module>
         <module>tracing</module>

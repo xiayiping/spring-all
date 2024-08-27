@@ -36,16 +36,15 @@ public class ServletSecurityConfig {
     SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
         log.info("creating servlet springSecurityFilterChain ......");
 //        http.csrf(AbstractHttpConfigurer::disable);
-        http.csrf(csrfSpec ->
-            csrfSpec.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
+        http.csrf(csrfSpec -> csrfSpec
+            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
         )
-            ;
+        ;
         http.sessionManagement(sessionCustomize -> sessionCustomize.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http
-            .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll()
-            )
+        http.authorizeHttpRequests(authorize -> authorize
+            .anyRequest().permitAll()
+        )
         ;
         http.addFilterBefore(new JwtFilter(new JwtConverter(null)), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
