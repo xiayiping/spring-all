@@ -1,0 +1,9 @@
+vaadin:
+  launch-browser: true
+
+spring:
+  application:
+    name: web-vaadin
+  devtools:
+    restart:
+      enabled: true
