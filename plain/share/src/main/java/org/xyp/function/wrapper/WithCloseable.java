@@ -76,7 +76,7 @@ public final class WithCloseable<C extends AutoCloseable, T> {
 
     public Result<T, Throwable> closeAndGetResult() {
         try (var closeable = closeableSupplier.get()) {
-            return Result.success(innerMapper.apply(closeable));
+            return Result.success(innerMapper.apply(closeable), null);
         } catch (Throwable e) {
             return Result.failure(e);
         }
@@ -87,7 +87,7 @@ public final class WithCloseable<C extends AutoCloseable, T> {
         Function<Throwable, E> exceptionMapper
     ) {
         try (var closeable = closeableSupplier.get()) {
-            return Result.success(innerMapper.apply(closeable));
+            return Result.success(innerMapper.apply(closeable), null);
         } catch (Throwable e) {
             return Result.failure(Fun.convertRte(e, target, exceptionMapper));
         }

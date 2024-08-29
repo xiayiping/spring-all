@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record Success<T, E extends Throwable>(T value) implements Result<T, E> {
+public record Success<T, E extends Throwable>(T value, StackStepInfo stackStepInfo) implements Result<T, E> {
 
     @Override
     public boolean isSuccess() {

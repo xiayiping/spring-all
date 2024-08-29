@@ -62,9 +62,10 @@ class ResultOrErrorTest {
             .filter(i -> i > 0)
             .map(i -> i - 4)
             .filter(i -> i > 0)
-//            .noExMap(i -> i)
+            .noExMap(i -> i)
             .map(i -> i + 100)
             .fallbackForEmpty(() -> 996)
+            .logTrace(System.out::println)
             .getOption();
 
         Assertions.assertThat(opt).isNotEmpty();
@@ -146,6 +147,7 @@ class ResultOrErrorTest {
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(66)))
             .map(Fun.castTo(Object.class))
             .flatMap(i -> ResultOrError.on(() -> i.orElse(null)))
+            .logTrace(System.out::println)
             .getOption();
         Assertions.assertThat(opt).isNotEmpty();
         Assertions.assertThat(opt.get().getClass()).isEqualTo(Person.class);
@@ -284,6 +286,17 @@ class ResultOrErrorTest {
         Assertions.assertThat(new FunctionException("")).isNotNull();
         Assertions.assertThat(new FunctionException("", new RuntimeException())).isNotNull();
         Assertions.assertThat(new FunctionException(new RuntimeException())).isNotNull();
+    }
+
+    @Test
+    void test20() {
+        ValueHolder<Integer> vh = new ValueHolder<>(0);
+        Assertions.assertThat(vh.value()).isZero();
+        val doRun = ResultOrError.doRun(() -> vh.setValue(1));
+        Assertions.assertThat(vh.value()).isZero();
+        doRun.getResult();
+        Assertions.assertThat(vh.value()).isOne();
+
     }
 
     @Data

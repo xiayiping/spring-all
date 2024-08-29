@@ -7,8 +7,8 @@ import java.util.function.Function;
 public interface Result<T, E extends Throwable> {
     boolean isSuccess();
 
-    static <T, E extends Throwable> Result<T, E> success(T t) {
-        return new Success<>(t);
+    static <T, E extends Throwable> Result<T, E> success(T t, StackStepInfo stackStepInfo) {
+        return new Success<>(t, stackStepInfo);
     }
 
     static <T, E extends Throwable> Result<T, E> failure(E throwable) {
