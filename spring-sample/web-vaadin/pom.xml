@@ -7,7 +7,7 @@
         <groupId>org.xyp.sample</groupId>
         <artifactId>spring</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+<!--        <relativePath>../pom.xml</relativePath>-->
     </parent>
     <groupId>org.xyp.sample.spring</groupId>
     <artifactId>web-vaadin</artifactId>
