@@ -18,7 +18,7 @@ class WithCloseableTest {
     void test1() {
         ValueHolder<MockCloseable> holder = ValueHolder.of(null);
         Assertions.assertThat(holder.isEmpty()).isTrue();
-        val lazy = WithCloseable.open(MockCloseable::new)
+        var lazy = WithCloseable.open(MockCloseable::new)
             .map(Fun.updateSelf(holder::setValue))
             .map(c -> 1);
         ;
@@ -35,11 +35,11 @@ class WithCloseableTest {
 
     @Test
     void test2() {
-        val lazy = WithCloseable.open(MockCloseable::new)
+        var lazy = WithCloseable.open(MockCloseable::new)
             .map(c -> 1)
             .map(c -> c / 0);
 
-        Assertions.assertThatThrownBy(lazy::closeAndGet).isInstanceOf(ArithmeticException.class);
+        Assertions.assertThatThrownBy(() -> lazy.closeAndGet()).isInstanceOf(ArithmeticException.class);
         Assertions.assertThatThrownBy(() -> lazy.closeAndGet(IllegalArgumentException.class, IllegalArgumentException::new)).isInstanceOf(IllegalArgumentException.class);
         Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
         Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).isSuccess()).isFalse();
@@ -47,10 +47,10 @@ class WithCloseableTest {
 
     @Test
     void test3() {
-        val lazy = WithCloseable.open(MockCloseableErr::new)
+        var lazy = WithCloseable.open(MockCloseableErr::new)
             .map(c -> 1);
 
-        Assertions.assertThatThrownBy(lazy::closeAndGet).isInstanceOf(RuntimeException.class);
+        Assertions.assertThatThrownBy(() -> lazy.closeAndGet()).isInstanceOf(RuntimeException.class);
         Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
         Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).isSuccess()).isFalse();
     }
@@ -58,7 +58,7 @@ class WithCloseableTest {
     @Test
     void test4() {
         ValueHolder<MockCloseable> holder = new ValueHolder<>(null);
-        val lazy = WithCloseable.open(MockCloseable::new)
+        var lazy = WithCloseable.open(MockCloseable::new)
             .map(Fun.updateSelf(holder::setValue))
             .map(c -> 1)
             .consume(i -> {
@@ -74,10 +74,10 @@ class WithCloseableTest {
 
     @Test
     void test5() {
-        val lazy = WithCloseable.open(MockCloseableErr2::new)
+        var lazy = WithCloseable.open(MockCloseableErr2::new)
             .map(c -> 1);
 
-        Assertions.assertThatThrownBy(lazy::closeAndGet).isInstanceOf(RuntimeException.class);
+        Assertions.assertThatThrownBy(() -> lazy.closeAndGet()).isInstanceOf(RuntimeException.class);
         Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
         Assertions.assertThat(lazy.closeAndGetResult().getOrFallBackForError(ex -> 55)).isEqualTo(55);
         Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).isSuccess()).isFalse();
