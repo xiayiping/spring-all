@@ -22,8 +22,8 @@
 
     <properties>
         <revision>0.0.0</revision>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+<!--        <maven.compiler.source>21</maven.compiler.source>-->
+<!--        <maven.compiler.target>21</maven.compiler.target>-->
         <version.lombok>1.18.32</version.lombok>
     </properties>
 

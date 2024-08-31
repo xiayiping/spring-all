@@ -5,11 +5,11 @@ import java.util.LinkedList;
 public class AuditInfoStack {
     private final LinkedList<AuditInfo> stack = new LinkedList<>();
 
-    public AuditInfo pop() {
+    AuditInfo pop() {
         return isEmpty() ? null : stack.pop();
     }
 
-    public AuditInfo push(AuditInfo info) {
+    AuditInfo push(AuditInfo info) {
         stack.push(info);
         return info;
     }

@@ -1,7 +1,5 @@
 package org.xyp.sample.spring.tracing;
 
-import com.tcghl.corej.util.fun.wrapper.ResultOrError;
-import com.tcghl.corej.util.fun.wrapper.WithCloseable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,10 +9,12 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.xyp.function.wrapper.ResultOrError;
+import org.xyp.function.wrapper.WithCloseable;
 
 import java.util.Optional;
 
-import static com.tcghl.corej.util.fun.Fun.checkAndCast;
+import static org.xyp.function.Fun.checkAndCast;
 
 @Slf4j
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class AuditAspect {
     private final ThreadLocal<AuditInfoStack> infoStack = ThreadLocal.withInitial(AuditInfoStack::new);
     private final AuditListener auditListener;
 
-    @Pointcut("@annotation(com.tcghl.corej.audit.aop.Audit)")
+    @Pointcut("@annotation(org.xyp.sample.spring.tracing.Audit)")
     public void startAuditTransactionPointcut() {
     }
 
