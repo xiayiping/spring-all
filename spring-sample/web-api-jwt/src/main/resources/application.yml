@@ -1,5 +1,8 @@
 server:
   port: 8083
+  tomcat:
+    resource:
+      allow-caching: false
 
 spring:
   application:

@@ -27,6 +27,11 @@ public class BatchController {
     final TaskDaoJpa taskDaoJpa;
     final BatchService batchService;
 
+    @PostMapping("/say")
+    public String batch(@RequestParam("say") String batch) {
+        return batch;
+    }
+
     @PostMapping("/batch")
     public Batch batch(@RequestBody Batch batch) {
         return batchDaoJpa.save(batch);
@@ -40,6 +45,14 @@ public class BatchController {
     @PostMapping("/task")
     public Task task(@RequestBody Task task) {
         return taskDaoJpa.save(task);
+    }
+
+    @PatchMapping("/batch{id}")
+    public Batch patch(@PathVariable long id, @RequestParam("name") String name) {
+        return batchDaoJpa.findById(Batch.BatchId.of(id))
+            .map(b -> b.setBatchName(name))
+            .map(batchDaoJpa::save)
+            .orElse(null);
     }
 
     @Trace(value = "batch.get")

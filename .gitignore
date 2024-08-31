@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 *.versionsBackup
 *.env
+generated/
 
 ### IntelliJ IDEA ###
 .idea/

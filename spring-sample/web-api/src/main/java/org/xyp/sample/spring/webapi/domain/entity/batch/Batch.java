@@ -3,6 +3,7 @@ package org.xyp.sample.spring.webapi.domain.entity.batch;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.core.convert.converter.Converter;
@@ -32,6 +33,7 @@ import java.util.*;
 @AllArgsConstructor
 @Builder
 @Data
+@Accessors(chain = true)
 // 完整的object只会出现一次，且是第一次出现， 如果是第二次出现， 只会只有id reference
 // 并不能解决所有问题， 如果第一次出现是在某个aggregate root的leaf中， 那么第二次即使是个跟高层级的Object ， 也只会变成ref
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")

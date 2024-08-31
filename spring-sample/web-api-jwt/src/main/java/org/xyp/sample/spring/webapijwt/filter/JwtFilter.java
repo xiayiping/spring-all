@@ -25,15 +25,15 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
         HttpServletRequest request, HttpServletResponse response, FilterChain filterChain
     ) throws ServletException, IOException {
-        val authHeader = request.getHeader("Authorization");
-        if (!StringUtils.hasText(authHeader)) {
-            throw new UnAuthenticatedException();
-        }
-
-        val token = authHeader.replace("Bearer ", "");
-        log.info("jwtToken: {}", token);
-        val auth = jwtConverter.convertJwtToken(token);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+//        val authHeader = request.getHeader("Authorization");
+//        if (!StringUtils.hasText(authHeader)) {
+//            throw new UnAuthenticatedException();
+//        }
+//
+//        val token = authHeader.replace("Bearer ", "");
+//        log.info("jwtToken: {}", token);
+//        val auth = jwtConverter.convertJwtToken(token);
+//        SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
     }
 }

@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -31,4 +29,13 @@ public class HelloController {
         return Map.of("message", "Hello " + authentication);
     }
 
+    @PostMapping("/say")
+    public String batch(@RequestParam("say") String batch) {
+        return batch;
+    }
+
+    @PostMapping("/say2")
+    public String batch2(@RequestParam("say") String batch) {
+        return batch + "_2";
+    }
 }

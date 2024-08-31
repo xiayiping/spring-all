@@ -26,15 +26,19 @@ Accept: application/json
   "batchName": "batch 334",
   "batchRules": [
     {
-      "ruleName": "efgh",
+      "id" : 701,
+      "ruleName": "efgddh",
       "batchRuleDescriptions" : [{
-        "description" : "disc2"
+        "description" : "zzzz"
       }]
     },
     {
-      "ruleName": "abcd",
+      "id" : 702,
+      "ruleName": "abffcd",
       "batchRuleDescriptions" : [{
-        "description" : "disc222"
+        "description" : "xxx"
+      }, {
+        "description" : "yyy"
       }]
     }
   ]

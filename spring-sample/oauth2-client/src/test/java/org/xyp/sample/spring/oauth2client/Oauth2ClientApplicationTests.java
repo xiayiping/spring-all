@@ -63,7 +63,7 @@ class Oauth2ClientApplicationTests {
 
     @Test
     void test3() {
-        org.xyp.function.wrapper.Result.success(1);
+        org.xyp.function.wrapper.Result.success(1, null);
         val flux = Flux.fromIterable(List.of(1, 0, 9, 0, 19, 0, 29, 0))
             .map(i -> ResultOrError.on(() -> i + " | " + 10 / i))
             .map(re -> re.map(s -> s + ";").getResult());
