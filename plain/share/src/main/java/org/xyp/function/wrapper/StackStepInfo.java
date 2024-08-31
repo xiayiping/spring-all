@@ -1,38 +1,31 @@
 package org.xyp.function.wrapper;
 
+import java.util.Optional;
 
-public class StackStepInfo {
-    private final StackWalker.StackFrame stackFrame;
-    private final StackStepInfo previous;
-    private Object input;
-    private Object output;
+public record StackStepInfo<T>(
+    StackWalker.StackFrame stackFrame,
+    StackStepInfo<?> previous,
+    Object input,
+    T output,
+    Throwable throwable,
+    StackStepInfo<T> child
+) {
 
-    public StackStepInfo(StackWalker.StackFrame stackFrame, StackStepInfo previous) {
-        this.stackFrame = stackFrame;
-        this.previous = previous;
+    public boolean isError() {
+        return null != throwable;
     }
 
-    public StackWalker.StackFrame getStackFrame() {
-        return stackFrame;
+    public Optional<StackStepInfo<T>> getChild() {
+        return Optional.ofNullable(child);
     }
 
-    public Object getInput() {
-        return input;
-    }
-
-    void setInput(Object input) {
-        this.input = input;
-    }
-
-    public Object getOutput() {
-        return output;
-    }
-
-    void setOutput(Object output) {
-        this.output = output;
-    }
-
-    public StackStepInfo getPrevious() {
-        return previous;
+    public StackStepInfo(
+        StackWalker.StackFrame stackFrame,
+        StackStepInfo<?> previous,
+        Object input,
+        T output,
+        Throwable throwable
+    ) {
+        this(stackFrame, previous, input, output, throwable, null);
     }
 }
