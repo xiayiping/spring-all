@@ -21,10 +21,23 @@
     </modules>
 
     <properties>
-        <revision>0.0.0</revision>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <version.lombok>1.18.32</version.lombok>
     </properties>
+
+    <build>
+        <pluginManagement>
+<!--            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version> &lt;!&ndash; or a newer version when available &ndash;&gt;
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <enablePreview>true</enablePreview>
+                    </configuration>
+                </plugin>
+            </plugins>-->
+        </pluginManagement>
+    </build>
 
 </project>

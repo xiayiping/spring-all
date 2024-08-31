@@ -21,6 +21,7 @@
     </properties>
 
     <dependencies>
+<!--
 
         <dependency>
             <groupId>org.xyp.sample.plain</groupId>
@@ -39,6 +40,7 @@
             <artifactId>common</artifactId>
             <version>${revision}</version>
         </dependency>
+-->
 
         <dependency>
             <groupId>org.webjars</groupId>
@@ -210,6 +212,12 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+            </plugin>
+
         </plugins>
     </build>
 
