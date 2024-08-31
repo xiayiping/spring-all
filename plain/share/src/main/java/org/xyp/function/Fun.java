@@ -6,6 +6,9 @@ import java.util.function.Function;
 
 public class Fun {
 
+    private Fun() {
+    }
+
     public static <T> ExceptionalFunction<T, T> updateSelf(ExceptionalConsumer<T> consumer) {
         return obj -> {
             consumer.accept(obj);
@@ -20,25 +23,20 @@ public class Fun {
         };
     }
 
+    public static <T> Optional<T> checkAndCast(Object o, Class<T> target) {
+        return Optional.ofNullable(o)
+            .filter(target::isInstance)
+            .map(target::cast);
+    }
+
+    public static <R> Function<Object, Optional<R>> cast(Class<R> target) {
+        return o -> checkAndCast(o, target);
+    }
+
     public static <E extends RuntimeException> E convertRte(Throwable e, Class<E> target, Function<Throwable, E> converter) {
         if (target.isAssignableFrom(e.getClass())) {
             return (target.cast(e));
         }
         return converter.apply(e);
     }
-
-    public static <R> Optional<R> cast(Object o, Class<R> target) {
-        if (null == o) {
-            return Optional.empty();
-        }
-        if (target.isAssignableFrom(o.getClass())) {
-            return Optional.of(target.cast(o));
-        }
-        return Optional.empty();
-    }
-
-    public static <R> Function<Object, Optional<R>> cast(Class<R> target) {
-        return o -> cast(o, target);
-    }
-
 }

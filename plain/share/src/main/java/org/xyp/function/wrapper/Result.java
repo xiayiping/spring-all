@@ -7,25 +7,31 @@ import java.util.function.Function;
 public interface Result<T, E extends Throwable> {
     boolean isSuccess();
 
-    static <T, E extends Throwable> Result<T, E> success(T t) {
-        return new Success<>(t);
+    static <T, E extends Throwable> Result<T, E> success(T t, StackStepInfo<T> stackStepInfo) {
+        return new Success<>(t, stackStepInfo);
     }
 
-    static <T, E extends Throwable> Result<T, E> failure(E throwable) {
-        return new Failure<>(throwable);
+    static <T, E extends Throwable> Result<T, E> failure(E throwable, StackStepInfo<T> stackStepInfo) {
+        return new Failure<>(throwable, stackStepInfo);
     }
 
     T get();
 
-    <RTE extends RuntimeException>
-    T getOrSpecError(Class<RTE> rteClass, Function<E, RTE> exceptionMapper);
+    E getError();
+
+    <R extends RuntimeException>
+    T getOrSpecError(Class<R> rteClass, Function<E, R> exceptionMapper);
 
     Optional<T> getOption();
 
     Optional<T> getOptionEvenErr(Consumer<E> exceptionConsumer);
 
-    <RTE extends RuntimeException> Optional<T>
-    getOptionOrSpecError(Class<RTE> rteClass, Function<E, RTE> exceptionMapper);
+    <R extends RuntimeException> Optional<T>
+    getOptionOrSpecError(Class<R> rteClass, Function<E, R> exceptionMapper);
 
     void ifError(Consumer<E> consumer);
+
+    T getOrFallBackForError(Function<E, T> exceptionMapper);
+
+    Optional<StackStepInfo<T>> getStackStepInfo();
 }

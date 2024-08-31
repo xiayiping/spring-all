@@ -8,7 +8,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public record Failure<T, E extends Throwable>(
-    E throwable
+    E throwable,
+    StackStepInfo<T> stackStepInfo
 ) implements Result<T, E> {
     @Override
     public boolean isSuccess() {
@@ -21,7 +22,12 @@ public record Failure<T, E extends Throwable>(
     }
 
     @Override
-    public <RTE extends RuntimeException> T getOrSpecError(Class<RTE> rteClass, Function<E, RTE> exceptionMapper) {
+    public E getError() {
+        return throwable;
+    }
+
+    @Override
+    public <R extends RuntimeException> T getOrSpecError(Class<R> rteClass, Function<E, R> exceptionMapper) {
         if (rteClass.isAssignableFrom(throwable.getClass())) {
             throw rteClass.cast(throwable);
         }
@@ -40,7 +46,7 @@ public record Failure<T, E extends Throwable>(
     }
 
     @Override
-    public <RTE extends RuntimeException> Optional<T> getOptionOrSpecError(Class<RTE> rteClass, Function<E, RTE> exceptionMapper) {
+    public <R extends RuntimeException> Optional<T> getOptionOrSpecError(Class<R> rteClass, Function<E, R> exceptionMapper) {
         if (rteClass.isAssignableFrom(throwable.getClass())) {
             throw rteClass.cast(throwable);
         }
@@ -50,5 +56,15 @@ public record Failure<T, E extends Throwable>(
     @Override
     public void ifError(Consumer<E> consumer) {
         consumer.accept(throwable);
+    }
+
+    @Override
+    public T getOrFallBackForError(Function<E, T> exceptionMapper) {
+        return exceptionMapper.apply(throwable);
+    }
+
+    @Override
+    public Optional<StackStepInfo<T>> getStackStepInfo() {
+        return Optional.ofNullable(stackStepInfo);
     }
 }
