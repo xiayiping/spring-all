@@ -62,17 +62,5 @@
             </testResource>
         </testResources>
         <testOutputDirectory>target/classes-test</testOutputDirectory>
-<!--
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <enablePreview>true</enablePreview>
-                </configuration>
-            </plugin>
-        </plugins>-->
     </build>
 </project>

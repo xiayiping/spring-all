@@ -7,6 +7,10 @@ public class ValueHolder<T> {
         return new ValueHolder<>(value);
     }
 
+    public ValueHolder() {
+        this.value = null;
+    }
+
     public ValueHolder(T t) {
         this.value = t;
     }
@@ -18,5 +22,9 @@ public class ValueHolder<T> {
     public ValueHolder<T> setValue(T value) {
         this.value = value;
         return this;
+    }
+
+    public boolean isEmpty() {
+        return null == value;
     }
 }
