@@ -207,8 +207,7 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
     private void initIdValueToTable(PreparedStatement preparedStatement) {
         ResultOrError.on(preparedStatement::executeUpdate)
             .map(Fun.updateSelf(i -> log.info("init id of entity, inserted row count {}", i)))
-            .getResultOrSpecError(IdGenerationException.class, IdGenerationException::new)
-            .get()
+            .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
         ;
     }
 
@@ -229,8 +228,7 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
     private void updateIdBatch(PreparedStatement preparedStatement) {
         ResultOrError.on(preparedStatement::executeUpdate)
             .map(Fun.updateSelf(i -> log.info("update id, updated row count {}", i)))
-            .getResultOrSpecError(IdGenerationException.class, IdGenerationException::new)
-            .get()
+            .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
         ;
     }
 

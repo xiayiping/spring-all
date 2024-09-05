@@ -214,7 +214,6 @@ public class ResultOrError<R> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <U> ResultOrError<U> map(ExceptionalFunction<? super R, ? extends U> mapper) {
         final var frame = getStackStep();
         return new ResultOrError<>(
@@ -276,15 +275,7 @@ public class ResultOrError<R> {
     }
 
     public R get() {
-        try {
-            final var res = supplier.get();
-            if (res.isError()) {
-                throw res.throwable();
-            }
-            return res.output();
-        } catch (Throwable e) {
-            throw Fun.convertRte(e, RuntimeException.class, FunctionException::new);
-        }
+        return getResult().get();
     }
 
     public Optional<R> getOption() {
@@ -292,33 +283,25 @@ public class ResultOrError<R> {
     }
 
     public <E extends RuntimeException> R getOrSpecError(Class<E> target, Function<Throwable, E> exceptionMapper) {
-        try {
-            final var res = supplier.get();
-            if (res.isError()) {
-                throw res.throwable();
-            }
-            return res.output();
-        } catch (Throwable e) {
-            throw Fun.convertRte(e, target, exceptionMapper);
-        }
+        return getResult().getOrSpecError(target, exceptionMapper);
+    }
+
+    public <E extends RuntimeException> R getOrSpecErrorBy(Class<E> target, Function<Result<R, Throwable>, E> exceptionMapper) {
+        return getResult().getOrSpecErrorBy(target, exceptionMapper);
     }
 
     public <E extends RuntimeException> Optional<R> getOptionOrSpecError(Class<E> target, Function<Throwable, E> exceptionMapper) {
-        return Optional.ofNullable(getOrSpecError(target, exceptionMapper));
+        return getResult().getOptionOrSpecError(target, exceptionMapper);
+    }
+
+    public <E extends RuntimeException> Optional<R> getOptionOrSpecErrorBy(Class<E> target, Function<Result<R, Throwable>, E> exceptionMapper) {
+        return getResult().getOptionOrSpecErrorBy(target, exceptionMapper);
     }
 
     public Result<R, Throwable> getResult() {
         final var res = (supplier.get());
         if (res.isError()) {
             return Result.failure(res.throwable(), res);
-        }
-        return Result.success(res.output(), res);
-    }
-
-    public <E extends RuntimeException> Result<R, E> getResultOrSpecError(Class<E> target, Function<Throwable, E> exceptionMapper) {
-        final var res = (supplier.get());
-        if (res.isError()) {
-            return Result.failure(Fun.convertRte(res.throwable(), target, exceptionMapper), res);
         }
         return Result.success(res.output(), res);
     }

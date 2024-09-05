@@ -27,12 +27,17 @@ public record Success<T, E extends Throwable>(T value, StackStepInfo<T> stackSte
     }
 
     @Override
+    public <R extends RuntimeException> T getOrSpecErrorBy(Class<R> rteClass, Function<Result<T, E>, R> exceptionMapper) {
+        return value;
+    }
+
+    @Override
     public Optional<T> getOption() {
         return Optional.ofNullable(value);
     }
 
     @Override
-    public Optional<T> getOptionEvenErr(Consumer<E> exceptionConsumer) {
+    public Optional<T> getOptionEvenErr(Function<E, T> exceptionFallBack) {
         return Optional.ofNullable(value);
     }
 
@@ -42,8 +47,14 @@ public record Success<T, E extends Throwable>(T value, StackStepInfo<T> stackSte
     }
 
     @Override
-    public void ifError(Consumer<E> consumer) {
-        // no need
+    public <R extends RuntimeException> Optional<T>
+    getOptionOrSpecErrorBy(Class<R> rteClass, Function<Result<T, E>, R> exceptionMapper) {
+        return Optional.ofNullable(value);
+    }
+
+    @Override
+    public Result<T,E> ifError(Consumer<E> consumer) {
+        return this;
     }
 
     @Override

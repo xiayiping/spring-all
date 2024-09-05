@@ -35,14 +35,21 @@ public record Failure<T, E extends Throwable>(
     }
 
     @Override
+    public <R extends RuntimeException> T getOrSpecErrorBy(Class<R> rteClass, Function<Result<T, E>, R> exceptionMapper) {
+        if (rteClass.isAssignableFrom(throwable.getClass())) {
+            throw rteClass.cast(throwable);
+        }
+        throw exceptionMapper.apply(this);
+    }
+
+    @Override
     public Optional<T> getOption() {
         throw Fun.convertRte(throwable, RuntimeException.class, FunctionException::new);
     }
 
     @Override
-    public Optional<T> getOptionEvenErr(Consumer<E> exceptionConsumer) {
-        exceptionConsumer.accept(throwable);
-        return Optional.empty();
+    public Optional<T> getOptionEvenErr(Function<E, T> exceptionFallBack) {
+        return Optional.ofNullable(exceptionFallBack.apply(throwable));
     }
 
     @Override
@@ -54,8 +61,18 @@ public record Failure<T, E extends Throwable>(
     }
 
     @Override
-    public void ifError(Consumer<E> consumer) {
+    public <R extends RuntimeException> Optional<T>
+    getOptionOrSpecErrorBy(Class<R> rteClass, Function<Result<T, E>, R> exceptionMapper) {
+        if (rteClass.isAssignableFrom(throwable.getClass())) {
+            throw rteClass.cast(throwable);
+        }
+        throw exceptionMapper.apply(this);
+    }
+
+    @Override
+    public Result<T, E> ifError(Consumer<E> consumer) {
         consumer.accept(throwable);
+        return this;
     }
 
     @Override

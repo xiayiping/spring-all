@@ -12,6 +12,7 @@ import org.xyp.function.ValueHolder;
 import org.xyp.function.wrapper.ResultOrError;
 import org.xyp.function.wrapper.StackStepInfo;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -161,15 +162,12 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .fallbackForEmpty(() -> 996)
-            .getResultOrSpecError(ValidateException.class, ex -> new ValidateException(ex.getMessage()));
+            .fallbackForEmpty(() -> 996);
         Assertions.assertThat(opt.getOption()).isNotEmpty();
         Assertions.assertThat(opt.get()).isEqualTo(996);
         Assertions.assertThat(opt.getOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isEqualTo(996);
-        Assertions.assertThat(opt.getOptionEvenErr(e -> {
-        })).isNotEmpty();
-        Assertions.assertThat(opt.getOptionEvenErr(e -> {
-        }).get()).isEqualTo(996);
+        Assertions.assertThat(opt.getResult().getOptionEvenErr(e -> null)).isNotEmpty();
+        Assertions.assertThat(opt.getResult().getOptionEvenErr(e -> null).get()).isEqualTo(996);
     }
 
     @Test
@@ -180,17 +178,18 @@ class ResultOrErrorTest {
             .filter(i -> i > 0)
             .map(i -> i + 100)
             .fallbackForEmpty(() -> 996)
-            .logTrace(System.out::println)
-            .getResult();
+            .logTrace(System.out::println);
         Assertions.assertThat(opt.getOption()).isNotEmpty();
         Assertions.assertThat(opt.getOptionOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isNotEmpty();
         Assertions.assertThat(opt.get()).isEqualTo(996);
         ValueHolder<Integer> vh = new ValueHolder<>(0);
-        opt.ifError(er -> vh.setValue(100));
+        Assertions.assertThat(
+            opt.getResult().ifError(er -> vh.setValue(100))
+                .isSuccess()).isTrue();
         Assertions.assertThat(vh.value()).isZero();
-        Assertions.assertThat(opt.isSuccess()).isTrue();
-        Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
-        opt.getStackStepInfo().ifPresent(stack -> {
+        Assertions.assertThat(opt.getResult().isSuccess()).isTrue();
+        Assertions.assertThat(opt.getResult().getStackStepInfo()).isNotEmpty();
+        opt.getResult().getStackStepInfo().ifPresent(stack -> {
             int count = 0;
             StackStepInfo<?> curent = stack;
             while (curent != null) {
@@ -214,10 +213,10 @@ class ResultOrErrorTest {
             .map(i -> i + 100)
             .fallbackForEmpty(() -> 996)
             .map(o -> o / 0)
-            .getResultOrSpecError(ValidateException.class, ex -> new ValidateException(ex.getMessage()));
+            .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThatThrownBy(opt::getOption)
-            .isInstanceOf(ValidateException.class);
+            .isInstanceOf(ArithmeticException.class);
         ValueHolder<Integer> vh = new ValueHolder<>(0);
         opt.ifError(er -> vh.setValue(100));
         Assertions.assertThat(vh.value()).isEqualTo(100);
@@ -234,9 +233,8 @@ class ResultOrErrorTest {
             .filter(i -> i > 0)
             .map(i -> i + 100)
             .fallbackForEmpty(() -> 996)
-            .map(o -> o / 0)
-            .getResult();
-        Assertions.assertThat(opt.isSuccess()).isFalse();
+            .map(o -> o / 0);
+        Assertions.assertThat(opt.getResult().isSuccess()).isFalse();
         Assertions.assertThatThrownBy(() -> opt.getOrSpecError(ValidateException.class, ex -> new ValidateException(ex.getMessage())))
             .isInstanceOf(ValidateException.class);
 
@@ -266,7 +264,9 @@ class ResultOrErrorTest {
         Assertions.assertThatThrownBy(lazy::get)
             .isInstanceOf(ArithmeticException.class);
         ;
-        Assertions.assertThatThrownBy(() -> lazy.getOrSpecError(IllegalArgumentException.class, ex -> new IllegalArgumentException()))
+        Assertions.assertThatThrownBy(() -> lazy.getOrSpecError(IllegalArgumentException.class, ex -> new IllegalArgumentException())
+                .equals(88)
+            )
             .isInstanceOf(IllegalArgumentException.class);
         ;
     }
@@ -278,11 +278,13 @@ class ResultOrErrorTest {
             .map(i -> i / 0);
         Assertions.assertThatThrownBy(lazy::getOption)
             .isInstanceOf(ArithmeticException.class);
-        Assertions.assertThatThrownBy(() -> lazy.getOptionOrSpecError(IllegalArgumentException.class, ex -> new IllegalArgumentException()))
+        Assertions.assertThatThrownBy(() -> lazy.getOptionOrSpecError(IllegalArgumentException.class, ex -> new IllegalArgumentException())
+                .ifPresent(e -> {
+                }))
             .isInstanceOf(IllegalArgumentException.class);
 
-        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e -> {
-        })).isEmpty();
+        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e -> null)).isEmpty();
+        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e -> 71)).isEqualTo(Optional.of(71));
         ;
     }
 
@@ -536,6 +538,147 @@ class ResultOrErrorTest {
             .logTrace(System.out::println, () -> false)
             .logTrace(System.out::println);
         Assertions.assertThat(opt.getResult().isSuccess()).isFalse();
+    }
+
+    @Test
+    void test29() {
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .filter(i -> i > 0)
+            .map(i -> i + 100)
+            .fallbackForEmpty(() -> 996);
+        Assertions.assertThat(opt.getOption()).isNotEmpty();
+        Assertions.assertThat(opt.get()).isEqualTo(996);
+        Assertions.assertThat(opt.getOrSpecErrorBy(RuntimeException.class, ex -> new RuntimeException())).isEqualTo(996);
+        Assertions.assertThat(opt.getResult().getOptionEvenErr(e -> 13)).isNotEmpty();
+        Assertions.assertThat(opt.getResult().getOptionEvenErr(e -> 13).get()).isEqualTo(996);
+    }
+
+    @Test
+    void test30() {
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .filter(i -> i > 0)
+            .map(i -> i + 100)
+            .fallbackForEmpty(() -> 996)
+            .map(o -> o / 0)
+            .getResult();
+        Assertions.assertThat(opt.isSuccess()).isFalse();
+        Assertions.assertThatThrownBy(() -> opt.getOrSpecErrorBy(
+                ValidateWithStackException.class, result -> new ValidateWithStackException(
+                    result.getError().getMessage(),
+                    result.getStackStepInfo().orElse(null)))
+            )
+            .isInstanceOf(ValidateWithStackException.class)
+        ;
+
+        Assertions.assertThatThrownBy(opt::get)
+            .isInstanceOf(RuntimeException.class)
+        ;
+    }
+
+    @Test
+    void test31() {
+        val opt = ResultOrError.of(1)
+            .map(i -> i + 1)
+            .map(i -> i / 0)
+            .consume(i -> {
+                var t = i / 0;
+                return;
+            })
+            .flatMap(i -> ResultOrError.on(() -> i / 1))
+            .map(i -> i + 1)
+            .logTrace(s -> {
+                var u = 6 / 0;
+                System.out.println(u);
+            });
+
+        Assertions.assertThatThrownBy(() -> opt.getOrSpecErrorBy(ValidateWithStackException.class,
+                res -> new ValidateWithStackException(res.getError().getMessage(), res.getStackStepInfo().orElse(null))).equals(1)
+            )
+            .isInstanceOf(ValidateWithStackException.class)
+            .matches(tr -> {
+                return tr instanceof ValidateWithStackException vv && vv.getStackStepInfo() != null;
+            })
+        ;
+    }
+
+    @Test
+    void test32() {
+        val lazy = ResultOrError.of(1)
+            .noExMap(i -> i)
+            .map(i -> i / 0);
+        Assertions.assertThatThrownBy(lazy::getOption)
+            .isInstanceOf(ArithmeticException.class);
+        Assertions.assertThatThrownBy(() -> lazy.getOptionOrSpecErrorBy(
+                    ValidateWithStackException.class,
+                    ex -> new ValidateWithStackException(ex.getError().getMessage(), ex.getStackStepInfo().orElse(null)))
+                .ifPresent(e -> {
+                }))
+            .isInstanceOf(ValidateWithStackException.class)
+            .matches(tr -> {
+                return tr instanceof ValidateWithStackException vv && vv.getStackStepInfo() != null;
+            })
+        ;
+
+        ValueHolder<Integer> ss = new ValueHolder<>(0);
+        lazy.getResult().doIfError(result -> {
+            Assertions.assertThat(result.getError()).isNotNull();
+            Assertions.assertThat(result.getStackStepInfo()).isNotNull();
+            ss.setValue(1);
+        }).equals(4);
+        Assertions.assertThat(ss.value()).isOne();
+
+        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e -> null)).isEmpty();
+        Assertions.assertThat(lazy.getResult().getOptionEvenErr(e -> 83)).isEqualTo(Optional.of(83));
+        ;
+    }
+
+    @Test
+    void test33() {
+        val lazy = ResultOrError.of(1)
+            .map(i -> i / 0);
+        Assertions.assertThatThrownBy(() -> lazy.getResult().getOrSpecError(ArithmeticException.class, ex -> {
+                throw new RuntimeException();
+            }))
+            .isInstanceOf(ArithmeticException.class);
+        Assertions.assertThatThrownBy(() -> lazy.getResult().getOrSpecErrorBy(ArithmeticException.class, res -> {
+                throw new RuntimeException();
+            }))
+            .isInstanceOf(ArithmeticException.class);
+        Assertions.assertThatThrownBy(() -> lazy.getResult().getOptionOrSpecError(ArithmeticException.class, ex -> {
+                throw new RuntimeException();
+            }))
+            .isInstanceOf(ArithmeticException.class);
+        Assertions.assertThatThrownBy(() -> lazy.getResult().getOptionOrSpecErrorBy(ArithmeticException.class, res -> {
+                throw new RuntimeException();
+            }))
+            .isInstanceOf(ArithmeticException.class);
+    }
+
+    @Test
+    void test34() {
+
+        val lazy = ResultOrError.of(1)
+            .map(i -> i / 1);
+
+        Assertions.assertThat(lazy.getResult().getError()).isNull();
+        Assertions.assertThat(lazy.getResult().getOptionOrSpecErrorBy(ArithmeticException.class, e -> new ArithmeticException()))
+            .isNotEmpty();
+    }
+
+    @Test
+    void test35() {
+        val opt = ResultOrError.of(Map.<String, Object>of())
+            .map(i -> i)
+            .map(i -> ((Number) i.get("s")).longValue())
+            .logTrace(System.out::println)
+            .getResult()
+            .doIfError(System.out::println)
+            .getOrFallBackForError(ex -> 999L);
+        Assertions.assertThat(opt).isEqualTo(999);
     }
 
     @Data
