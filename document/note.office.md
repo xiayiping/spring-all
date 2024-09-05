@@ -22,8 +22,11 @@ sudo firewall-cmd --zone=public --add-port=8100/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=8301/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=1300/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=8500/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=8600/tcp --permanent
 sudo firewall-cmd --reload
 sudo firewall-cmd --reload
+sudo firewall-cmd --zone=public --remove-port=80/tcp --permanent
 sudo firewall-cmd --reload
 ```
 
@@ -33,6 +36,11 @@ sudo firewall-cmd --reload
 
 sudo systemctl daemon-reload
 
+systemctl daemon-reload
+systemctl stop trex.service
+systemctl restart trex.service
+journalctl  -u trex.service
+sudo journalctl -xeu apigw.service
 ```
 
 ## sudo-er add
@@ -57,7 +65,8 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/se
 
 ```shell
 audit2allow -w -a
-audit2allow -a -M mycertwatch
+audit2allow -a -M mySample
+ausearch -m avc -ts recent | audit2allow -M mySample  # this one is better than audit2allow
 ```
 disown
 
