@@ -16,7 +16,17 @@ npm run dev
 # enable MUI
 npm install @mui/material @emotion/react @emotion/styled
 npm install @mui/icons-material
+npm install react-router-dom
 
+# date pickers
+npm install @mui/x-date-pickers
+npm install dayjs
+
+# data grid
+npm install @mui/x-data-grid
+npm install @mui/x-data-grid-generator
+
+npm run build
 # @mui/material: 
 # ### This is the core package that provides all the Material Design components.
 # @emotion/react: 
