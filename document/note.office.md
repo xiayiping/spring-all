@@ -219,7 +219,7 @@ WHERE
 
 https://spring.io/guides/tutorials/spring-boot-oauth2
 
-## IODC 
+## OIDC 
 An OIDC client (OpenID Connect client) is a software application or service that interacts with an OpenID Connect (OIDC) 
 provider to authenticate users and obtain user identity information. 
 OpenID Connect (OIDC) is an identity layer built on top of the OAuth 2.0 protocol, 

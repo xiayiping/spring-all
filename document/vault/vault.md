@@ -1,6 +1,6 @@
+<div style="font-size: 1.2em;">
 
-[source,text]
-----
+```shell
 
 Unseal Key 1: pu/Vc+J5QPv/YudjZ22xXqC2cuQ4pJZRS0bmiPpa1ev6
 Unseal Key 2: p5fnNgd6zD+wUZhqXj1JG6eFebrIDfTKEQS/BzreKTDF
@@ -58,10 +58,11 @@ you can put $vault_token in system environment  ,
 it's the highest priority token.
 2nd priority is ~/.vault.token file.
 
-----
+```
 
-[source,text]
-----
+
+```shell
+
 ## the vault config file sample
 
 listener "tcp" {
@@ -80,16 +81,18 @@ storage "file" {
 }
 
 api_addr = "https://127.0.0.1:8180"
-----
 
-[source,shell]
-----
+```
+
+```shell
+
 # start vault
 vault server -config=config.file.name
-----
 
-[source,shell]
-----
+```
+
+```shell
+
 # the first time you need to use vault
 export VAULT_ADDR='https://127.0.0.1:8180'
 export vault_token=hvs.6SnLsAKoGIyHE4sE5NtRvk0b
@@ -105,20 +108,21 @@ vault kv get $ca -format=json dev/paradise/keystore
 vault token create -ca-path=./ca.pem -policy=kv_read
 
 vault login -ca-path=D:/develop/tcg-paradise/template/config/resources/vault.pem
-----
 
-[source,shell]
-----
+```
+
+```shell
+
 vault login -ca-path=./ca.pem
 #then provide the token
 
 vault token create -ca-path=./ca.pem -policy=kv_read
 # then vault will give you the token
 # hvs.CAESIH66nAoa6gU05CN1CIpKIpaP3pkNYM2gbMEjmo7szQ4WGh4KHGh2cy4wQlB3Z25tMnFFS2NodjhPZzhpak9XSkQ
-----
 
-[source,shell]
-----
+```
+
+```shell
 
 
 # assume you have k-v username=aaaa under kv_xyp/dev
@@ -134,10 +138,12 @@ curl\
   https://127.0.0.1:8180/v1/kv_xyp/data/dev
 
 ## --cert /path/to/cert.pem
-----
 
-[source,text]
-----
+```
+
+```shell
+
+
 # config the policy
 
 path "kv_xyp/*" {
@@ -152,11 +158,12 @@ path "pki_xyp/*" {
   capabilities = ["read","create","update"]
 }
 
-----
+```
 
-=== Generate Root CA
-[source,shell]
-----
+### Generate Root CA
+
+```shell
+
 # vault pki
 export pki_path=pki_xyp
 export v_ca=./ca.pem
@@ -198,11 +205,11 @@ vault write -ca-path=${v_ca} \
      issuing_certificates="${VAULT_ADDR}/v1/${pki_path}/ca" \
      crl_distribution_points="${VAULT_ADDR}/v1/${pki_path}/crl"
 
-----
+```
 
-=== Generate Intermediate Certificate
-[source,shell]
-----
+### Generate Intermediate Certificate
+```shell
+
 export pki_path=pki_xyp
 export pki_int_path=pki_xyp_int
 export v_ca=./ca.pem
@@ -244,11 +251,12 @@ vault write -ca-path=${v_ca} \
     ${pki_int_path}/intermediate/set-signed \
     certificate=@intermediate.cert.pem
 
-----
+```
 
-=== Now create leaf certificate from Intermediate Certificate
-[source,shell]
-----
+### Now create leaf certificate from Intermediate Certificate
+
+```shell
+
 ## create the role
 export cert_role=example-dot-com
 vault write -ca-path=${v_ca} \
@@ -280,11 +288,13 @@ vault write -ca-path=${v_ca} \
     ip_sans="127.0.0.1,192.168.0.1" \
     alt_names="tt4.xypexample.com,aa4.xypexample.com,localhost"
     ttl="24000h"
-----
 
-==== create a new role for non-default issuer under same engine
-[source,shell]
-----
+```
+
+#### create a new role for non-default issuer under same engine
+
+```shell
+
 
 # vault pki
 export pki_path=paradise_dev
@@ -410,11 +420,10 @@ base64 -w 0 ./truststore2.p12 | vault kv patch ${vca} -mount=${vault_kv_mount} $
 # add head -c -1 | to avoid last line that breaks the
 echo "123456" | head -c -1 | vault kv patch ${vca} -mount=${vault_kv_mount} ${vault_kv_path} password=-
 
-----
+```
 
 
-[source,shell]
-----
+```shell
 ## use certificate in application
 # create policy
 export policy=certs_int
@@ -424,10 +433,9 @@ echo "path \"${pki_int_path}/*\" {
 }" > ${policy}.hcl
 cat ${policy}.hcl | vault policy write -ca-path=${v_ca}  ${policy} -
 
-----
+```
 
-[source,shell]
-----
+```shell
 ## get certs
 vault list -ca-path=./ca.pem pki_xyp/certs
 vault read -ca-path=./ca.pem -format=json \
@@ -438,16 +446,16 @@ vault read -ca-path=./ca.pem -format=json \
 vault read -ca-path=./ca.pem -format=json \
     pki_xyp_int/cert/75:39:5a:f4:8e:5c:75:1a:e1:c8:56:76:99:01:c1:54:d7:90:92:e1
 
-----
+```
 
 https://www.hashicorp.com/blog/certificate-management-with-vault
 
 
-== practice
+## PRACTICE
 
-=== CA ROOT
-[source, shell]
-----
+### CA ROOT
+```shell
+
 ## PKI means Public Key Infrastructure
 export pki_path="pki/xyp"
 vault secrets disable ${pki_path}
@@ -464,7 +472,7 @@ vault write -format=json ${pki_path}/config/urls issuing_certificates="${VAULT_A
 
 # issuer commands
 ## below will create a new issuer, comment out to avoid really create
-#vault write ${pki_path}/root/generate/internal common_name='127.0.0.1' ttl=3650d
+# vault write ${pki_path}/root/generate/internal common_name='127.0.0.1' ttl=3650d
 # list issuers (root certificate)
 vault list -format=json ${pki_path}/issuers
 vault read -format=json ${pki_path}/issuer/$(vault list -format=json ${pki_path}/issuers | jq -r '.[0]' )
@@ -475,8 +483,8 @@ vault read -format=json ${pki_path}/issuer/$(vault list -format=json ${pki_path}
 # Configure a role
 export role_name='example-localhost'
 vault write -format=json ${pki_path}/roles/${role_name} allowed_domains='myvault.com' allow_subdomains=true allow_ip_sans=true max_ttl=72h
-# role issue certificate, will issue a cert directly under root ca, so comment it out
-#vault write ${pki_path}/issue/${role_name} common_name=abc.myvault.com ip_sans='127.0.0.1,192.168.1.1'
+# role issue certificate, will issue a cert directly under root ca, so comment it out:
+# vault write ${pki_path}/issue/${role_name} common_name=abc.myvault.com ip_sans='127.0.0.1,192.168.1.1'
 
 #################################
 
@@ -490,11 +498,12 @@ vault write $pki_path/config/issuers default=2c556a8e-50a2-f554-4422-78498115581
 vault list ${pki_path}/certs
 vault write ${pki_path}/revoke serial_number=77:73:c1:18:ab:59:0d:3c:e2:ee:f6:f0:b0:e6:ad:5c:e3:4f:57:1f
 vault delete ${pki_path}/certs/77:73:c1:18:ab:59:0d:3c:e2:ee:f6:f0:b0:e6:ad:5c:e3:4f:57:1f
-----
 
-=== CA INTERMEDIATE
-[source,shell]
-----
+```
+
+### CA INTERMEDIATE
+```shell
+
 export pki_int_path="pki/xyp-int"
 vault secrets disable ${pki_int_path}
 vault secrets enable -path=${pki_int_path} pki
@@ -534,4 +543,6 @@ vault write -format=json ${pki_int_path}/issue/${role_name_int} \
     common_name=blah.myvault.com \
     ip_sans='127.0.0.1,192.168.1.1' > leaf.cert.json
 
-----
+```
+
+</div>

@@ -5,14 +5,14 @@ https://github.com/KurdTt/feign_client_ssl_example/blob/master/client-feign/src/
 
 I got trustAnchor empty problem, probably because I didn't set
 
-[source,shell]
-----
+```shell
+
 java -Djavax.net.ssl.trustStore=/some/loc/on/server/our_truststore.jks /
   -Djavax.net.ssl.trustStorePassword=our_password /
   -jar application.jar
 
 ## D:/develop/spring-all/echo/src/main/resources/keystore/certstore.p12
-----
+```
 
 https://www.baeldung.com/java-trustanchors-parameter-must-be-non-empty
 
