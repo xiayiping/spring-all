@@ -1,12 +1,14 @@
 package org.xyp.sample.spring.webapi.config;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.autoconfigure.security.servlet.StaticResourceRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,10 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 
-//import org.xyp.sample.spring.web.filter.SomeFilter;
-//import org.xyp.sample.spring.web.filter.SomeServletFilter;
 //
 @Slf4j
 @Configuration
@@ -59,39 +58,48 @@ public class ServletSecurityConfig {
     @Bean(name = "allFilter")
     SecurityFilterChain apiSecurity(
         HttpSecurity http,
-        Oauth2AuthenticationFailureHandler authenticationFailureHandler
+        Oauth2AuthenticationFailureHandler authenticationFailureHandler,
+        WebApiProperties properties
     ) throws Exception {
         log.info("creating servlet springSecurityFilterChain ......");
-//        http.csrf(AbstractHttpConfigurer::disable);
-        http.csrf(csrfSpec -> csrfSpec
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        val needAuth = properties.isNeedAuthentication();
+        val needCsrf = properties.isNeedCsrf();
+        if (needCsrf) {
+            http.csrf(csrfSpec -> csrfSpec
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //            .csrfTokenRequestHandler(new XorServerCsrfTokenRequestAttributeHandler())
-        );
-        http
-            .securityMatcher(d -> !staticMatcher.matches(d))
-            .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll()
-            )
-//            .oauth2ResourceServer(
-//                config -> config.jwt(Customizer.withDefaults())
-//            )
-//            .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
-//                        .introspectionUri(this.introspectionUri)
-//                        .introspectionClientCredentials(this.clientId, this.clientSecret)
-//                    )
-//                    .addObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
-//                        @Override
-//                        public <O extends BearerTokenAuthenticationFilter> O postProcess(O object) {
-//                            object.setAuthenticationFailureHandler(authenticationFailureHandler);
-//                            return object;
-//                        }
-//                    })
-//            )
-        ;
+            );
+        } else {
+            http.csrf(AbstractHttpConfigurer::disable);
+        }
 
-//        bearerTokenAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
-
+        if (needAuth) {
+            http
+                .securityMatcher(d -> !staticMatcher.matches(d))
+                .authorizeHttpRequests(authorize -> authorize
+                    .anyRequest().permitAll()
+                );
+        } else {
+            http
+//                .oauth2ResourceServer(
+//                    config -> config.jwt(Customizer.withDefaults())
+//                )
+                .oauth2ResourceServer(configurer -> configurer.opaqueToken(opaqueToken -> opaqueToken
+                            .introspectionUri(this.introspectionUri)
+                            .introspectionClientCredentials(this.clientId, this.clientSecret)
+                        )
+                        .addObjectPostProcessor(new ObjectPostProcessor<BearerTokenAuthenticationFilter>() {
+                            @Override
+                            public <O extends BearerTokenAuthenticationFilter> O postProcess(O object) {
+                                object.setAuthenticationFailureHandler(authenticationFailureHandler);
+                                return object;
+                            }
+                        })
+                )
+            ;
 //        http.oauth2Login(login -> login.failureHandler(authenticationFailureHandler));
+        }
+
         return http.build();
     }
 }

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.annotation.PersistenceCreator;
@@ -14,11 +16,12 @@ import org.springframework.data.domain.AfterDomainEventPublication;
 import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.stereotype.Component;
-import org.xyp.function.Fun;
 import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 实践下来，spring DATA jdbc并不好用 <br/>
@@ -36,7 +39,7 @@ import java.util.*;
 @Accessors(chain = true)
 // 完整的object只会出现一次，且是第一次出现， 如果是第二次出现， 只会只有id reference
 // 并不能解决所有问题， 如果第一次出现是在某个aggregate root的leaf中， 那么第二次即使是个跟高层级的Object ， 也只会变成ref
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @org.springframework.data.relational.core.mapping.Table(schema = "test", name = "batch")
 @Entity
 @Table(schema = "test", name = "batch")
@@ -50,6 +53,8 @@ import java.util.*;
         }
     )
 )
+@DynamicUpdate
+@DynamicInsert
 public class Batch implements HasId<Long> {
 
     @SuppressWarnings("deprecation")

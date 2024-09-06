@@ -22,27 +22,17 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "companyId": 201,
-  "batchName": "batch 334",
-  "batchRules": [
-    {
-      "id" : 701,
-      "ruleName": "efgddh",
-      "batchRuleDescriptions" : [{
-        "description" : "zzzz"
-      }]
-    },
-    {
-      "id" : 702,
-      "ruleName": "abffcd",
-      "batchRuleDescriptions" : [{
-        "description" : "xxx"
-      }, {
-        "description" : "yyy"
-      }]
-    }
-  ]
+  "batchId": 351,
+  "companyId": 222,
+  "batchName": "batch 99"
 }
+
+### PUT Batchs
+PUT http://localhost:8082/api/batchs
+Content-Type: application/json
+Accept: application/json
+
+
 
 ### PUT Task
 PUT http://localhost:8082/api/task/52851

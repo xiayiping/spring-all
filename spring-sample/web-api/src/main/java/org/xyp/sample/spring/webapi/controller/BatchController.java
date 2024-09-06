@@ -7,6 +7,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 import org.xyp.sample.spring.tracing.Trace;
+import org.xyp.sample.spring.webapi.domain.dto.BatchDto;
 import org.xyp.sample.spring.webapi.domain.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.entity.task.Task;
 import org.xyp.sample.spring.webapi.repository.jpa.BatchDaoJpa;
@@ -38,8 +39,16 @@ public class BatchController {
     }
 
     @PutMapping("/batch/{id}")
-    public Batch batchUpdate(@PathVariable Long id, @RequestBody Batch batch) {
-        return batchService.update(id, batch);
+    public BatchDto batchUpdate(@PathVariable Long id, @RequestBody BatchDto batchdto) {
+        if (!id.equals(batchdto.id().id())) {
+            throw new IllegalArgumentException("id must be equal to id");
+        }
+        return batchService.update(batchdto);
+    }
+
+    @PutMapping("/batchs")
+    public List<BatchDto> batchesUpdate() {
+        return batchService.updateBatchesRandomly();
     }
 
     @PostMapping("/task")
@@ -65,8 +74,7 @@ public class BatchController {
             .withRel("update_key") // it's the key name
             .withType(HttpMethod.PUT.name())
             .withName("update_key_name")
-            .withAffordances(List.of(afford))
-            ;
+            .withAffordances(List.of(afford));
         val batch = batchDaoJpa.findWithRulesById(Batch.BatchId.of(id)).get();
         return EntityModel.of(batch, link, linkPut);
     }

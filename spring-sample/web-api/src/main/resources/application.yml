@@ -8,10 +8,10 @@ spring:
     name: web-api
 
   datasource:
-    driver-class-name: ${db_driver_1}
-    url: ${db_url_1}
-    username: ${db_user_1}
-    password: ${db_token_1}
+    driver-class-name: ${db_driver}
+    url: ${db_url}
+    username: ${db_user}
+    password: ${db_token}
     hikari:
       connection-test-query: "select 1 "
       maximum-pool-size: 3
@@ -27,8 +27,8 @@ spring:
           batch_size: 100
           lob:
             non_contextual_creation: true
-        format_sql: true
-        use_sql_comments: false
+        format_sql: false
+        use_sql_comments: true
         generate_statistics: true
         default_schema: test
     open-in-view: false

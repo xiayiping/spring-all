@@ -5,6 +5,7 @@ target/
 *.versionsBackup
 *.env
 generated/
+.env/
 
 ### IntelliJ IDEA ###
 .idea/

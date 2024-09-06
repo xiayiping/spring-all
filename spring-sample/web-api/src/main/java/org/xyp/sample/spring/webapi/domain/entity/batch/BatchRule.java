@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
@@ -27,6 +28,7 @@ import java.util.Set;
 @org.springframework.data.relational.core.mapping.Table(schema = "test", name = "batch_rule")
 @Entity
 @Table(schema = "test", name = "batch_rule")
+@BatchSize(size = 20)
 public class BatchRule implements HasId<Long> {
 
     // JPA need an ID field

@@ -232,7 +232,10 @@ public class SecretSslBundleRegistrar implements SslBundleRegistrar {
     private SslBundle getBundle(String keyRef, DefaultSslBundleRegistry defaultReg) {
         return ResultOrError.on(() -> defaultReg.getBundle(keyRef))
             .getResult()
-            .getOptionEvenErr(e -> log.error("error when getting bundle for {}", keyRef, e))
+            .getOptionEvenErr(e -> {
+                log.error("error when getting bundle for {}", keyRef, e);
+                return null;
+            })
             .orElseGet(() -> getFromFallback(keyRef));
     }
 
