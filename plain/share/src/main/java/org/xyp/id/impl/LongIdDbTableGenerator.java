@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.xyp.function.Fun;
 import org.xyp.function.ValueHolder;
+import org.xyp.function.wrapper.Result;
 import org.xyp.function.wrapper.ResultOrError;
+import org.xyp.function.wrapper.StackLogUtil;
 import org.xyp.function.wrapper.WithCloseable;
 import org.xyp.id.IdGenerator;
 import org.xyp.id.JdbcConnectionAccessorFactory;
@@ -14,7 +16,6 @@ import org.xyp.id.exception.IdGenerationException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -28,6 +29,14 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
     public static final int DEFAULT_STEP_SIZE = 1;
 
     private final ConcurrentHashMap<String, BatchIdResult> idHolder = new ConcurrentHashMap<>();
+
+    private record DoNothingCloseable(Connection conn) implements AutoCloseable {
+
+        @Override
+        public void close() throws Exception {
+            // do nothing
+        }
+    }
 
     public LongIdDbTableGenerator(
         IdGenDialect idGenDialect
@@ -43,7 +52,16 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
     @Override
     public List<Long> nextId(String entityName, int fetchSize, JdbcConnectionAccessorFactory factory) {
 
-        val cachedState = idHolder.computeIfAbsent(entityName, clz -> fetchOrCreateIdBatchStateFromDB(entityName, factory));
+        val cachedState = idHolder.computeIfAbsent(
+            entityName,
+            __ -> fetchOrCreateIdBatchStateFromDB(entityName, factory)
+                .getResult()
+                .doIf(___ -> true, res -> res.traceDebugOrError(
+                    log::isDebugEnabled, log::debug,
+                    () -> true, log::error
+                ))
+                .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
+        );
 
         ValueHolder<BatchIdResult> currentStateHolder = new ValueHolder<>(null);
         ValueHolder<BatchIdResult> newStartStateHolder = new ValueHolder<>(null);
@@ -57,14 +75,20 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
                 return state.withLast(newLast);
             } else {
                 return WithCloseable.open(factory::open)
-                    .map(connection -> fetchAndUpdateIdInDB(
+                    .flatMap(connection -> fetchAndUpdateIdInDB(
                         entityName,
                         fetchSize,
                         state,
                         newStartStateHolder,
                         connection
                     ))
-                    .closeAndGet(IdGenerationException.class, IdGenerationException::new)
+                    .convertToResult()
+                    .getResult()
+                    .doIf(___ -> true, res -> res.traceDebugOrError(
+                        log::isDebugEnabled, log::debug,
+                        () -> true, log::error)
+                    )
+                    .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
                     ;
             }
         });
@@ -84,37 +108,54 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
             ;
     }
 
-    private BatchIdResult fetchAndUpdateIdInDB(
+    private static void debugOrError(Result<BatchIdResult, Throwable> res) {
+        if (res.isSuccess()) {
+            log.debug("check debug");
+            StackLogUtil.logTrace(log::debug, res.getStackStepInfo().orElse(null));
+        } else {
+            log.debug("check error");
+            StackLogUtil.logTrace(log::error, res.getStackStepInfo().orElse(null));
+        }
+    }
+
+    private ResultOrError<BatchIdResult> fetchAndUpdateIdInDB(
         String entityName,
         int fetchSize,
         BatchIdResult currentState,
         ValueHolder<BatchIdResult> newStartStateHolder,
         Connection connection
-    ) throws SQLException {
-        try {
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-            connection.setAutoCommit(false);
+    ) {
+        return WithCloseable.open(() -> new DoNothingCloseable(connection),
+                (__, ___) -> ResultOrError.doRun(connection::rollback).getResult()
+            )
+            .map(conn -> conn.conn)
+            .consume(conn -> {
+                conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+                conn.setAutoCommit(false);
+            })
+            .flatMap(conn -> fetchIdBatchFromDB(entityName, conn))
+            .consume(newStartStateHolder::setValue)
+            .map(newStartState -> {
+                int remainingCount = (int) (fetchSize - (currentState.max() - currentState.prev()) / currentState.stepSize());
+                val adder = remainingCount * newStartState.stepSize();
+                val remainder = adder % newStartState.fetchSize();
+                val multiplier = adder / newStartState.fetchSize();
+                val newMax = newStartState.prev()
+                    + (long) multiplier * newStartState.fetchSize()
+                    + (remainder > 0 ? newStartState.fetchSize() : 0);
+                return newStartState.withLastAndMax(adder + newStartState.prev(), newMax);
+            })
+            .mapWithCloseable((c, newOne) -> {
+                this.updateIdBatch(entityName, newOne.max(), c.conn);
+                return newOne;
+            })
+            .mapWithCloseable((c, newOne) -> {
+                c.conn.commit();
+                return newOne;
+            })
+            .convertToResult()
+            ;
 
-            int remainingCount = (int) (fetchSize - (currentState.max() - currentState.prev()) / currentState.stepSize());
-
-            val newStartState = fetchIdBatchFromDB(entityName, connection);
-            newStartStateHolder.setValue(newStartState);
-
-            val adder = remainingCount * newStartState.stepSize();
-            val remainder = adder % newStartState.fetchSize();
-            val multiplier = adder / newStartState.fetchSize();
-
-            val newMax = newStartState.prev()
-                + (long) multiplier * newStartState.fetchSize()
-                + (remainder > 0 ? newStartState.fetchSize() : 0);
-            val newOne = newStartState.withLastAndMax(adder + newStartState.prev(), newMax);
-            this.updateIdBatch(entityName, newOne.max(), connection);
-            connection.commit();
-            return newOne;
-        } catch (Exception exception) {
-            connection.rollback();
-            throw new IdGenerationException(exception);
-        }
     }
 
 
@@ -125,44 +166,47 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
      * @param factory    factory
      * @return BatchIdResult
      */
-    private BatchIdResult fetchOrCreateIdBatchStateFromDB(String entityName, JdbcConnectionAccessorFactory factory) {
+    private ResultOrError<BatchIdResult> fetchOrCreateIdBatchStateFromDB(String entityName, JdbcConnectionAccessorFactory factory) {
         return WithCloseable.open(factory::open)
-            .map(connection -> fetchOrCreateIdBatchStateFromDB(entityName, connection))
-            .closeAndGet(IdGenerationException.class, IdGenerationException::new)
+            .flatMap(connection -> fetchOrCreateIdBatchStateFromDB(entityName, connection))
+            .convertToResult()
             ;
     }
 
-    private BatchIdResult fetchOrCreateIdBatchStateFromDB(String entityName, Connection connection) throws SQLException {
-        try {
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-            connection.setAutoCommit(false);
-
-            final var holder = fetchIdBatchFromDB(entityName, connection);
-
-            if (null == holder) {
-                val newHolder = new BatchIdResult(entityName, 0L, DEFAULT_STEP_SIZE, DEFAULT_BATCH_SIZE);
-                initIdValueToTable(entityName, newHolder, connection);
-                connection.commit();
-                return newHolder;
-            } else {
-                this.updateIdBatch(entityName, holder.max(), connection);
+    private ResultOrError<BatchIdResult> fetchOrCreateIdBatchStateFromDB(String entityName, Connection connection) {
+        return WithCloseable.open(
+                () -> new DoNothingCloseable(connection),
+                (__, ___) -> ResultOrError.doRun(connection::rollback).getResult()
+            )
+            .map(c -> c.conn)
+            .consume(conn -> {
+                conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+                conn.setAutoCommit(false);
+            })
+            .flatMap(conn -> fetchIdBatchFromDB(entityName, conn))
+            .continueWithOptional()
+            .map(holderOpt -> holderOpt
+                .map(Fun.consumeSelf(h -> updateIdBatch(entityName, h.max(), connection)))
+                .orElseGet(() -> {
+                    val newHolder = new BatchIdResult(entityName, 0L, DEFAULT_STEP_SIZE, DEFAULT_BATCH_SIZE);
+                    initIdValueToTable(entityName, newHolder, connection);
+                    return newHolder;
+                }))
+            .flatMap(holder -> ResultOrError.on(() -> {
                 connection.commit();
                 return holder;
-            }
-        } catch (Exception e) {
-            connection.rollback();
-            throw e;
-        }
+            }))
+            .convertToResult()
+            ;
     }
 
-    private BatchIdResult fetchIdBatchFromDB(String entityName, Connection connection) {
+    private ResultOrError<BatchIdResult> fetchIdBatchFromDB(String entityName, Connection connection) {
         val getLastIdSql = getLastIdSqlByDialect();
         return WithCloseable.open(() -> connection.prepareStatement(getLastIdSql))
             .map(Fun.updateSelf(ps -> log.info("fetch next id of entity {} {}", entityName, getLastIdSql)))
             .map(Fun.updateSelf(ps -> ps.setString(1, entityName)))
             .map(ps -> this.fetchIdBatchFromDB(entityName, ps))
-            .closeAndGetResult(IdGenerationException.class, IdGenerationException::new)
-            .get()
+            .convertToResult()
             ;
     }
 
@@ -199,8 +243,8 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
             }))
             .map(Fun.updateSelf(ps -> log.info("init id of entity {}", entityName)))
             .map(Fun.updateSelf(this::initIdValueToTable))
-            .closeAndGetResult(IdGenerationException.class, IdGenerationException::new)
-            .get()
+            .closeAndGetResult()
+            .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
         ;
     }
 
@@ -220,8 +264,8 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
                 ps.setString(2, entityName);
             }))
             .consume(this::updateIdBatch)
-            .closeAndGetResult(IdGenerationException.class, IdGenerationException::new)
-            .get()
+            .closeAndGetResult()
+            .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
         ;
     }
 

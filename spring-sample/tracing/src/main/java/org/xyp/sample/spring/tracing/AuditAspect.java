@@ -53,7 +53,11 @@ public class AuditAspect {
         val start = System.currentTimeMillis();
         val result = WithCloseable.open(
                 () -> {
-                    val recorder = new AuditRecorder(currentInfoStack);
+                    val recorder = new AuditRecorder(currentInfoStack, ()-> {
+                        if (currentInfoStack.isEmpty()) {
+                            this.infoStack.remove();
+                        }
+                    });
                     ResultOrError.on(() -> {
                         log.info("<{}> begin", txAnn.value());
                         auditListener.onBegin(recorder, pjp);
@@ -65,12 +69,7 @@ public class AuditAspect {
                     log.error("</{}> error {} {}", txAnn.value(), throwable.getClass().getName(), throwable.getMessage());
                     auditListener.onError(closedRecorder, pjp, throwable);
                     return closedRecorder;
-                }).getResult(),
-                closedRecorder -> {
-                    if (closedRecorder.getStack().isEmpty()) {
-                        this.infoStack.remove();
-                    }
-                }
+                }).getResult()
             )
             .map(ignoredRecorder -> pjp.proceed())
             .mapWithCloseable((recorder, res) -> ResultOrError.on(() -> {

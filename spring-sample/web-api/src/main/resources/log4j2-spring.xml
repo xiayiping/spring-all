@@ -12,7 +12,7 @@
 %style{[${appName}]}{bright_magenta} %style{[%pid]}{blue}
 %style{[%mdc{trace_id}%X{traceId},%mdc{span_id}%X{spanId}]}{bright_magenta}
 %style{[%thread]}{bright_magenta}
-%blue{%logger}:%style{%L}{bright_green}
+(%F:%L) %blue{(%logger)}
 %n%n"/>
 
     </Properties>
@@ -57,7 +57,7 @@
 <!--        <Logger name="org.springframework.transaction" level="debug"/>-->
 <!--        <Logger name="org.springframework.security.web" level="trace"/>-->
 <!--        <Logger name="reactor.ipc.netty.channel" level="trace"/>-->
-        <Logger name="org.xyp" level="info"/>
+        <Logger name="org.xyp" level="debug"/>
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>

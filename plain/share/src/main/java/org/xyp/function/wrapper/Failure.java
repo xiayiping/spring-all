@@ -1,5 +1,6 @@
 package org.xyp.function.wrapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.xyp.function.Fun;
 import org.xyp.function.FunctionException;
 
@@ -7,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Slf4j
 public record Failure<T, E extends Throwable>(
     E throwable,
     StackStepInfo<T> stackStepInfo
@@ -83,5 +85,14 @@ public record Failure<T, E extends Throwable>(
     @Override
     public Optional<StackStepInfo<T>> getStackStepInfo() {
         return Optional.ofNullable(stackStepInfo);
+    }
+
+    @Override
+    public <W extends RuntimeException>
+    Result<T, W> mapError(Class<W> target, Function<E, W> exceptionMapper) {
+        return new Failure<>(
+            exceptionMapper.apply(this.throwable),
+            this.stackStepInfo
+        );
     }
 }

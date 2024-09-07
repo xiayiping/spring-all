@@ -25,7 +25,8 @@ class WithCloseableTest {
         Assertions.assertThat(lazy.closeAndGet()).isOne();
         Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isTrue();
         Assertions.assertThat(lazy.closeAndGetResult().getOrFallBackForError(ex -> 2)).isOne();
-        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).isSuccess()).isTrue();
+        Assertions.assertThat(lazy
+            .closeAndGetResult().isSuccess()).isTrue();
 
         Assertions.assertThat(lazy.closeAndGet()).isOne();
         Assertions.assertThat(lazy.closeAndGet(IllegalArgumentException.class, IllegalArgumentException::new)).isOne();
@@ -42,7 +43,6 @@ class WithCloseableTest {
         Assertions.assertThatThrownBy(() -> lazy.closeAndGet()).isInstanceOf(ArithmeticException.class);
         Assertions.assertThatThrownBy(() -> lazy.closeAndGet(IllegalArgumentException.class, IllegalArgumentException::new)).isInstanceOf(IllegalArgumentException.class);
         Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
-        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).isSuccess()).isFalse();
     }
 
     @Test
@@ -52,7 +52,6 @@ class WithCloseableTest {
 
         Assertions.assertThatThrownBy(() -> lazy.closeAndGet()).isInstanceOf(RuntimeException.class);
         Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
-        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).isSuccess()).isFalse();
     }
 
     @Test
@@ -69,7 +68,7 @@ class WithCloseableTest {
             .mapWithCloseable((c, i) -> i)
             .map(c -> 11);
         ;
-        Assertions.assertThat(lazy.logTrace(System.out::println).closeAndGet()).isNull();
+        Assertions.assertThat(lazy.closeAndGet()).isNull();
     }
 
     @Test
@@ -80,7 +79,6 @@ class WithCloseableTest {
         Assertions.assertThatThrownBy(() -> lazy.closeAndGet()).isInstanceOf(RuntimeException.class);
         Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
         Assertions.assertThat(lazy.closeAndGetResult().getOrFallBackForError(ex -> 55)).isEqualTo(55);
-        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).isSuccess()).isFalse();
     }
 
     @Test
@@ -89,9 +87,8 @@ class WithCloseableTest {
         ValueHolder<Integer> errorHolder = new ValueHolder<>(0);
         ValueHolder<Integer> finallyHolder = new ValueHolder<>(0);
         val lazy = WithCloseable.open(
-                MockCloseable::new,
-                (c, err) -> errorHolder.setValue(errorHolder.value() + 1),
-                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)
+                () -> new MockCloseable(() -> finallyHolder.setValue(1)),
+                (c, err) -> errorHolder.setValue(errorHolder.value() + 1)
             )
             .map(Fun.updateSelf(holder::setValue))
             .mapWithCloseable((c, v) -> {
@@ -122,9 +119,9 @@ class WithCloseableTest {
         ValueHolder<Integer> errorHolder = new ValueHolder<>(0);
         ValueHolder<Integer> finallyHolder = new ValueHolder<>(0);
         val lazy = WithCloseable.open(
-                MockCloseable::new,
-                (c, err) -> errorHolder.setValue(errorHolder.value() + 1),
-                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)
+                () -> new MockCloseable(() -> finallyHolder.setValue(1)),
+                (c, err) -> errorHolder.setValue(errorHolder.value() + 1)/*,
+                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)*/
             )
             .map(Fun.updateSelf(holder::setValue))
             .mapWithCloseable((c, v) -> {
@@ -134,14 +131,12 @@ class WithCloseableTest {
             })
             .map(c -> 1)
             .fallBackEmpty(c -> 49)
-            .logTrace(System.out::println)
             .consume(i -> {
                 Assertions.assertThat(i).isOne();
                 throw new RuntimeException("run time e");
             })
             .map(i -> i)
-            .fallBackEmpty(c -> 44)
-            .logTrace(System.out::println);
+            .fallBackEmpty(c -> 44);
 
         Assertions.assertThat(errorHolder.value()).isZero();
         val result = lazy.closeAndGetResult();
@@ -175,16 +170,18 @@ class WithCloseableTest {
         ValueHolder<Integer> finallyHolder = new ValueHolder<>(0);
         val lazy = WithCloseable.open(
                 MockCloseable::new,
-                (c, err) -> errorHolder.setValue(errorHolder.value() + 1),
-                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)
+                (c, err) -> errorHolder.setValue(errorHolder.value() + 1)/*,
+                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)*/
             )
             .map(c -> 1)
             .map(i -> i + 1)
             .filter(i -> i > 100)
+            .continueWithOptional()
+            .map(opt -> {
+                Assertions.assertThat(opt).isEmpty();
+                return null;
+            })
             .fallBackEmpty(c -> 49 / 0)
-            .logTrace(System.out::println)
-            .logTrace(System.out::println, false)
-            .logTrace(System.out::println, () -> false)
             .map(i -> 99)
             .closeAndGetResult()
             //
@@ -212,8 +209,8 @@ class WithCloseableTest {
         ValueHolder<Integer> finallyHolder = new ValueHolder<>(0);
         val lazy = WithCloseable.open(
                 MockCloseable::new,
-                (c, err) -> errorHolder.setValue(errorHolder.value() + 1),
-                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)
+                (c, err) -> errorHolder.setValue(errorHolder.value() + 1)/*,
+                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)*/
             )
             .map(c -> 1)
             .map(i -> i + 1)
@@ -221,7 +218,6 @@ class WithCloseableTest {
             .mapWithCloseable((c, i) -> i / 0)
             .filter(i -> i > 100)
             .fallBackEmpty(c -> 49 / 0)
-            .logTrace(System.out::println)
             .map(i -> 99)
             .closeAndGetResult()
             //
@@ -249,8 +245,8 @@ class WithCloseableTest {
         ValueHolder<Integer> finallyHolder = new ValueHolder<>(0);
         val lazy = WithCloseable.open(
                 MockCloseable::new,
-                (c, err) -> errorHolder.setValue(errorHolder.value() + 1),
-                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)
+                (c, err) -> errorHolder.setValue(errorHolder.value() + 1)/*,
+                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)*/
             )
             .map(c -> 1)
             .map(i -> i + 1)
@@ -262,7 +258,6 @@ class WithCloseableTest {
             )
             .filter(i -> i > 100)
             .fallBackEmpty(c -> 49 / 0)
-            .logTrace(System.out::println)
             .map(i -> 99)
             .closeAndGetResult()
             //
@@ -278,8 +273,8 @@ class WithCloseableTest {
         ValueHolder<Integer> finallyHolder = new ValueHolder<>(0);
         val lazy = WithCloseable.open(
                 MockCloseable::new,
-                (c, err) -> errorHolder.setValue(errorHolder.value() + 1),
-                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)
+                (c, err) -> errorHolder.setValue(errorHolder.value() + 1)/*,
+                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)*/
             )
             .map(c -> 1)
             .map(i -> i + 1)
@@ -290,11 +285,11 @@ class WithCloseableTest {
                 .map(t -> t + 3)
             )
             .filter(i -> i > 100)
-            .logTrace(System.out::println)
             .map(i -> 99)
             .closeAndGetResult()
-            //
-            ;
+            .traceDebugOrError(() -> true, System.out::println, () -> true, System.out::println);
+        //
+        ;
         Assertions.assertThat(lazy.isSuccess()).isFalse();
         Assertions.assertThat(lazy.getStackStepInfo()).isNotEmpty();
     }
@@ -303,11 +298,11 @@ class WithCloseableTest {
     void test12() {
         ValueHolder<MockCloseable> holder = new ValueHolder<>();
         ValueHolder<Integer> errorHolder = new ValueHolder<>(0);
-        ValueHolder<Integer> finallyHolder = new ValueHolder<>(0);
+        ValueHolder<Integer> originalExceptionChecked = new ValueHolder<>(0);
         val lazy = WithCloseable.open(
                 MockCloseable::new,
-                (c, err) -> errorHolder.setValue(errorHolder.value() + 1),
-                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)
+                (c, err) -> errorHolder.setValue(errorHolder.value() + 1)/*,
+                closeable -> finallyHolder.setValue(finallyHolder.value() + 1)*/
             )
             .map(c -> 1)
             .map(i -> i + 1)
@@ -319,22 +314,78 @@ class WithCloseableTest {
                 .map(t -> t + 3)
             )
             .filter(i -> i > 100)
-            .logTrace(System.out::println)
             .map(i -> 99)
             .closeAndGetResult()
+            .doIfError(res -> {
+                Assertions.assertThat(res.getError()).isInstanceOf(ArithmeticException.class);
+                originalExceptionChecked.setValue(11);
+            })
+            .mapError(IllegalArgumentException.class, IllegalArgumentException::new)
             //
             ;
         Assertions.assertThat(lazy.isSuccess()).isFalse();
+        Assertions.assertThat(lazy.getError()).isInstanceOf(IllegalArgumentException.class);
         Assertions.assertThat(lazy.getStackStepInfo()).isNotEmpty();
+        Assertions.assertThat(originalExceptionChecked.value()).isEqualTo(11);
+    }
+
+    @Test
+    void test13() {
+        var lazy = WithCloseable.open(MockCloseableErr2::new)
+            .map(c -> 1);
+        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).getError())
+            .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThat(lazy.closeAndGetResult().getError())
+            .isInstanceOf(Exception.class);
+        Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
+        Assertions.assertThat(lazy.closeAndGetResult().getOrFallBackForError(ex -> 55)).isEqualTo(55);
+    }
+
+    @Test
+    void test14() {
+        var lazy = WithCloseable.open(MockCloseable::new)
+            .map(c -> 1)
+            .map(c -> null)
+            .fallBackEmpty(e -> null)
+            .flatMap(o -> ResultOrError.on(() -> 3));
+        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).getError())
+            .isNull();
+        Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isTrue();
+        Assertions.assertThat(lazy.closeAndGetResult().getOption()).isEmpty();
+    }
+
+    @Test
+    void test15() {
+        var lazy = WithCloseable.open(MockCloseable::new)
+            .map(c -> 1)
+            .map(c -> c / 0)
+            .continueWithOptional()
+            .flatMap(o -> ResultOrError.on(() -> 3));
+        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).getError())
+            .isNotNull();
+        Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
+        Assertions.assertThat(lazy.closeAndGetResult().getError()).isInstanceOf(ArithmeticException.class);
     }
 
     @Getter
     static class MockCloseable implements AutoCloseable {
         boolean closed = false;
 
+        Runnable additional = () -> {
+
+        };
+
         @Override
         public void close() throws Exception {
             this.closed = true;
+            this.additional.run();
+        }
+
+        MockCloseable(Runnable additional) {
+            this.additional = additional;
+        }
+
+        MockCloseable() {
         }
     }
 

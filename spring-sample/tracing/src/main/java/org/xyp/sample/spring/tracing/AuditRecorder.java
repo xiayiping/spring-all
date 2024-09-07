@@ -8,9 +8,11 @@ public class AuditRecorder implements AutoCloseable {
 
     private final AuditInfo selfInfo;
     private final AuditInfoStack stack;
+    private final Runnable clear;
 
-    public AuditRecorder(AuditInfoStack stack) {
+    public AuditRecorder(AuditInfoStack stack, Runnable additionalAction) {
         this.stack = stack;
+        this.clear = additionalAction;
         val parentAuditInfo = stack.peek();
         if (null == parentAuditInfo) {
             this.selfInfo = AuditInfo.ofNewOne();
@@ -23,8 +25,9 @@ public class AuditRecorder implements AutoCloseable {
 
     @Override
     public void close() {
-        if(null != this.selfInfo && this.selfInfo.equals(this.stack.peek())) {
+        if (null != this.selfInfo && this.selfInfo.equals(this.stack.peek())) {
             this.stack.pop();
         }
+        clear.run();
     }
 }

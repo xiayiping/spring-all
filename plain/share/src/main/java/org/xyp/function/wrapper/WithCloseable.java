@@ -1,143 +1,180 @@
 package org.xyp.function.wrapper;
 
-import org.xyp.function.*;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.xyp.function.ExceptionalBiFunction;
+import org.xyp.function.ExceptionalConsumer;
+import org.xyp.function.ExceptionalFunction;
+import org.xyp.function.ExceptionalSupplier;
 
+import java.util.Optional;
 import java.util.function.*;
+import java.util.stream.Stream;
 
-import static org.xyp.function.wrapper.ResultOrError.*;
-
+@Slf4j
 public class WithCloseable<C extends AutoCloseable, T> {
 
     static StackWalker.StackFrame getStackStep() {
         return StackWalker.getInstance()
-            .walk(stream -> stream.filter(s -> !s.toStackTraceElement().getClassName().equals(WithCloseable.class.getName()))
+            .walk(stream -> stream.filter(s ->
+                    !s.toStackTraceElement().getClassName().equals(WithCloseable.class.getName())
+                        && !s.toStackTraceElement().getClassName().equals(ResultOrError.class.getName())
+                )
                 .findFirst())
             .orElse(null);
+    }
+
+    private static <L extends AutoCloseable> StackStepInfoWithCloseable<L, L>
+    openStackStepInfoWithCloseable(ExceptionalSupplier<L> open, StackWalker.StackFrame frame) {
+        try {
+            final var closeable = open.get();
+            return new StackStepInfoWithCloseable<>(frame, null, closeable, null, closeable, null);
+        } catch (Throwable t) {
+            return new StackStepInfoWithCloseable<>(frame, null, null, null, null, t);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    static <R, U, C extends AutoCloseable> StackStepInfoWithCloseable<C, U>
+    getStackStepInfoByMapper(
+        ExceptionalFunction<? super R, ? extends U> mapper,
+        StackStepInfoWithCloseable<C, R> previousStackInfo,
+        StackWalker.StackFrame frame
+    ) {
+        final var lastOutput = previousStackInfo.output();
+        if (previousStackInfo.isError()) {
+            return (StackStepInfoWithCloseable<C, U>) previousStackInfo;
+        } else if (null != lastOutput) {
+            final var closeable = previousStackInfo.closeable();
+            try {
+                final var mappedVal = mapper.apply(lastOutput);
+                return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, lastOutput, mappedVal, null);
+            } catch (Throwable t) {
+                return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, lastOutput, null, t);
+            }
+        } else {
+            return (StackStepInfoWithCloseable<C, U>) previousStackInfo;
+        }
+    }
+
+    static <R, C extends AutoCloseable> StackStepInfoWithCloseable<C, R>
+    getStackByConsume(
+        ExceptionalConsumer<? super R> consumer,
+        StackStepInfoWithCloseable<C, R> prevStack,
+        StackWalker.StackFrame frame
+    ) {
+        final var lastOutput = prevStack.output();
+        if (prevStack.isError()) {
+            return prevStack;
+        } else if (null != lastOutput) {
+            final var closeable = prevStack.closeable();
+            try {
+                consumer.accept(lastOutput);
+                return new StackStepInfoWithCloseable<>(frame, prevStack, closeable, lastOutput, lastOutput, null);
+            } catch (Throwable throwable) {
+                return new StackStepInfoWithCloseable<>(frame, prevStack, closeable, lastOutput, null, throwable);
+            }
+        } else {
+            return prevStack;
+        }
+    }
+
+    static <C extends AutoCloseable, R> StackStepInfoWithCloseable<C, R> getStackStepInfoByFilter(
+        Predicate<? super R> predicate,
+        StackStepInfoWithCloseable<C, R> prevStack,
+        StackWalker.StackFrame frame
+    ) {
+        if (prevStack.isError()) {
+            return prevStack;
+        }
+        final var lastOutput = prevStack.output();
+        final var closeable = prevStack.closeable();
+        try {
+            if (null != lastOutput && predicate.test(lastOutput)) {
+                return prevStack;
+            } else {
+                return new StackStepInfoWithCloseable<>(frame, prevStack, closeable, null, null, null);
+            }
+        } catch (Throwable throwable) {
+            return new StackStepInfoWithCloseable<>(frame, prevStack, closeable, lastOutput, null, throwable);
+        }
     }
 
     public static <L extends AutoCloseable> WithCloseable<L, L> open(ExceptionalSupplier<L> open) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            open,
-            c -> new StackStepInfo<>(frame, null, null, c, null),
-            (c, t) -> {
-            },
-            c -> {
+            () -> openStackStepInfoWithCloseable(open, frame),
+            // (closeable, throwable) onException
+            (_, _) -> {
             }
         );
     }
 
     public static <L extends AutoCloseable> WithCloseable<L, L> open(
         ExceptionalSupplier<L> open,
-        BiConsumer<L, Throwable> exceptionConsumer,
-        Consumer<L> finallyConsumer
+        BiConsumer<L, Throwable> exceptionConsumer
     ) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            open,
-            c -> new StackStepInfo<>(frame, null, null, c, null),
-            exceptionConsumer,
-            finallyConsumer
+            () -> openStackStepInfoWithCloseable(open, frame),
+            exceptionConsumer
         );
     }
 
-    final ExceptionalSupplier<C> closeableSupplier;
+    final Supplier<StackStepInfoWithCloseable<C, T>> closeableSupplier;
     final BiConsumer<C, Throwable> exceptionConsumer;
-    final Consumer<C> finallyConsumer;
-    final Function<? super C, StackStepInfo<T>> innerResultMapper;
 
     private WithCloseable(
-        ExceptionalSupplier<C> closeableSupplier,
-        Function<? super C, StackStepInfo<T>> mapper,
-        BiConsumer<C, Throwable> exceptionConsumer,
-        Consumer<C> finallyConsumer
+        Supplier<StackStepInfoWithCloseable<C, T>> closeableSupplier,
+        BiConsumer<C, Throwable> exceptionConsumer
     ) {
         this.closeableSupplier = closeableSupplier;
-        this.innerResultMapper = mapper;
         this.exceptionConsumer = exceptionConsumer;
-        this.finallyConsumer = finallyConsumer;
     }
 
-    @SuppressWarnings("unchecked")
     public <U> WithCloseable<C, U> map(ExceptionalFunction<? super T, ? extends U> function) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            closeableSupplier,
-            closeable -> {
-                final var previousStackInfo = innerResultMapper.apply(closeable);
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
                 return getStackStepInfoByMapper(function, previousStackInfo, frame);
             },
-            exceptionConsumer,
-            finallyConsumer
+            exceptionConsumer
         );
     }
 
     public WithCloseable<C, T> fallBackEmpty(Function<C, T> emptySupplier) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            closeableSupplier,
-            closeable -> {
-                final var previousStackInfo = innerResultMapper.apply(closeable);
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
                 final var lastOutput = previousStackInfo.output();
                 if (previousStackInfo.isError()) {
                     return previousStackInfo;
                 } else if (null == lastOutput) {
+                    final var closeable = previousStackInfo.closeable();
                     try {
                         final var mappedVal = emptySupplier.apply(closeable);
-                        return new StackStepInfo<>(frame, previousStackInfo, null, mappedVal, null);
+                        return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, null, mappedVal, null);
                     } catch (Throwable t) {
-                        return new StackStepInfo<>(frame, previousStackInfo, null, null, t);
+                        return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, null, null, t);
                     }
                 } else {
                     return previousStackInfo;
                 }
             },
-            exceptionConsumer,
-            finallyConsumer
+            exceptionConsumer
         );
     }
 
     public WithCloseable<C, T> consume(ExceptionalConsumer<? super T> consumer) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            closeableSupplier,
-            closeable -> {
-                final var previousStackInfo = innerResultMapper.apply(closeable);
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
                 return getStackByConsume(consumer, previousStackInfo, frame);
             },
-            this.exceptionConsumer,
-            finallyConsumer
-        );
-    }
-
-    public WithCloseable<C, T> logTrace(Consumer<String> logger) {
-        return logTrace(logger, true);
-    }
-
-    public WithCloseable<C, T> logTrace(Consumer<String> logger, Supplier<Boolean> shouldLog) {
-        return logTrace(logger, shouldLog.get());
-    }
-
-    public WithCloseable<C, T> logTrace(Consumer<String> logger, boolean shouldLog) {
-        if(!shouldLog) {
-            return this;
-        }
-        final var frame = getStackStep();
-        return new WithCloseable<>(
-            closeableSupplier,
-            closeable -> {
-                final var previousStackInfo = innerResultMapper.apply(closeable);
-                final var lastOutput = previousStackInfo.output();
-                try {
-                    final var current = new StackStepInfo<T>(frame, previousStackInfo, lastOutput, lastOutput, previousStackInfo.throwable());
-                    logTraceInternal(logger, current);
-                    return current;
-                } catch (Throwable t) {
-                    return new StackStepInfo<>(frame, previousStackInfo, previousStackInfo, null, t);
-                }
-            },
-            this.exceptionConsumer,
-            finallyConsumer
+            this.exceptionConsumer
         );
     }
 
@@ -145,36 +182,33 @@ public class WithCloseable<C extends AutoCloseable, T> {
     public <U> WithCloseable<C, U> mapWithCloseable(ExceptionalBiFunction<? super C, ? super T, ? extends U> biFunction) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            closeableSupplier,
-            closeable -> {
-                final var previousStackInfo = innerResultMapper.apply(closeable);
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
                 final var lastOutput = previousStackInfo.output();
                 if (previousStackInfo.isError()) {
-                    return (StackStepInfo<U>) previousStackInfo;
+                    return (StackStepInfoWithCloseable<C, U>) previousStackInfo;
                 } else {
+                    final var closeable = previousStackInfo.closeable();
                     try {
                         final var mappedVal = biFunction.apply(closeable, lastOutput);
-                        return new StackStepInfo<>(frame, previousStackInfo, lastOutput, mappedVal, null);
+                        return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, lastOutput, mappedVal, null);
                     } catch (Throwable t) {
-                        return new StackStepInfo<>(frame, previousStackInfo, lastOutput, null, t);
+                        return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, lastOutput, null, t);
                     }
                 }
             },
-            this.exceptionConsumer,
-            finallyConsumer
+            this.exceptionConsumer
         );
     }
 
     public WithCloseable<C, T> filter(Predicate<? super T> predicate) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            closeableSupplier,
-            closeable -> {
-                final var prevStack = innerResultMapper.apply(closeable);
+            () -> {
+                final var prevStack = closeableSupplier.get();
                 return getStackStepInfoByFilter(predicate, prevStack, frame);
             },
-            this.exceptionConsumer,
-            finallyConsumer
+            this.exceptionConsumer
         );
     }
 
@@ -182,108 +216,100 @@ public class WithCloseable<C extends AutoCloseable, T> {
     public <U> WithCloseable<C, U> flatMap(Function<? super T, ResultOrError<U>> mapper) {
         final var frame = getStackStep();
         return new WithCloseable<>(
-            closeableSupplier,
-            closeable -> {
-                final var previousStackInfo = innerResultMapper.apply(closeable);
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
                 final var lastOutput = previousStackInfo.output();
                 if (previousStackInfo.isError()) {
-                    return (StackStepInfo<U>) previousStackInfo;
+                    return (StackStepInfoWithCloseable<C, U>) previousStackInfo;
                 } else if (null != lastOutput) {
                     final var mappedResult = mapper.apply(lastOutput).getResult();
                     final var childStack = mappedResult.getStackStepInfo();
-                    if(mappedResult.isSuccess()) {
+                    final var closeable = previousStackInfo.closeable();
+                    if (mappedResult.isSuccess()) {
                         final var mappedVal = mappedResult.get();
-                        return new StackStepInfo<U>(frame, previousStackInfo, lastOutput, mappedVal, null, childStack.orElse(null));
+                        return new StackStepInfoWithCloseable<C, U>(frame, previousStackInfo, closeable, lastOutput, mappedVal, null, childStack.orElse(null));
                     } else {
-                        return new StackStepInfo<U>(frame, previousStackInfo, lastOutput, null, mappedResult.getError(), childStack.orElse(null));
+                        return new StackStepInfoWithCloseable<C, U>(frame, previousStackInfo, closeable, lastOutput, null, mappedResult.getError(), childStack.orElse(null));
                     }
                 } else {
-                    return (StackStepInfo<U>) previousStackInfo;
+                    return (StackStepInfoWithCloseable<C, U>) previousStackInfo;
                 }
             },
-            this.exceptionConsumer,
-            finallyConsumer
+            this.exceptionConsumer
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    public WithCloseable<C, Optional<T>> continueWithOptional() {
+        final var frame = getStackStep();
+        return new WithCloseable<C, Optional<T>>(
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
+                final var lastOutput = previousStackInfo.output();
+                if (previousStackInfo.isError()) {
+                    return (StackStepInfoWithCloseable<C, Optional<T>>) previousStackInfo;
+                } else {
+                    return new StackStepInfoWithCloseable<>(frame, previousStackInfo, previousStackInfo.closeable(), lastOutput, Optional.ofNullable(lastOutput), null, null);
+                }
+            },
+            this.exceptionConsumer
         );
     }
 
     public T closeAndGet() {
-        C localCloseable = null;
-        try (var closeable = closeableSupplier.get()) {
-            localCloseable = closeable;
-            final var res = innerResultMapper.apply(closeable);
-            if (res.isError()) {
-                throw res.throwable();
-            }
-            return res.output();
-        } catch (Throwable e) {
-            throw Fun.convertRte(e, RuntimeException.class, FunctionException::new);
-        } finally {
-            if (null != localCloseable)
-                finallyConsumer.accept(localCloseable);
-        }
+        return closeAndGetResult().get();
     }
 
     public <E extends RuntimeException> T closeAndGet(
         Class<E> target,
         Function<Throwable, E> exceptionMapper
     ) {
-        C localCloseable = null;
-        try (var closeable = closeableSupplier.get()) {
-            localCloseable = closeable;
-            final var res = innerResultMapper.apply(closeable);
-            if (res.isError()) {
-                throw res.throwable();
-            }
-            return res.output();
-        } catch (Throwable e) {
-            exceptionConsumer.accept(localCloseable, e);
-            throw Fun.convertRte(e, target, exceptionMapper);
-        } finally {
-            if (null != localCloseable) {
-                finallyConsumer.accept(localCloseable);
-            }
-        }
+        return closeAndGetResult().getOrSpecError(target, exceptionMapper);
     }
 
     public Result<T, Throwable> closeAndGetResult() {
-        C localCloseable = null;
-        try (var closeable = closeableSupplier.get()) {
-            localCloseable = closeable;
-            final var res = innerResultMapper.apply(closeable);
-            if (res.isError()) {
-                exceptionConsumer.accept(localCloseable, res.throwable());
-                return Result.failure(res.throwable(), res);
-            }
-            return Result.success(res.output(), res);
-        } catch (Throwable e) {
-            exceptionConsumer.accept(localCloseable, e);
-            return Result.failure(e, null);
-        } finally {
-            if (null != localCloseable)
-                finallyConsumer.accept(localCloseable);
-        }
+        return convertToResult().getResult();
     }
 
-    public <E extends RuntimeException> Result<T, E> closeAndGetResult(
-        Class<E> target,
-        Function<Throwable, E> exceptionMapper
-    ) {
-        C localCloseable = null;
-        try (var closeable = closeableSupplier.get()) {
-            localCloseable = closeable;
-            final var res = innerResultMapper.apply(closeable);
-            if (res.isError()) {
-                exceptionConsumer.accept(localCloseable, res.throwable());
-                return Result.failure(Fun.convertRte(res.throwable(), target, exceptionMapper), res);
+
+    public <W extends RuntimeException>
+    Result<T, W> closeAndGetResult(Class<W> target, Function<Throwable, W> exceptionMapper) {
+        return closeAndGetResult().mapError(target, exceptionMapper);
+    }
+
+    public ResultOrError<T> convertToResult() {
+
+        final var frame = getStackStep();
+        val rapped = (Supplier<? extends StackStepInfo<T>>) () -> {
+            C localCloseable = null;
+            StackStepInfoWithCloseable<C, T> localRes = null;
+            try (var res = closeableSupplier.get()) {
+                localCloseable = res.closeable();
+                localRes = res;
+                if (res.isError()) {
+                    this.exceptionConsumer.accept(localCloseable, res.throwable());
+                    localRes = new StackStepInfoWithCloseable<>(frame, res, localCloseable, res.input(), res.output(), res.throwable());
+                }
+            } catch (Throwable e) {
+                localRes = new StackStepInfoWithCloseable<>(
+                    StackWalker.getInstance().walk(Stream::findFirst).orElse(localRes.stackFrame()),
+                    new StackStepInfoWithCloseable<>(
+                        frame,
+                        localRes,
+                        localCloseable,
+                        localRes.input(),
+                        localRes.output(),
+                        localRes.throwable()
+                    ),
+                    localCloseable,
+                    localRes.input(),
+                    localRes.output(),
+                    e
+                );
             }
-            return Result.success(res.output(), res);
-        } catch (Throwable e) {
-            exceptionConsumer.accept(localCloseable, e);
-            final var ex = Fun.convertRte(e, target, exceptionMapper);
-            return Result.failure(ex, null);
-        } finally {
-            if (null != localCloseable)
-                finallyConsumer.accept(localCloseable);
-        }
+            return localRes;
+        };
+
+        return new ResultOrError<>(rapped);
     }
 }

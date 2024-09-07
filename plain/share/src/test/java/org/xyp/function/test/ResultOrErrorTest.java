@@ -149,7 +149,6 @@ class ResultOrErrorTest {
             .map(Fun.updateSelf(p -> Assertions.assertThat(p.getAge()).isEqualTo(66)))
             .map(r -> Fun.cast(Object.class).apply(r))
             .map(i -> i.orElse(null))
-            .logTrace(System.out::println)
             .getOption();
         Assertions.assertThat(opt).isNotEmpty();
         Assertions.assertThat(opt.get().getClass()).isEqualTo(Person.class);
@@ -177,8 +176,8 @@ class ResultOrErrorTest {
             .map(i -> i - 4)
             .filter(i -> i > 0)
             .map(i -> i + 100)
-            .fallbackForEmpty(() -> 996)
-            .logTrace(System.out::println);
+            .fallbackForEmpty(() -> 996);
+
         Assertions.assertThat(opt.getOption()).isNotEmpty();
         Assertions.assertThat(opt.getOptionOrSpecError(RuntimeException.class, ex -> new RuntimeException())).isNotEmpty();
         Assertions.assertThat(opt.get()).isEqualTo(996);
@@ -200,7 +199,7 @@ class ResultOrErrorTest {
                 curent = curent.previous();
             }
 
-            Assertions.assertThat(count).isGreaterThan(4);
+            Assertions.assertThat(count).isEqualTo(4);
         });
     }
 
@@ -251,7 +250,6 @@ class ResultOrErrorTest {
             .flatMap(ResultOrError::of)
             .fallbackForEmpty(() -> 1)
             .fallbackForEmpty(() -> 100)
-            .logTrace(System.out::println)
             .get();
         Assertions.assertThat(opt).isOne();
     }
@@ -330,7 +328,7 @@ class ResultOrErrorTest {
                 .map(t -> t + 2)
             )
             .fallbackForEmpty(() -> 1)
-            .logTrace(System.out::println);
+            ;
         Assertions.assertThat(opt.get()).isEqualTo(11);
     }
 
@@ -353,7 +351,6 @@ class ResultOrErrorTest {
             .flatMap(ResultOrError::of)
             .fallbackForEmpty(() -> 1 / 0)
             .fallbackForEmpty(() -> 100)
-            .logTrace(System.out::println)
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
     }
@@ -366,13 +363,12 @@ class ResultOrErrorTest {
             .map(i -> i + 1)
             .map(i -> i + 1)
             .map(i -> i + 1)
-            .logTrace(System.out::println)
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isTrue();
         Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
         opt.getStackStepInfo().ifPresent(stack -> {
             StackStepInfo<?> current = stack;
-            var num = 6;
+            var num = 5;
             boolean first = true;
             while (current != null) {
                 if (first) {
@@ -395,7 +391,6 @@ class ResultOrErrorTest {
             .map(i -> i + 1)
             .map(i -> i / 0)
             .filter(i -> i > 1000)
-            .logTrace(System.out::println)
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
@@ -403,7 +398,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 5) {
+                if (num >= 6) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -421,7 +416,6 @@ class ResultOrErrorTest {
             .map(i -> i + 1)
             .filter(i -> i > i / 0)
             .map(i -> i + 1)
-            .logTrace(System.out::println)
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
@@ -429,7 +423,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 5) {
+                if (num >= 6) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -450,7 +444,6 @@ class ResultOrErrorTest {
                 return;
             })
             .map(i -> i + 1)
-            .logTrace(System.out::println)
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
@@ -458,7 +451,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 5) {
+                if (num >= 6) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -480,10 +473,6 @@ class ResultOrErrorTest {
             })
             .flatMap(i -> ResultOrError.on(() -> i / 1))
             .map(i -> i + 1)
-            .logTrace(s -> {
-                var u = 6 / 0;
-                System.out.println(s);
-            })
             .getResult();
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
@@ -491,7 +480,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 5) {
+                if (num >= 6) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -513,10 +502,7 @@ class ResultOrErrorTest {
             })
             .flatMap(i -> ResultOrError.on(() -> i / 1))
             .map(i -> i + 1)
-            .logTrace(s -> {
-                var u = 6 / 0;
-                System.out.println(s);
-            });
+            ;
 
         Assertions.assertThatThrownBy(() -> opt.getOrSpecError(IllegalStateException.class, IllegalStateException::new))
         ;
@@ -534,9 +520,7 @@ class ResultOrErrorTest {
                 .map(t -> t + 2)
             )
             .fallbackForEmpty(() -> 1)
-            .logTrace(System.out::println, false)
-            .logTrace(System.out::println, () -> false)
-            .logTrace(System.out::println);
+            ;
         Assertions.assertThat(opt.getResult().isSuccess()).isFalse();
     }
 
@@ -590,10 +574,7 @@ class ResultOrErrorTest {
             })
             .flatMap(i -> ResultOrError.on(() -> i / 1))
             .map(i -> i + 1)
-            .logTrace(s -> {
-                var u = 6 / 0;
-                System.out.println(u);
-            });
+            ;
 
         Assertions.assertThatThrownBy(() -> opt.getOrSpecErrorBy(ValidateWithStackException.class,
                 res -> new ValidateWithStackException(res.getError().getMessage(), res.getStackStepInfo().orElse(null))).equals(1)
@@ -674,11 +655,89 @@ class ResultOrErrorTest {
         val opt = ResultOrError.of(Map.<String, Object>of())
             .map(i -> i)
             .map(i -> ((Number) i.get("s")).longValue())
-            .logTrace(System.out::println)
             .getResult()
-            .doIfError(System.out::println)
             .getOrFallBackForError(ex -> 999L);
         Assertions.assertThat(opt).isEqualTo(999);
+    }
+
+    @Test
+    void test36() {
+        ValueHolder<Boolean> continueOptionChecked = new ValueHolder<>(false);
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .filter(i -> i > 0)
+            .map(i -> i + 100)
+            .continueWithOptional()
+            .map(ww -> {
+                Assertions.assertThat(ww).isEmpty();
+                continueOptionChecked.setValue(true);
+                return 1;
+            })
+            .getResult()
+            .getOption();
+
+        Assertions.assertThat(opt).isNotEmpty();
+        Assertions.assertThat(opt.get()).isOne();
+        Assertions.assertThat(continueOptionChecked.value()).isTrue();
+    }
+
+    @Test
+    void test37() {
+        val opt = ResultOrError.of(Map.<String, Object>of())
+            .map(i -> i)
+            .map(i -> ((Number) i.get("s")).longValue())
+            .getResult(ValidateException.class, e -> new ValidateException(e.getMessage()))
+            .doIfError(System.out::println)
+            ;
+        Assertions.assertThat(opt.isSuccess()).isFalse();
+        Assertions.assertThat(opt.getError()).isInstanceOf(ValidateException.class);
+
+    }
+
+    @Test
+    void test38() {
+        ValueHolder<Boolean> continueOptionChecked = new ValueHolder<>(false);
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .filter(i -> i > 0)
+            .map(i -> i + 100)
+            .continueWithOptional()
+            .map(ww -> {
+                Assertions.assertThat(ww).isEmpty();
+                continueOptionChecked.setValue(true);
+                return 1;
+            })
+            .getResult()
+            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()))
+            .getOption();
+
+        Assertions.assertThat(opt).isNotEmpty();
+        Assertions.assertThat(opt.get()).isOne();
+        Assertions.assertThat(continueOptionChecked.value()).isTrue();
+    }
+
+    @Test
+    void test39() {
+        ValueHolder<Boolean> continueOptionChecked = new ValueHolder<>(false);
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .map(i -> i / 0)
+            .continueWithOptional()
+            .map(ww -> {
+                Assertions.assertThat(ww).isEmpty();
+                continueOptionChecked.setValue(true);
+                return 1;
+            })
+            .getResult()
+            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()))
+            ;
+
+        Assertions.assertThat(opt.isSuccess()).isFalse();
+        Assertions.assertThat(opt.getError()).isInstanceOf(ValidateException.class);
+        Assertions.assertThat(continueOptionChecked.value()).isFalse();
     }
 
     @Data

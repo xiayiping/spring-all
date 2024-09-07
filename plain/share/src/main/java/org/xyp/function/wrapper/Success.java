@@ -53,7 +53,7 @@ public record Success<T, E extends Throwable>(T value, StackStepInfo<T> stackSte
     }
 
     @Override
-    public Result<T,E> ifError(Consumer<E> consumer) {
+    public Result<T, E> ifError(Consumer<E> consumer) {
         return this;
     }
 
@@ -65,5 +65,12 @@ public record Success<T, E extends Throwable>(T value, StackStepInfo<T> stackSte
     @Override
     public Optional<StackStepInfo<T>> getStackStepInfo() {
         return Optional.ofNullable(stackStepInfo);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <W extends RuntimeException>
+    Result<T, W> mapError(Class<W> target, Function<E, W> exceptionMapper) {
+        return (Result<T, W>) this;
     }
 }

@@ -1,8 +1,8 @@
 package org.xyp.function.wrapper;
 
+import lombok.val;
 import org.xyp.function.*;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -18,15 +18,18 @@ import java.util.function.Supplier;
  */
 public class ResultOrError<R> {
 
-    private final Supplier<StackStepInfo<R>> supplier;
+    private final Supplier<? extends StackStepInfo<R>> supplier;
 
-    private ResultOrError(Supplier<StackStepInfo<R>> supplier) {
+    ResultOrError(Supplier<? extends StackStepInfo<R>> supplier) {
         this.supplier = supplier;
     }
 
     static StackWalker.StackFrame getStackStep() {
         return StackWalker.getInstance()
-            .walk(stream -> stream.filter(s -> !s.toStackTraceElement().getClassName().equals(ResultOrError.class.getName()))
+            .walk(stream -> stream.filter(s ->
+                    !s.toStackTraceElement().getClassName().equals(ResultOrError.class.getName())
+                    && !s.toStackTraceElement().getClassName().equals(WithCloseable.class.getName())
+                )
                 .findFirst())
             .orElse(null);
     }
@@ -137,83 +140,6 @@ public class ResultOrError<R> {
         }
     }
 
-    public ResultOrError<R> logTrace(Consumer<String> logger) {
-        return logTrace(logger, true);
-    }
-
-    public ResultOrError<R> logTrace(Consumer<String> logger, Supplier<Boolean> shouldLog) {
-        return logTrace(logger, shouldLog.get());
-    }
-
-    public ResultOrError<R> logTrace(Consumer<String> logger, boolean shouldLog) {
-        if(!shouldLog) {
-            return this;
-        }
-        final var frame = getStackStep();
-        return new ResultOrError<>(
-            () -> {
-                final var previousStackInfo = this.supplier.get();
-                final var lastOutput = previousStackInfo.output();
-                try {
-                    final var current = new StackStepInfo<R>(frame, previousStackInfo, lastOutput, lastOutput, previousStackInfo.throwable());
-                    logTraceInternal(logger, current);
-                    return current;
-                } catch (Throwable t) {
-                    return new StackStepInfo<>(frame, previousStackInfo, previousStackInfo, null, t);
-                }
-            }
-        );
-    }
-
-    private static final String TRACE_LOG_INDENT = "    ";
-
-    static void logTraceInternal(Consumer<String> logger, StackStepInfo<?> stackInfo) {
-        logTraceInternal(logger, stackInfo, "");
-    }
-
-    private static void logTraceInternal(Consumer<String> logger, StackStepInfo<?> stackInfo, String prefix) {
-        var currentStackInfo = stackInfo;
-        while (null != currentStackInfo) {
-            final var frame = currentStackInfo.stackFrame().toString();
-            final var input = Optional.of(Objects.toString(currentStackInfo.input()))
-                .map(s -> {
-                    if (s.length() > 100) {
-                        return s.substring(0, 100) + " ...";
-                    }
-                    return s;
-                }).orElse(null);
-            final var output = Optional.of(Objects.toString(currentStackInfo.output()))
-                .map(s -> {
-                    if (s.length() > 100) {
-                        return s.substring(0, 100) + " ...";
-                    }
-                    return s;
-                }).orElse(null);
-            if (stackInfo.isError()) {
-                final var log = String.format("%s%s\n    %sinput: %s\n    %soutput: %s\n    %sexception: %s",
-                    prefix, frame,
-                    prefix, input,
-                    prefix, output,
-                    prefix, Optional.ofNullable(currentStackInfo.throwable()).map(Object::toString).orElse("")
-                );
-                logger.accept(log);
-            } else {
-                final var log = String.format("%s%s\n    %sinput: %s\n    %soutput: %s",
-                    prefix, frame,
-                    prefix, input,
-                    prefix, output
-                );
-                logger.accept(log);
-            }
-
-            currentStackInfo.getChild().ifPresent(child -> {
-                logTraceInternal(logger, child, prefix + TRACE_LOG_INDENT);
-            });
-
-            currentStackInfo = currentStackInfo.previous();
-        }
-    }
-
     public <U> ResultOrError<U> map(ExceptionalFunction<? super R, ? extends U> mapper) {
         final var frame = getStackStep();
         return new ResultOrError<>(
@@ -274,6 +200,22 @@ public class ResultOrError<R> {
         );
     }
 
+    @SuppressWarnings("unchecked")
+    public ResultOrError<Optional<R>> continueWithOptional() {
+        final var frame = getStackStep();
+        return new ResultOrError<>(
+            () -> {
+                final var previousStackInfo = supplier.get();
+                final var lastOutput = previousStackInfo.output();
+                if (previousStackInfo.isError()) {
+                    return (StackStepInfo<Optional<R>>) previousStackInfo;
+                } else {
+                    return new StackStepInfo<>(frame, previousStackInfo, lastOutput, Optional.ofNullable(lastOutput), null, null);
+                }
+            }
+        );
+    }
+
     public R get() {
         return getResult().get();
     }
@@ -299,10 +241,17 @@ public class ResultOrError<R> {
     }
 
     public Result<R, Throwable> getResult() {
+
         final var res = (supplier.get());
         if (res.isError()) {
             return Result.failure(res.throwable(), res);
         }
         return Result.success(res.output(), res);
     }
+
+    public <W extends RuntimeException>
+    Result<R, W> getResult(Class<W> target, Function<Throwable, W> exceptionMapper) {
+        return getResult().mapError(target, exceptionMapper);
+    }
+
 }
