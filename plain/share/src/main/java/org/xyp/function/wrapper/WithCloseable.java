@@ -222,7 +222,8 @@ public class WithCloseable<C extends AutoCloseable, T> {
                 if (previousStackInfo.isError()) {
                     return (StackStepInfoWithCloseable<C, U>) previousStackInfo;
                 } else if (null != lastOutput) {
-                    final var mappedResult = mapper.apply(lastOutput).getResult();
+                    val mapperROE = mapper.apply(lastOutput);
+                    final var mappedResult = mapperROE.getResultInPackage(mapperROE.supplier());
                     final var childStack = mappedResult.getStackStepInfo();
                     final var closeable = previousStackInfo.closeable();
                     if (mappedResult.isSuccess()) {

@@ -188,19 +188,20 @@ class ResultOrErrorTest {
         Assertions.assertThat(vh.value()).isZero();
         Assertions.assertThat(opt.getResult().isSuccess()).isTrue();
         Assertions.assertThat(opt.getResult().getStackStepInfo()).isNotEmpty();
-        opt.getResult().getStackStepInfo().ifPresent(stack -> {
-            int count = 0;
-            StackStepInfo<?> curent = stack;
-            while (curent != null) {
-                System.out.println(curent.stackFrame());
-                System.out.println(curent.input());
-                System.out.println(curent.output());
-                count += 1;
-                curent = curent.previous();
-            }
+        opt.getResult()
+            .getStackStepInfo().ifPresent(stack -> {
+                int count = 0;
+                StackStepInfo<?> curent = stack;
+                while (curent != null) {
+                    System.out.println(curent.stackFrame());
+                    System.out.println(curent.input());
+                    System.out.println(curent.output());
+                    count += 1;
+                    curent = curent.previous();
+                }
 
-            Assertions.assertThat(count).isEqualTo(4);
-        });
+                Assertions.assertThat(count).isEqualTo(5);
+            });
     }
 
     @Test
@@ -327,8 +328,7 @@ class ResultOrErrorTest {
                 .map(t -> t + 2)
                 .map(t -> t + 2)
             )
-            .fallbackForEmpty(() -> 1)
-            ;
+            .fallbackForEmpty(() -> 1);
         Assertions.assertThat(opt.get()).isEqualTo(11);
     }
 
@@ -368,7 +368,7 @@ class ResultOrErrorTest {
         Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
         opt.getStackStepInfo().ifPresent(stack -> {
             StackStepInfo<?> current = stack;
-            var num = 5;
+            var num = 6;
             boolean first = true;
             while (current != null) {
                 if (first) {
@@ -398,7 +398,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -423,7 +423,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -451,7 +451,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -480,7 +480,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -501,8 +501,7 @@ class ResultOrErrorTest {
                 return;
             })
             .flatMap(i -> ResultOrError.on(() -> i / 1))
-            .map(i -> i + 1)
-            ;
+            .map(i -> i + 1);
 
         Assertions.assertThatThrownBy(() -> opt.getOrSpecError(IllegalStateException.class, IllegalStateException::new))
         ;
@@ -519,8 +518,7 @@ class ResultOrErrorTest {
                 .map(t -> t + 2 / 0)
                 .map(t -> t + 2)
             )
-            .fallbackForEmpty(() -> 1)
-            ;
+            .fallbackForEmpty(() -> 1);
         Assertions.assertThat(opt.getResult().isSuccess()).isFalse();
     }
 
@@ -573,8 +571,7 @@ class ResultOrErrorTest {
                 return;
             })
             .flatMap(i -> ResultOrError.on(() -> i / 1))
-            .map(i -> i + 1)
-            ;
+            .map(i -> i + 1);
 
         Assertions.assertThatThrownBy(() -> opt.getOrSpecErrorBy(ValidateWithStackException.class,
                 res -> new ValidateWithStackException(res.getError().getMessage(), res.getStackStepInfo().orElse(null))).equals(1)
@@ -688,8 +685,7 @@ class ResultOrErrorTest {
             .map(i -> i)
             .map(i -> ((Number) i.get("s")).longValue())
             .getResult(ValidateException.class, e -> new ValidateException(e.getMessage()))
-            .doIfError(System.out::println)
-            ;
+            .doIfError(System.out::println);
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThat(opt.getError()).isInstanceOf(ValidateException.class);
 
@@ -732,8 +728,7 @@ class ResultOrErrorTest {
                 return 1;
             })
             .getResult()
-            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()))
-            ;
+            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()));
 
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThat(opt.getError()).isInstanceOf(ValidateException.class);

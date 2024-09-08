@@ -7,7 +7,6 @@ import org.xyp.function.ExceptionalRunnable;
 import org.xyp.function.ExceptionalSupplier;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -22,6 +21,10 @@ import java.util.function.Supplier;
 public class ResultOrError<R> {
 
     private final Supplier<? extends StackStepInfo<R>> supplier;
+
+    Supplier<? extends StackStepInfo<R>> supplier() {
+        return supplier;
+    }
 
     ResultOrError(Supplier<? extends StackStepInfo<R>> supplier) {
         this.supplier = supplier;
@@ -188,7 +191,8 @@ public class ResultOrError<R> {
                 if (previousStackInfo.isError()) {
                     return (StackStepInfo<U>) previousStackInfo;
                 } else if (null != lastOutput) {
-                    final var mappedResult = mapper.apply(lastOutput).getResult();
+                    val mapperROE = mapper.apply(lastOutput);
+                    final var mappedResult = mapperROE.getResultInPackage(mapperROE.supplier);
                     final var childStack = mappedResult.getStackStepInfo();
                     if (mappedResult.isSuccess()) {
                         final var mappedVal = mappedResult.get();
@@ -243,42 +247,22 @@ public class ResultOrError<R> {
         return getResult().getOptionOrSpecErrorBy(target, exceptionMapper);
     }
 
-    public Result<R, Throwable> getResult() {
-
-        val prev = StackWalker.getInstance()
-            .walk(stream -> {
-                    val iter = stream.iterator();
-                    if (iter.hasNext()) {
-                        iter.next();
-                        if (iter.hasNext()) {
-                            return iter.next();
-                        }
-                        return null;
-                    }
-                    return null;
-                }
-            );
-
-        val isSelfCall = (prev.toStackTraceElement().getClassName().equals(ResultOrError.class.getName())
-            && !Set.of("get", "getOption", "getOrSpecError", "getOrSpecErrorBy", "getOptionOrSpecError", "getOptionOrSpecErrorBy")
-            .contains(prev.toStackTraceElement().getMethodName())
-        )
-            || (
-            prev.toStackTraceElement().getClassName().equals(WithCloseable.class.getName())
-                && !Set.of("closeAndGetResult", "closeAndGet")
-                .contains(prev.toStackTraceElement().getMethodName())
-        );
-
-        val rapped = isSelfCall ? supplier : (Supplier<? extends StackStepInfo<R>>) () -> {
-            final var res = supplier.get();
-            return new StackStepInfo<>(getStackStep(), res, res.input(), res.output(), res.throwable());
-        };
-
+    Result<R, Throwable> getResultInPackage(Supplier<? extends StackStepInfo<R>> rapped) {
         final var res = (rapped.get());
         if (res.isError()) {
             return Result.failure(res.throwable(), res);
         }
         return Result.success(res.output(), res);
+    }
+
+    public Result<R, Throwable> getResult() {
+
+        val rapped = (Supplier<? extends StackStepInfo<R>>) () -> {
+            final var res = supplier.get();
+            return new StackStepInfo<>(getStackStep(), res, res.input(), res.output(), res.throwable());
+        };
+
+        return getResultInPackage(rapped);
     }
 
     public <W extends RuntimeException>
