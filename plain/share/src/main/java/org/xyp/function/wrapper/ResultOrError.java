@@ -1,10 +1,13 @@
 package org.xyp.function.wrapper;
 
 import lombok.val;
-import org.xyp.function.*;
+import org.xyp.function.ExceptionalConsumer;
+import org.xyp.function.ExceptionalFunction;
+import org.xyp.function.ExceptionalRunnable;
+import org.xyp.function.ExceptionalSupplier;
 
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -28,7 +31,7 @@ public class ResultOrError<R> {
         return StackWalker.getInstance()
             .walk(stream -> stream.filter(s ->
                     !s.toStackTraceElement().getClassName().equals(ResultOrError.class.getName())
-                    && !s.toStackTraceElement().getClassName().equals(WithCloseable.class.getName())
+                        && !s.toStackTraceElement().getClassName().equals(WithCloseable.class.getName())
                 )
                 .findFirst())
             .orElse(null);
@@ -242,7 +245,36 @@ public class ResultOrError<R> {
 
     public Result<R, Throwable> getResult() {
 
-        final var res = (supplier.get());
+        val prev = StackWalker.getInstance()
+            .walk(stream -> {
+                    val iter = stream.iterator();
+                    if (iter.hasNext()) {
+                        iter.next();
+                        if (iter.hasNext()) {
+                            return iter.next();
+                        }
+                        return null;
+                    }
+                    return null;
+                }
+            );
+
+        val isSelfCall = (prev.toStackTraceElement().getClassName().equals(ResultOrError.class.getName())
+            && !Set.of("get", "getOption", "getOrSpecError", "getOrSpecErrorBy", "getOptionOrSpecError", "getOptionOrSpecErrorBy")
+            .contains(prev.toStackTraceElement().getMethodName())
+        )
+            || (
+            prev.toStackTraceElement().getClassName().equals(WithCloseable.class.getName())
+                && !Set.of("closeAndGetResult", "closeAndGet")
+                .contains(prev.toStackTraceElement().getMethodName())
+        );
+
+        val rapped = isSelfCall ? supplier : (Supplier<? extends StackStepInfo<R>>) () -> {
+            final var res = supplier.get();
+            return new StackStepInfo<>(getStackStep(), res, res.input(), res.output(), res.throwable());
+        };
+
+        final var res = (rapped.get());
         if (res.isError()) {
             return Result.failure(res.throwable(), res);
         }
