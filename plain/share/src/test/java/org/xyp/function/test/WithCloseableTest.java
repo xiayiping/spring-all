@@ -192,7 +192,7 @@ class WithCloseableTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 5)
+                if (num >= 4)
                     Assertions.assertThat(current.throwable()).isNotNull();
                 else
                     Assertions.assertThat(current.throwable()).isNull();
@@ -228,7 +228,7 @@ class WithCloseableTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 5)
+                if (num >= 4)
                     Assertions.assertThat(current.throwable()).isNotNull();
                 else
                     Assertions.assertThat(current.throwable()).isNull();

@@ -271,7 +271,7 @@ public class ResultOrError<R> {
 
         val rapped = isSelfCall ? supplier : (Supplier<? extends StackStepInfo<R>>) () -> {
             final var res = supplier.get();
-            return new StackStepInfo<>(getStackStep(), res, res.input(), res.output(), res.throwable());
+            return new StackStepInfo<>(getStackStep(), res, res.output(), res.output(), res.throwable());
         };
 
         final var res = (rapped.get());

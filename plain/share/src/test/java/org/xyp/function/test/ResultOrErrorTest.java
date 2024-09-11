@@ -199,7 +199,7 @@ class ResultOrErrorTest {
                 curent = curent.previous();
             }
 
-            Assertions.assertThat(count).isEqualTo(4);
+            Assertions.assertThat(count).isEqualTo(5);
         });
     }
 
@@ -368,7 +368,7 @@ class ResultOrErrorTest {
         Assertions.assertThat(opt.getStackStepInfo()).isNotEmpty();
         opt.getStackStepInfo().ifPresent(stack -> {
             StackStepInfo<?> current = stack;
-            var num = 5;
+            var num = 6;
             boolean first = true;
             while (current != null) {
                 if (first) {
@@ -398,7 +398,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -423,7 +423,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -451,7 +451,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
@@ -480,7 +480,7 @@ class ResultOrErrorTest {
             StackStepInfo<?> current = stack;
             var num = 6;
             while (current != null) {
-                if (num >= 6) {
+                if (num >= 5) {
                     Assertions.assertThat(current.throwable()).isNotNull();
                 } else {
                     Assertions.assertThat(current.throwable()).isNull();
