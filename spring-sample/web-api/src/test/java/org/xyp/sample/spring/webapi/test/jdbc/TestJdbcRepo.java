@@ -9,12 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.xyp.sample.spring.webapi.domain.entity.batch.Batch;
-import org.xyp.sample.spring.webapi.domain.entity.batch.BatchRule;
-import org.xyp.sample.spring.webapi.domain.entity.batch.BatchRuleDesc;
-import org.xyp.sample.spring.webapi.domain.entity.task.Task;
-import org.xyp.sample.spring.webapi.repository.jdbc.BatchDaoJdbc;
-import org.xyp.sample.spring.webapi.repository.jdbc.TaskDaoJdbc;
+import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
+import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule;
+import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRuleDesc;
+import org.xyp.sample.spring.webapi.domain.task.entity.task.Task;
+import org.xyp.sample.spring.webapi.domain.task.repository.jdbc.BatchDaoJdbc;
+import org.xyp.sample.spring.webapi.domain.task.repository.jdbc.TaskDaoJdbc;
 
 import java.util.List;
 import java.util.Set;

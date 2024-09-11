@@ -13,7 +13,7 @@ import org.hibernate.type.Type;
 import org.xyp.function.wrapper.ResultOrError;
 import org.xyp.id.IdGenerator;
 import org.xyp.id.exception.IdGenerationException;
-import org.xyp.sample.spring.db.JpaDbConfig;
+import org.xyp.sample.spring.webapi.infra.config.JpaDbConfig;
 
 import java.util.EnumSet;
 import java.util.Properties;
