@@ -148,6 +148,7 @@ require {
     type init_t;
     type http_port_t;
     type unreserved_port_t;
+    type sshd_t;
     attribute file_type;
     class dir { write read create getattr add_name };
     class file { open write read getattr execute execute_no_trans map create append };
@@ -162,6 +163,7 @@ allow init_t esop_t:lnk_file { read };
 allow init_t esop_t:dir { read write create getattr add_name };
 allow init_t http_port_t:tcp_socket name_connect;
 allow init_t unreserved_port_t:tcp_socket name_connect;
+allow sshd_t esop_t:file { getattr read write open };
 
 ######
 
