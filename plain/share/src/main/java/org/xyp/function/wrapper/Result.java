@@ -70,10 +70,8 @@ public interface Result<T, E extends Throwable> {
     ) {
         try {
             if (isSuccess() && needDebug.get()) {
-                debugLogger.accept("check debug");
                 StackLogUtil.logTrace(debugLogger, getStackStepInfo().orElse(null));
-            } else if (needError.get()) {
-                errLogger.accept("check error");
+            } else if (!isSuccess() && needError.get()) {
                 StackLogUtil.logTrace(errLogger, getStackStepInfo().orElse(null));
             }
         } catch (Exception e) {

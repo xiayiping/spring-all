@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
-import org.xyp.sample.spring.db.JdbcDbConfig;
+import org.xyp.sample.spring.webapi.infra.config.JdbcDbConfig;
 import org.xyp.sample.spring.tracing.TracingConfig;
-import org.xyp.sample.spring.webapi.config.WebApiProperties;
+import org.xyp.sample.spring.webapi.web.config.WebApiProperties;
 
 @ComponentScan(basePackageClasses = {
     JdbcDbConfig.class,

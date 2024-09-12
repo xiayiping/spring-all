@@ -4,9 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.xyp.function.Fun;
 import org.xyp.function.ValueHolder;
-import org.xyp.function.wrapper.Result;
 import org.xyp.function.wrapper.ResultOrError;
-import org.xyp.function.wrapper.StackLogUtil;
 import org.xyp.function.wrapper.WithCloseable;
 import org.xyp.id.IdGenerator;
 import org.xyp.id.JdbcConnectionAccessorFactory;
@@ -71,8 +69,21 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
             val totalLast = state.prev() + (long) fetchSize * state.stepSize();
 
             if (state.max() >= totalLast) {
-                val newLast = cachedState.prev() + (long) cachedState.stepSize() * fetchSize;
-                return state.withLast(newLast);
+//                val newLast = cachedState.prev() + (long) cachedState.stepSize() * fetchSize;
+//                return state.withLast(newLast);
+//                return state.withLast(totalLast);
+                return ResultOrError.on(() -> state)
+                    .map(st -> st.withLast(totalLast))
+                    .getResult()
+                    .doIf(___ -> true, res -> {
+                            log.debug("id update finished");
+                            res.traceDebugOrError(
+                                log::isDebugEnabled, log::debug,
+                                () -> true, log::error);
+                        }
+                    )
+                    .get()
+                    ;
             } else {
                 return WithCloseable.open(factory::open)
                     .flatMap(connection -> fetchAndUpdateIdInDB(
@@ -82,11 +93,13 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
                         newStartStateHolder,
                         connection
                     ))
-                    .convertToResult()
-                    .getResult()
-                    .doIf(___ -> true, res -> res.traceDebugOrError(
-                        log::isDebugEnabled, log::debug,
-                        () -> true, log::error)
+                    .closeAndGetResult()
+                    .doIf(___ -> true, res -> {
+                            log.debug("id generate finished");
+                            res.traceDebugOrError(
+                                log::isDebugEnabled, log::debug,
+                                () -> true, log::error);
+                        }
                     )
                     .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
                     ;
@@ -106,16 +119,6 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
             )
         ).toList()
             ;
-    }
-
-    private static void debugOrError(Result<BatchIdResult, Throwable> res) {
-        if (res.isSuccess()) {
-            log.debug("check debug");
-            StackLogUtil.logTrace(log::debug, res.getStackStepInfo().orElse(null));
-        } else {
-            log.debug("check error");
-            StackLogUtil.logTrace(log::error, res.getStackStepInfo().orElse(null));
-        }
     }
 
     private ResultOrError<BatchIdResult> fetchAndUpdateIdInDB(
@@ -205,12 +208,12 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
         return WithCloseable.open(() -> connection.prepareStatement(getLastIdSql))
             .map(Fun.updateSelf(ps -> log.info("fetch next id of entity {} {}", entityName, getLastIdSql)))
             .map(Fun.updateSelf(ps -> ps.setString(1, entityName)))
-            .map(ps -> this.fetchIdBatchFromDB(entityName, ps))
+            .flatMap(ps -> this.fetchIdBatchFromDB(entityName, ps))
             .convertToResult()
             ;
     }
 
-    private BatchIdResult fetchIdBatchFromDB(String entityName, PreparedStatement preparedStatement) {
+    private ResultOrError<BatchIdResult> fetchIdBatchFromDB(String entityName, PreparedStatement preparedStatement) {
         return WithCloseable.open(preparedStatement::executeQuery)
             .map(resultSet -> {
                 if (resultSet.next()) {
@@ -227,7 +230,7 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
                 log.debug("not found entity id item in db");
                 return null;
             })
-            .closeAndGet(IdGenerationException.class, IdGenerationException::new)
+            .convertToResult()
             ;
     }
 
