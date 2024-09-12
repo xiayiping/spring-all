@@ -138,7 +138,7 @@ curl\
   https://127.0.0.1:8180/v1/kv_xyp/data/dev
 
 ## --cert /path/to/cert.pem
-
+# --cert /d/develop/tcg-paradise/template/config/resources/vault.pem -H "X-Vault-Request: true" -H "X-Vault-Token: hvs.6SnLsAKoGIyHE4sE5NtRvk0b"
 ```
 
 ```shell

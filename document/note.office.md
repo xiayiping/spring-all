@@ -1,4 +1,4 @@
-<div style="font-size: 1.4em;">
+<div style="font-size: 18px;">
 
 # linux
 
@@ -134,6 +134,48 @@ This will create and install a custom SELinux policy module that allows the `ini
 #### Summary
 
 The log entry indicates that the `consul` process was denied write access to a file due to SELinux policies. To resolve this, you can modify SELinux policies, change file contexts, or temporarily switch to permissive mode. However, modifying policies or contexts is generally the preferred solution for maintaining security.
+
+
+
+## SELINUX SAMPLE
+```shell
+## esop_type.te 
+
+module esop_type 1.0;
+
+require {
+    type systemd_systemctl_exec_t;
+    type init_t;
+    type http_port_t;
+    type unreserved_port_t;
+    attribute file_type;
+    class dir { write read create getattr add_name };
+    class file { open write read getattr execute execute_no_trans map create append };
+    class lnk_file { read };
+    class tcp_socket name_connect;
+}
+
+type esop_t;
+typeattribute esop_t file_type;
+allow init_t esop_t:file { map getattr open read execute execute_no_trans create write append };
+allow init_t esop_t:lnk_file { read };
+allow init_t esop_t:dir { read write create getattr add_name };
+allow init_t http_port_t:tcp_socket name_connect;
+allow init_t unreserved_port_t:tcp_socket name_connect;
+
+######
+
+#!/usr/bin/env bash
+
+sudo checkmodule -M -m -o ./esop_type.mod ./esop_type.te
+sudo semodule_package -o esop_type.pp -m esop_type.mod
+sudo semodule -i esop_type.pp  ## this can update existing, so no need to delete existing one if update
+
+sudo semanage fcontext -a -t esop_t "/home/esop(/.*)?"
+sudo semanage fcontext -l | grep esop
+sudo restorecon -Rv /home/esop
+
+```
 
 
 # db
