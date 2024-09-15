@@ -76,7 +76,7 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
                     .map(st -> st.withLast(totalLast))
                     .getResult()
                     .doIf(___ -> true, res -> {
-                            log.info("id update finished");
+                            log.debug("id update finished");
                             res.traceDebugOrError(
                                 log::isDebugEnabled, log::debug,
                                 () -> true, log::error);
@@ -95,7 +95,7 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
                     ))
                     .closeAndGetResult()
                     .doIf(___ -> true, res -> {
-                            log.info("id generate finished");
+                            log.debug("id generate finished");
                             res.traceDebugOrError(
                                 log::isDebugEnabled, log::debug,
                                 () -> true, log::error);

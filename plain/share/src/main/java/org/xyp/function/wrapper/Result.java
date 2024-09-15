@@ -71,7 +71,7 @@ public interface Result<T, E extends Throwable> {
         try {
             if (isSuccess() && needDebug.get()) {
                 StackLogUtil.logTrace(debugLogger, getStackStepInfo().orElse(null));
-            } else if (needError.get()) {
+            } else if (!isSuccess() && needError.get()) {
                 StackLogUtil.logTrace(errLogger, getStackStepInfo().orElse(null));
             }
         } catch (Exception e) {

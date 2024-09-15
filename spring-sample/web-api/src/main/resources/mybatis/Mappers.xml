@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.xyp.sample.spring.webapi.repository.mybatis.Mappers">
+<mapper namespace="org.xyp.sample.spring.webapi.domain.task.repository.mybatis.Mappers">
 
-    <resultMap id="BatchRecord" type="org.xyp.sample.spring.webapi.domain.entity.batch.BatchRecord">
+    <resultMap id="BatchRecord" type="org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRecord">
         <constructor>
             <idArg column="id" javaType="Long"/>
             <arg column="company_id" javaType="_int"/>
             <arg column="batch_name" javaType="String"/>
         </constructor>
         <association property="batchRules" columnPrefix="batch_rule_"
-                     javaType="org.xyp.sample.spring.webapi.domain.entity.batch.BatchRule"
+                     javaType="org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule"
                      resultMap="BatchRule"
                      notNullColumn="id"
                      autoMapping="true"
         />
     </resultMap>
 
-    <resultMap id="BatchRule" type="org.xyp.sample.spring.webapi.domain.entity.batch.BatchRule">
+    <resultMap id="BatchRule" type="org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule">
         <constructor>
             <idArg column="id" javaType="Long"/>
             <arg column="rule_name" javaType="String"/>

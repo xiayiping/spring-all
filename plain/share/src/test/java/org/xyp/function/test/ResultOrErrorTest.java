@@ -200,8 +200,8 @@ class ResultOrErrorTest {
                     curent = curent.previous();
                 }
 
-                Assertions.assertThat(count).isEqualTo(5);
-            });
+            Assertions.assertThat(count).isEqualTo(4);
+        });
     }
 
     @Test

@@ -13,14 +13,16 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
 import org.xyp.function.Fun;
-import org.xyp.sample.spring.webapi.domain.entity.batch.Batch;
-import org.xyp.sample.spring.webapi.domain.entity.batch.BatchRule;
-import org.xyp.sample.spring.webapi.domain.entity.batch.BatchRuleDesc;
-import org.xyp.sample.spring.webapi.domain.entity.task.Task;
-import org.xyp.sample.spring.webapi.repository.jpa.BatchDaoJpa;
-import org.xyp.sample.spring.webapi.repository.jpa.BatchRecordDaoJpa;
-import org.xyp.sample.spring.webapi.repository.jpa.TaskDaoJpa;
-import org.xyp.sample.spring.webapi.repository.mybatis.BatchDaoMybatis;
+import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
+import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule;
+import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRuleDesc;
+import org.xyp.sample.spring.webapi.domain.task.entity.task.Task;
+import org.xyp.sample.spring.webapi.domain.task.pojo.BatchPojo;
+import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchDaoJpa;
+import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchRecordDaoJpa;
+import org.xyp.sample.spring.webapi.domain.task.repository.jpa.TaskDaoJpa;
+import org.xyp.sample.spring.webapi.domain.task.repository.mybatis.BatchDaoMybatis;
+import org.xyp.sample.spring.webapi.domain.task.service.BatchService;
 
 import java.util.List;
 import java.util.Set;
@@ -53,6 +55,8 @@ class TestJpaRepo {
     BatchRecordDaoJpa batchRecordDaoJpa;
     @Autowired
     BatchDaoMybatis batchDaoMybatis;
+    @Autowired
+    BatchService batchService;
 
     Batch.BatchId id = null;
     Batch bt = null;
@@ -182,5 +186,17 @@ class TestJpaRepo {
         Assertions.assertThatThrownBy(() -> {
             batchRecordDaoJpa.findWithRulesById(id);
         }).isInstanceOf(RuntimeException.class);
+    }
+
+    @DisplayName("update batch using common_update_service")
+    @Test
+    void commonUpdateService() {
+        val batchPojo = new BatchPojo(
+            id.id(), 2, "bt_name", List.of()
+        );
+
+        val res = batchService.update(batchPojo);
+        Assertions.assertThat(res).isNotNull();
+        Assertions.assertThat(res.companyId()).isEqualTo(2);
     }
 }

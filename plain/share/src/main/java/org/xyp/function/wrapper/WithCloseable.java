@@ -105,7 +105,7 @@ public class WithCloseable<C extends AutoCloseable, T> {
         return new WithCloseable<>(
             () -> openStackStepInfoWithCloseable(open, frame),
             // (closeable, throwable) onException
-            (_, _) -> {
+            (__, ___) -> {
             }
         );
     }
@@ -289,7 +289,7 @@ public class WithCloseable<C extends AutoCloseable, T> {
                 localRes = res;
                 if (res.isError()) {
                     this.exceptionConsumer.accept(localCloseable, res.throwable());
-                    localRes = new StackStepInfoWithCloseable<>(frame, res, localCloseable, res.input(), res.output(), res.throwable());
+                    localRes = new StackStepInfoWithCloseable<>(frame, res, localCloseable, res.output(), res.output(), res.throwable());
                 }
             } catch (Throwable e) {
                 localRes = new StackStepInfoWithCloseable<>(
@@ -298,12 +298,12 @@ public class WithCloseable<C extends AutoCloseable, T> {
                         frame,
                         localRes,
                         localCloseable,
-                        localRes.input(),
+                        localRes.output(),
                         localRes.output(),
                         localRes.throwable()
                     ),
                     localCloseable,
-                    localRes.input(),
+                    localRes.output(),
                     localRes.output(),
                     e
                 );

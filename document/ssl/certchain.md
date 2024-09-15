@@ -48,7 +48,7 @@ openssl x509 -in cert-leaf.pem -text -noout
 
 ######## trust store chain ########
 #cat cert-leaf.pem > trust-root.pem
-#cat cert-int.pem >> trust-root.pem
+cat cert-int.pem >> trust-root.pem
 cat ca.pem > trust-root.pem
 
 [ -f ./paradise.truststore.p12 ] && rm ./paradise.truststore.p12
@@ -60,7 +60,7 @@ keytool -list -v -keystore ./paradise.truststore.p12
 
 ######## key store ########
 cat cert-leaf.pem > cert-chain.pem
-cat cert-int.pem >> cert-chain.pem
+#cat cert-int.pem >> cert-chain.pem
 #cat ca.pem >> cert-chain.pem
 
 cat cert-leaf-key.pem > key-leaf.pem
