@@ -73,3 +73,15 @@ public key algos:
 **used to solve the problem is confidentially...**,  not integrity.
 
 ![HMAC](hmac.png "HMAC")
+
+
+```shell
+jcmd <pid>
+# can be used to get system properties
+# so system.properties is lower safe
+
+cat /proc/${pid}/environ
+# can be used to get environment variable,
+# so it's not safe either;
+# better thing is, the /proc/${pid}/environ is only readable to user, not group and all
+```

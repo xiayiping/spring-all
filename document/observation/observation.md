@@ -4,15 +4,15 @@
 
 
 
-[source,shell]
-----
+```shell
+
 ## intellij startup : add vm option:
 JAVA_TOOL_OPTIONS="-javaagent:opentelemetry-javaagent.jar"; OTEL_TRACES_EXPORTER=otlp; OTEL_METRICS_EXPORTER=otlp; OTEL_LOGS_EXPORTER=; OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:5555;
 
-----
+```
 
-[source,shell]
-----
+```shell
+
 ## command line startup export options:
 
 export JAVA_TOOL_OPTIONS=""
@@ -29,20 +29,18 @@ export JAVA_TOOL_OPTIONS="-javaagent:/d/develop/spring-all/opentelemetry-javaage
     OTEL_LOGS_EXPORTER=logging \
     OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:5555
 
-
-----
+```
 
 
 https://grafana.com/blog/2022/05/04/how-to-capture-spring-boot-metrics-with-the-opentelemetry-java-instrumentation-agent/
 
 as per the doc, after setup the otel mid-layer:
 
-[quote]
-The Prometheus endpoint of the application is no longer involved. You can now remove the Prometheus endpoint configuration in application.properties and remove the micrometer-registry-prometheus dependency from pom.xml.
+> The Prometheus endpoint of the application is no longer involved. You can now remove the Prometheus endpoint configuration in application.properties and remove the micrometer-registry-prometheus dependency from pom.xml.
 
 
-[source,shell]
-----
+```shell
+
 netstat -ano
 netsh interface ipv4 show excludedportrange protocol=tcp
 netsh interface ipv4 delete excludedportrange startport=3093 numberofports=100 protocol=tcp
@@ -51,4 +49,4 @@ netsh int ipv4 set dynamicport tcp start=9000 num=10000
 
 net stop winnat
 net start winnat
-----
+```
