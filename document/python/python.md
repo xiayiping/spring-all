@@ -1,9 +1,9 @@
 
 ```shell
 ## to freeze the requirements
-pip freeze > requirements.txt
+python -m pip freeze > requirements.txt
 ## to apply the requirement.txt
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 
@@ -14,4 +14,4 @@ source local/Scripts/activate
 or
 local/Scripts/activate.ps1
 
-```
+```                

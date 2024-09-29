@@ -17,8 +17,6 @@
 
     * [Authenticate with JWT](#authenticate-with-jwt)
 <!-- TOC -->
-<!-- Wrap your entire content in a div with a style attribute -->
-<div style="font-size: 1.4em;">
 
 
 # spring-all
@@ -559,4 +557,3 @@ WB is Waiting
 
 
 
-</div>

@@ -1,0 +1,17 @@
+spring:
+  data:
+    jdbc:
+      dialect: postgresql
+      repositories:
+        enabled: true
+  datasource:
+    hikari:
+      jdbc-url: jdbc:postgresql://localhost:5432/postgres
+      username: xyp
+      password: Xyp54250
+      schema: public
+      driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    org.springframework.jdbc: debug

@@ -24,6 +24,7 @@
         <module>tracing</module>
         <module>secret</module>
         <module>common</module>
+        <module>data-jdbc</module>
     </modules>
 
     <properties>
