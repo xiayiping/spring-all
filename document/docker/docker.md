@@ -36,6 +36,7 @@ docker build --tag myname:latest -f ./MyDockerfile
 ```shell
 
 docker compose -f docker.yml up
+docker compose -it -f docker.yml up
 ```
 
 

@@ -1,8 +1,9 @@
-<div style="font-size: 1.4em;">
 
 ```shell
 # version
 npm -v 
+
+npm cache clean --force
 # upgrade
 npm install -g npm
 # create
@@ -35,5 +36,3 @@ npm run build
 # ### This provides a styled-components-like API, which MUI uses internally and which you can also use to create your own styled components that integrate well with MUI's theming system.
 ```
 
-
-</div>
