@@ -1,8 +1,5 @@
 
 
-[source,text]
-----
-
 The series of operators you've provided is a sequence of PDF (Portable Document Format) operators commonly used to perform various text-related operations. These operators are part of the PDF page content stream and are used to draw text on a PDF page. Let's break down each operator:
 
 Do: The Do operator is used to invoke an XObject, which can be an image or a form (a self-contained content stream). It's often used to insert images or forms into a PDF document.
@@ -129,5 +126,3 @@ Table Structure: The structure of the table, including the row and column layout
 To accurately determine the location of text within a table, you would need to analyze the PDF content stream and consider the sequence of operators, transformations, and the table structure. This can involve parsing the PDF structure, analyzing the graphics and text objects, and interpreting the content stream instructions.
 
 It's worth noting that extracting structured data, such as tables, from PDF documents can be complex due to the variability in PDF layouts and the lack of standardized table structures. Specialized PDF processing libraries or tools that offer table extraction capabilities may be helpful in extracting tabular data from PDF documents.
-----
-
