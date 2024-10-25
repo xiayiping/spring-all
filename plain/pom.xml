@@ -21,22 +21,25 @@
     </modules>
 
     <properties>
+
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${version.spring.cloud.dependencies}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
     <build>
         <pluginManagement>
-<!--            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version> &lt;!&ndash; or a newer version when available &ndash;&gt;
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                        <enablePreview>true</enablePreview>
-                    </configuration>
-                </plugin>
-            </plugins>-->
+
         </pluginManagement>
     </build>
 

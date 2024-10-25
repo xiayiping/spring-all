@@ -3,12 +3,10 @@ package org.xyp.spring.datajdbc.domain.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import org.xyp.spring.datajdbc.domain.entity.BatchEntity;
 import org.xyp.spring.datajdbc.domain.pojo.Batch;
 import org.xyp.spring.datajdbc.domain.repository.jdbc.BatchDao;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -20,7 +18,7 @@ public class BatchRepositoryImpl implements BatchRepository {
 
     @Override
     public Optional<Batch> get(Batch.Id id) {
-        return batchDao.findById(id.id())
+        return batchDao.findById(id.value())
             .map(Batch::of)
             ;
     }

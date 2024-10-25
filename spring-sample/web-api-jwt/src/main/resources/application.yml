@@ -7,6 +7,11 @@ server:
 spring:
   application:
     name: web-api-jwt
+  cloud:
+    vault:
+      enabled: false
+  config:
+    additional-location: classpath:add.properties
 
 management:
   health:

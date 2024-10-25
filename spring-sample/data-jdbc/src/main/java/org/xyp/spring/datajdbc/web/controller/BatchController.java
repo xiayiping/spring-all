@@ -32,9 +32,9 @@ public class BatchController {
     @PostMapping("/many")
     public List<BatchDto> postMany() {
         List<Batch> list = List.of(
-            new Batch(null, "na"),
-            new Batch(null, "nb"),
-            new Batch(null, "nc")
+            new Batch(null, "na", "d1"),
+            new Batch(null, "nb", "d2"),
+            new Batch(null, "nc", "d3")
         );
         return batchRepository.saveAll(list)
             .stream().map(BatchDto::of)

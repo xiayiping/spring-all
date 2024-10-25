@@ -1,4 +1,3 @@
-<div style="font-size: 1.2em;">
 
 ```shell
 
@@ -545,4 +544,3 @@ vault write -format=json ${pki_int_path}/issue/${role_name_int} \
 
 ```
 
-</div>

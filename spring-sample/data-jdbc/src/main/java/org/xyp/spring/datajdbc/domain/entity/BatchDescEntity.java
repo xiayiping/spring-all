@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -12,13 +11,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "batch")
-public class BatchEntity {
-    @Id
-    Long id;
-
-    String name;
-
-    @Column("batch_ids")
-    BatchDescEntity desc;
+@Table(name = "batch_desc")
+public class BatchDescEntity {
+    @Column("content")
+    String desc;
 }
