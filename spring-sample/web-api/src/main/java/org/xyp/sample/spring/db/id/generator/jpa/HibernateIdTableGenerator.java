@@ -16,6 +16,7 @@ import org.xyp.id.exception.IdGenerationException;
 import org.xyp.sample.spring.webapi.infra.config.JpaDbConfig;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Properties;
 
 import static org.hibernate.generator.EventType.INSERT;
@@ -44,7 +45,15 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
         }
 
         val acc = session.getJdbcConnectionAccess();
-        val id = idGenerator.nextId(idName, new ConnectionFromAccess(acc));
+        val id =
+            ResultOrError.on(() -> {
+                    if (null != defaultFetchSize && null != defaultStepSize) {
+                        return idGenerator.nextId(idName, 1,  defaultStepSize, defaultFetchSize,new ConnectionFromAccess(acc)).getFirst();
+                    } else {
+                        return idGenerator.nextId(idName, new ConnectionFromAccess(acc));
+                    }
+                })
+                .getOrSpecError(IdGenerationException.class, IdGenerationException::new);
 
         if (idClass.isAssignableFrom(Long.class)) {
             return idClass.cast(id);
@@ -62,14 +71,22 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
         return EventTypeSets.INSERT_ONLY;
     }
 
+    private static final String BUILD_IN_GENERATOR_NAME = "GENERATOR_NAME";
+    public static final String KEY_DEFAULT_FETCH_SIZE = "DEFAULT_FETCH_SIZE";
+    public static final String KEY_DEFAULT_STEP_SIZE = "DEFAULT_STEP_SIZE";
+
     private Class<?> idClass = null;
     private String idName = null;
+    private Integer defaultFetchSize;
+    private Integer defaultStepSize;
 
     @Override
     public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
         idClass = type.getReturnedClass();
-        idName = params.getProperty(IdGenerator.GENERATOR_NAME);
+        idName = params.getProperty(BUILD_IN_GENERATOR_NAME);
         idGenerator = JpaDbConfig.SPRING_BEAN;
-        log.info("config id generator for id class {} {}", idClass, idGenerator);
+        defaultFetchSize = Optional.ofNullable(params.getProperty(KEY_DEFAULT_FETCH_SIZE)).map(Integer::valueOf).orElse(null);
+        defaultStepSize = Optional.ofNullable(params.getProperty(KEY_DEFAULT_STEP_SIZE)).map(Integer::valueOf).orElse(null);
+        log.info("config id generator for id class {} {}, default fetch size/step {} {}", idClass, idGenerator, defaultFetchSize, defaultStepSize);
     }
 }

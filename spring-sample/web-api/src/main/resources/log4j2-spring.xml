@@ -57,7 +57,7 @@
 <!--        <Logger name="org.springframework.transaction" level="debug"/>-->
 <!--        <Logger name="org.springframework.security.web" level="trace"/>-->
 <!--        <Logger name="reactor.ipc.netty.channel" level="trace"/>-->
-        <Logger name="org.xyp" level="debug"/>
+        <Logger name="org.xyp" level="info"/>
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>

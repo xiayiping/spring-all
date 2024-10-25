@@ -200,8 +200,8 @@ class ResultOrErrorTest {
                     curent = curent.previous();
                 }
 
-            Assertions.assertThat(count).isEqualTo(4);
-        });
+                Assertions.assertThat(count).isEqualTo(5);
+            });
     }
 
     @Test
@@ -733,6 +733,84 @@ class ResultOrErrorTest {
         Assertions.assertThat(opt.isSuccess()).isFalse();
         Assertions.assertThat(opt.getError()).isInstanceOf(ValidateException.class);
         Assertions.assertThat(continueOptionChecked.value()).isFalse();
+    }
+
+    @Test
+    void test40() {
+        ValueHolder<Boolean> continueOptionChecked = new ValueHolder<>(false);
+        ValueHolder<Boolean> doOnErrorChecked = new ValueHolder<>(false);
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .map(i -> i / 0)
+            .continueWithOptional()
+            .doOnError((e) -> doOnErrorChecked.setValue(true))
+            .map(ww -> {
+                Assertions.assertThat(ww).isEmpty();
+                continueOptionChecked.setValue(true);
+                return 1;
+            })
+            .map(ww -> ww + 1)
+            .map(ww -> ww + 1)
+            .getResult()
+            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()))
+
+            .doIf(ignored -> true, res -> {
+                res.traceDebugOrError(log::isDebugEnabled, System.out::println, () -> true, System.out::println);
+            });
+
+        Assertions.assertThat(opt.isSuccess()).isFalse();
+        Assertions.assertThat(opt.getError()).isInstanceOf(ValidateException.class);
+        Assertions.assertThat(continueOptionChecked.value()).isFalse();
+        Assertions.assertThat(doOnErrorChecked.value()).isTrue();
+
+        opt.getStackStepInfo().ifPresentOrElse(stack -> {
+            StackStepInfo<?> current = stack;
+            var num = 5;
+            while (current != null) {
+                num--;
+                current = current.previous();
+            }
+            Assertions.assertThat(num).isZero();
+        }, Assertions::assertThatException);
+    }
+
+    @Test
+    void test41() {
+        ValueHolder<Boolean> continueOptionChecked = new ValueHolder<>(false);
+        ValueHolder<Boolean> doOnErrorChecked = new ValueHolder<>(false);
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .map(i -> i / 1)
+            .continueWithOptional()
+            .doOnError((e) -> doOnErrorChecked.setValue(true))
+            .map(ww -> {
+                continueOptionChecked.setValue(true);
+                return 1;
+            })
+            .map(ww -> ww + 1)
+            .map(ww -> ww + 1)
+            .getResult()
+            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()))
+
+            .doIf(ignored -> true, res -> {
+                res.traceDebugOrError(() -> true, System.out::println, () -> true, System.out::println);
+            });
+
+        Assertions.assertThat(opt.isSuccess()).isTrue();
+        Assertions.assertThat(continueOptionChecked.value()).isTrue();
+        Assertions.assertThat(doOnErrorChecked.value()).isFalse();
+
+        opt.getStackStepInfo().ifPresentOrElse(stack -> {
+            StackStepInfo<?> current = stack;
+            var num = 8;
+            while (current != null) {
+                num--;
+                current = current.previous();
+            }
+            Assertions.assertThat(num).isZero();
+        }, Assertions::assertThatException);
     }
 
     @Data

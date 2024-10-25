@@ -21,10 +21,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-vault-config</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.awspring.cloud</groupId>
-            <artifactId>spring-cloud-aws-starter-secrets-manager</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

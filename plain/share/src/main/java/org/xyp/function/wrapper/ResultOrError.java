@@ -129,6 +129,26 @@ public class ResultOrError<R> {
         );
     }
 
+    public ResultOrError<R> doOnError(ExceptionalConsumer<? super Throwable> consumer) {
+        final var frame = getStackStep();
+        return new ResultOrError<>(
+            () -> {
+                final var prevStack = supplier.get();
+                final var lastOutput = prevStack.output();
+                try {
+                    if (prevStack.isError()) {
+                        consumer.accept(prevStack.throwable());
+                        return new StackStepInfo<>(frame, prevStack, lastOutput, null, prevStack.throwable());
+                    }
+                    return prevStack;
+                } catch (Throwable throwable) {
+                    return new StackStepInfo<>(frame, prevStack, lastOutput, null, throwable);
+                }
+            }
+        );
+
+    }
+
     static <R> StackStepInfo<R> getStackByConsume(ExceptionalConsumer<? super R> consumer, StackStepInfo<R> prevStack, StackWalker.StackFrame frame) {
 
         final var lastOutput = prevStack.output();

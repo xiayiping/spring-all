@@ -1,0 +1,36 @@
+
+spring:
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://10.21.110.91;databaseName=TCITEAP;schema=KYC;encrypt=false;
+    username: demo
+    password: demo
+    hikari:
+      connection-test-query: "select 1"
+  jpa:
+    properties:
+      hibernate:
+        default_schema: KYC
+    database-platform: org.hibernate.dialect.SQLServerDialect
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: http://a
+          client-id: b
+          client-secret: c
+  cloud:
+    vault:
+      enabled: false
+
+
+org:
+  xyp:
+    id-gen:
+      schema: KYC
+      table: IdTable
+      entity-name-column: entityName
+      prev-value-column: lastVal
+      step-size-column: step
+      fetch-size-column: fetchSize
+      dialect: mssql

@@ -9,4 +9,5 @@ public interface IdGenDialect {
 
     String getInitIdValueSql();
 
+
 }

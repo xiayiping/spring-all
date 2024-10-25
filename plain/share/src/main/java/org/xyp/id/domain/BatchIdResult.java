@@ -6,11 +6,11 @@ public record BatchIdResult(
     long prev,
     long max,
     int stepSize,
-    int fetchSize
+    long fetchSize
 ) {
 
-    public BatchIdResult(String name, long prev, int stepSize, int fetchSize) {
-        this(name, prev, prev + (long) stepSize * fetchSize, stepSize, fetchSize);
+    public static BatchIdResult fromPrev(String name, long prev, int stepSize, int fetchSize) {
+        return new BatchIdResult(name, prev, prev + (long) stepSize * fetchSize, stepSize, fetchSize);
     }
 
     public BatchIdResult withLast(long newLast) {

@@ -19,3 +19,6 @@ spring:
           introspection-uri: http://a
           client-id: b
           client-secret: c
+  cloud:
+    vault:
+      enabled: false

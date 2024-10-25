@@ -45,7 +45,7 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
             this.dataSource = ProxyDataSourceBuilder.create(dataSource)
                 .name("MyDS")
                 .multiline()
-                .logQueryBySlf4j(SLF4JLogLevel.INFO)
+                .logQueryBySlf4j(SLF4JLogLevel.WARN)
                 .build();
         }
 

@@ -61,7 +61,10 @@ public class Batch implements HasId<Long> {
     @org.springframework.data.annotation.Id
     @EmbeddedId
     @GeneratedValue(generator = BatchId.ID_NAME)
-    @GenericGenerator(name = BatchId.ID_NAME, type = HibernateIdTableGenerator.class)
+    @GenericGenerator(name = BatchId.ID_NAME, type = HibernateIdTableGenerator.class, parameters = {
+        @org.hibernate.annotations.Parameter(name = HibernateIdTableGenerator.KEY_DEFAULT_FETCH_SIZE, value = "50"),
+        @org.hibernate.annotations.Parameter(name = HibernateIdTableGenerator.KEY_DEFAULT_STEP_SIZE, value = "2"),
+    })
     @JsonUnwrapped
     private BatchId id;
 

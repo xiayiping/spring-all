@@ -13,4 +13,6 @@ public interface IdGenProperties {
     String getStepSizeColumn();
 
     String getFetchSizeColumn();
+
+    DialectType getDialect();
 }

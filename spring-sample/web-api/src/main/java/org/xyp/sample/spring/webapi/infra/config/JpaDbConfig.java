@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.xyp.id.IdGenerator;
 import org.xyp.id.dialect.IdGenDialect;
+import org.xyp.id.dialect.IdGenDialectMssql;
 import org.xyp.id.dialect.IdGenDialectPostgre;
 import org.xyp.id.impl.LongIdDbTableGenerator;
 import org.xyp.sample.spring.db.id.IdGenPropertiesImpl;
@@ -29,8 +30,11 @@ public class JpaDbConfig {
     }
 
     @Bean
-    IdGenDialect idGenDialect(IdGenPropertiesImpl idGenProperties) {
-        return new IdGenDialectPostgre(idGenProperties);
+    public IdGenDialect idGenDialect(IdGenPropertiesImpl idGenProperties) {
+        return switch (idGenProperties.getDialect()) {
+            case MSSQL -> new IdGenDialectMssql(idGenProperties);
+            default -> new IdGenDialectPostgre(idGenProperties);
+        };
     }
 
     @Bean
