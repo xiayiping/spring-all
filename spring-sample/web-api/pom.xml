@@ -3,11 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+    <parent><!--
         <groupId>org.xyp.sample</groupId>
-        <artifactId>spring</artifactId>
+        <artifactId>spring</artifactId>-->
+
+        <groupId>org.xyp.sample</groupId>
+        <artifactId>xyp-demo-all</artifactId>
         <version>${revision}</version>
-<!--        <relativePath>../pom.xml</relativePath>-->
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>org.xyp.sample.spring</groupId>
@@ -17,14 +20,19 @@
     <description>web-api</description>
 
     <properties>
-<!--        <java.version>21</java.version>-->
+        <java.version>21</java.version>
     </properties>
 
     <dependencies>
 
         <dependency>
-            <groupId>org.xyp.sample.plain</groupId>
-            <artifactId>share</artifactId>
+            <groupId>org.xyp.shared</groupId>
+            <artifactId>base</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xyp.shared</groupId>
+            <artifactId>jpa</artifactId>
             <version>${revision}</version>
         </dependency>
 

@@ -11,9 +11,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.xyp.function.Fun;
-import org.xyp.function.ValueHolder;
-import org.xyp.function.wrapper.ResultOrError;
+import org.xyp.shared.function.Fun;
+import org.xyp.shared.function.ValueHolder;
+import org.xyp.shared.function.wrapper.ResultOrError;
 
 import java.util.Optional;
 

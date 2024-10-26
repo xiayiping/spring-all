@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.data.relational.core.mapping.event.BeforeConvertCallback;
 import org.springframework.stereotype.Service;
-import org.xyp.function.Fun;
-import org.xyp.function.wrapper.ResultOrError;
-import org.xyp.id.IdGenerator;
-import org.xyp.id.JdbcConnectionAccessorFactory;
+import org.xyp.shared.function.Fun;
+import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.generator.DatasourceConnectionHolderFactory;
+import org.xyp.shared.id.generator.IdGenerator;
+import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
 
 import javax.sql.DataSource;
 

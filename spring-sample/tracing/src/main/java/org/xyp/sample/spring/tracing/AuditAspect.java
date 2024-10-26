@@ -9,12 +9,12 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.xyp.function.wrapper.ResultOrError;
-import org.xyp.function.wrapper.WithCloseable;
+import org.xyp.shared.function.wrapper.ResultOrError;
+import org.xyp.shared.function.wrapper.WithCloseable;
 
 import java.util.Optional;
 
-import static org.xyp.function.Fun.checkAndCast;
+import static org.xyp.shared.function.Fun.checkAndCast;
 
 @Slf4j
 @AllArgsConstructor

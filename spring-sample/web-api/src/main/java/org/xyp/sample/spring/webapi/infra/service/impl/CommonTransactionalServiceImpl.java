@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.xyp.function.Fun;
+import org.xyp.shared.function.Fun;
 import org.xyp.sample.spring.webapi.domain.shared.service.transactional.CommonTransactionalService;
 
 import java.util.List;

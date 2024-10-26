@@ -10,6 +10,10 @@ create table if not exists id_table
     fetch_size  integer      not null
 );
 
+insert into id_table
+values ('for_lock', 1, 1, 1);
+
+
 
 alter table if exists batch_rule drop constraint fk__batch_rule__batch;
 alter table if exists task drop constraint fk__task__batch;

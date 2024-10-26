@@ -6,6 +6,7 @@ target/
 *.env
 generated/
 .env/
+.jar/
 
 ### IntelliJ IDEA ###
 .idea/

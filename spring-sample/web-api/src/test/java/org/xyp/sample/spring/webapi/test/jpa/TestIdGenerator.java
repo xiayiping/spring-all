@@ -1,10 +1,13 @@
 package org.xyp.sample.spring.webapi.test.jpa;
 
 
-import com.jayway.jsonpath.internal.Utils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.assertj.core.api.Assertions;
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
+import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.internal.util.StringHelper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,41 +21,43 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
-import org.xyp.id.IdGenerator;
-import org.xyp.id.JdbcConnectionAccessorFactory;
-import org.xyp.id.dialect.IdGenDialectPostgre;
-import org.xyp.id.impl.LongIdDbTableGenerator;
-import org.xyp.sample.spring.db.id.IdGenPropertiesImpl;
+import org.xyp.shared.function.wrapper.ResultOrError;
+import org.xyp.shared.id.generator.IdGenerator;
+import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
+import org.xyp.shared.id.generator.table.dialect.IdGenProperties;
+import org.xyp.shared.id.generator.table.domain.BatchIdResult;
+import org.xyp.shared.id.generator.table.impl.LongIdDbTableGenerator;
 import org.xyp.sample.spring.webapi.infra.config.JpaDbConfig;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.singletonMap;
 
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
-//@ActiveProfiles("test")
-@ActiveProfiles("mssql")
-//@Sql(
-//    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
-//    config = @SqlConfig(
-//        errorMode = SqlConfig.ErrorMode.FAIL_ON_ERROR//CONTINUE_ON_ERROR
-//    ),
-//    scripts = {
-//        "classpath:/sql/schema.sql",
-//        "classpath:/sql/schema-mssql.sql",
-//        "classpath:/sql/schema-h2.sql",
-//    })
+//@ActiveProfiles("postgres")
+@ActiveProfiles("test")
+@Sql(
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
+    config = @SqlConfig(
+        errorMode = SqlConfig.ErrorMode.FAIL_ON_ERROR//CONTINUE_ON_ERROR
+    ),
+    scripts = {
+        "classpath:/sql/schema-h2.sql",
+    })
 @Transactional
 @Commit
 @Rollback(false)
@@ -62,7 +67,7 @@ class TestIdGenerator {
     DataSource dataSource;
 
     @Autowired
-    IdGenPropertiesImpl idGenProperties;
+    IdGenProperties idGenProperties;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -76,9 +81,27 @@ class TestIdGenerator {
     @Test
     void test2() throws ExecutionException, InterruptedException, SQLException {
         val config = new JpaDbConfig();
-        final IdGenerator<Long> gen1 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties));
-        final IdGenerator<Long> gen2 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties));
-        final IdGenerator<Long> gen3 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties));
+        val fetchDbPeekers = List.<BiConsumer<String, BatchIdResult>>of((e, b) -> ResultOrError.doRun(() -> {
+            System.out.println(Thread.currentThread().getName() + " fetch db for " + e);
+            Thread.sleep(333);
+        }).getResult());
+        val updateDbPeekers = List.<BiConsumer<String, BatchIdResult>>of((e, b) -> ResultOrError.doRun(() -> {
+            System.out.println(Thread.currentThread().getName() + " updated db for " + e);
+            Thread.sleep(333);
+        }).getResult());
+        val initedDbPeekers = List.<BiConsumer<String, BatchIdResult>>of((e, b) -> ResultOrError.doRun(() -> {
+            System.out.println(Thread.currentThread().getName() + " id record initialized for " + e);
+            Thread.sleep(333);
+        }).getResult());
+        final IdGenerator<Long> gen1 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties), idGenProperties,
+            fetchDbPeekers, updateDbPeekers, initedDbPeekers
+        );
+        final IdGenerator<Long> gen2 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties), idGenProperties,
+            fetchDbPeekers, updateDbPeekers, initedDbPeekers
+        );
+        final IdGenerator<Long> gen3 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties), idGenProperties,
+            fetchDbPeekers, updateDbPeekers, initedDbPeekers
+        );
 
         val id1Name = "id1";
         val factroy = new JdbcConnectionAccessorFactory() {
@@ -88,14 +111,11 @@ class TestIdGenerator {
             }
         };
 
-        val fetchTimes = 3;
-        for (int k = 0; k < 66; k++) {
+        val testTimesTotal = 5;
+        val fetchTimes = 30;
+        val fetchSize = 7;
+        for (int k = 0; k < testTimesTotal; k++) {
             System.out.println("test time: " + k);
-//            val defaultFetchSize = 15 + k;
-//            val stepSize = new Random().nextInt(5) + 1;
-//            val fetchSize = new Random().nextInt(30) + 1;
-
-            val fetchSize = 3;
 
             val t = k;
             ConcurrentHashMap<Long, Long> ids = new ConcurrentHashMap<>();
@@ -138,7 +158,21 @@ class TestIdGenerator {
             ids.putAll(((Set<Long>) (task3.get())).stream().collect(Collectors.toMap(i -> i, i -> i)));
             Assertions.assertThat(ids).hasSize(3 * fetchTimes * fetchSize);
         }
+    }
 
+    @Test
+    void test03() {
+        val valueColumnName = "value_col";
+        val formattedPhysicalTableName = "table";
+        val segmentColumnName = "segment";
+        final String alias = "tbl";
+        final String query = "select " + StringHelper.qualify(alias, valueColumnName)
+            + " from " + formattedPhysicalTableName + ' ' + alias
+            + " where " + StringHelper.qualify(alias, segmentColumnName) + "=?";
+        final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
 
+        final Map<String, String[]> updateTargetColumnsMap = singletonMap(alias, new String[]{valueColumnName});
+        val s = new PostgreSQLDialect().applyLocksToSql(query, lockOptions, updateTargetColumnsMap);
+        System.out.println(s);
     }
 }

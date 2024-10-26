@@ -18,8 +18,9 @@
     <description>Demo All</description>
 
     <modules>
-        <module>spring-sample</module>
-        <module>plain</module>
+        <module>shared/base</module>
+        <module>shared/jpa</module>
+        <module>spring-sample/web-api</module>
         <!--
         <module>demo-image</module>
         <module>demo-all-config</module>
@@ -41,7 +42,17 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <version.native.maven.plugin>0.10.2</version.native.maven.plugin>
+
         <version.spring.cloud.dependencies>2023.0.2</version.spring.cloud.dependencies>
+        <version.spring.openapi>2.1.0</version.spring.openapi>
+        <version.spring.start.mybatis>3.0.3</version.spring.start.mybatis>
+
+        <version.feign.hc5>12.4</version.feign.hc5>
+        <version.flatten.mvn.plugin>1.5.0</version.flatten.mvn.plugin>
+        <version.httpclient5>5.2.1</version.httpclient5>
+        <version.kerberos.extension>2.0.0</version.kerberos.extension>
+        <version.net.ttddyy>1.9</version.net.ttddyy>
+
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH.mm.ss</maven.build.timestamp.format>
     </properties>
 
@@ -54,8 +65,139 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-        </dependencies>
 
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>jquery</artifactId>
+                <version>3.7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>bootstrap</artifactId>
+                <version>5.3.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>webjars-locator-core</artifactId>
+                <version>0.58</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-core</artifactId>
+                <version>${version.kerberos.extension}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-web</artifactId>
+                <version>${version.kerberos.extension}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-client</artifactId>
+                <version>${version.kerberos.extension}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${version.spring.start.mybatis}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter-test</artifactId>
+                <version>${version.spring.start.mybatis}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-hc5</artifactId>
+                <version>${version.feign.hc5}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.6.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.ttddyy</groupId>
+                <artifactId>datasource-proxy</artifactId>
+                <version>${version.net.ttddyy}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.jtds</groupId>
+                <artifactId>jtds</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>0.11.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>0.11.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+                <version>1.30.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>1.30.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>pl.tkowalcz.tjahzi</groupId>
+                <artifactId>log4j2-appender-nodep</artifactId>
+                <version>0.9.17</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4</artifactId>
+                <version>4.13.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.25.2</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-community-dialects -->
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-community-dialects</artifactId>
+                <version>6.5.2.Final</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>aws-sdk-java</artifactId>
+                <version>2.20.162</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.20.162</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
     <build>
@@ -87,4 +229,16 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>skipTest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>

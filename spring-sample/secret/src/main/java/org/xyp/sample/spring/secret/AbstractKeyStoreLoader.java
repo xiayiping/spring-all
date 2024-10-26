@@ -2,7 +2,7 @@ package org.xyp.sample.spring.secret;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.xyp.function.wrapper.ResultOrError;
+import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.sample.spring.secret.config.KeyStoreSecretProperty;
 import org.xyp.sample.spring.secret.pojo.SecretStoreBundle;
 import org.xyp.sample.spring.secret.pojo.SecretTuple;

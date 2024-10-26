@@ -22,3 +22,15 @@ spring:
   cloud:
     vault:
       enabled: false
+
+
+org:
+  xyp:
+    id-gen:
+      schema: test
+      table: id_table
+      entity-name-column: entity_name
+      prev-value-column: prev_value
+      step-size-column: step_size
+      fetch-size-column: fetch_size
+      dialect: h2

@@ -2,7 +2,7 @@ package org.xyp.sample.spring.db.id.generator.jpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
-import org.xyp.id.JdbcConnectionAccessorFactory;
+import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;

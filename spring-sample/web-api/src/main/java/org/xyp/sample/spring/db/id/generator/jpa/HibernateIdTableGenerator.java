@@ -10,9 +10,9 @@ import org.hibernate.generator.EventTypeSets;
 import org.hibernate.id.Configurable;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
-import org.xyp.function.wrapper.ResultOrError;
-import org.xyp.id.IdGenerator;
-import org.xyp.id.exception.IdGenerationException;
+import org.xyp.shared.function.wrapper.ResultOrError;
+import org.xyp.shared.id.generator.IdGenerator;
+import org.xyp.shared.id.generator.table.exception.IdGenerationException;
 import org.xyp.sample.spring.webapi.infra.config.JpaDbConfig;
 
 import java.util.EnumSet;
@@ -26,12 +26,7 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
 
     transient IdGenerator<Long> idGenerator = null;
 
-    public HibernateIdTableGenerator(
-//        GenericGenerator genericGenerator
-//        CustomSequence config,
-//        Member annotatedMember,
-//        CustomIdGeneratorCreationContext context
-    ) {
+    public HibernateIdTableGenerator() {
         log.info("create hibernateIdTableGenerator ......");
     }
 
@@ -53,7 +48,7 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
                         return idGenerator.nextId(idName, new ConnectionFromAccess(acc));
                     }
                 })
-                .getOrSpecError(IdGenerationException.class, IdGenerationException::new);
+                .getOrSpecError(IdGenerationException.class, ee -> new IdGenerationException(idName, ee));
 
         if (idClass.isAssignableFrom(Long.class)) {
             return idClass.cast(id);
@@ -62,7 +57,7 @@ public class HibernateIdTableGenerator implements BeforeExecutionGenerator, Conf
                 val constructor = idClass.getConstructor(id.getClass()); // Long.TYPE for long
                 return constructor.newInstance(id);
             })
-            .getOrSpecError(IdGenerationException.class, IdGenerationException::new)
+            .getOrSpecError(IdGenerationException.class, ee -> new IdGenerationException(idName, ee))
             ;
     }
 

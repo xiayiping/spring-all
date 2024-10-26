@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.xyp.function.wrapper.ResultOrError;
+import org.xyp.shared.function.wrapper.ResultOrError;
 
 import java.util.List;
 import java.util.Optional;

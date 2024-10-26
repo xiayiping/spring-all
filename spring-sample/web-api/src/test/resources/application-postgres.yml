@@ -1,0 +1,36 @@
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: xyp
+    password: Xyp54250
+    hikari:
+      connection-test-query: "select 1"
+  jpa:
+    properties:
+      hibernate:
+        default_schema: public
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: http://a
+          client-id: b
+          client-secret: c
+  cloud:
+    vault:
+      enabled: false
+
+
+org:
+  xyp:
+    id-gen:
+      schema: public
+      table: id_table
+      entity-name-column: entity_name
+      prev-value-column: prev_value
+      step-size-column: step_size
+      fetch-size-column: fetch_size
+      dialect: postgres

@@ -9,7 +9,7 @@ import org.springframework.boot.ssl.DefaultSslBundleRegistry;
 import org.springframework.boot.ssl.NoSuchSslBundleException;
 import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundleRegistry;
-import org.xyp.function.wrapper.ResultOrError;
+import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.sample.spring.secret.config.KeyStoreSecretProperty;
 
 import java.io.ByteArrayOutputStream;

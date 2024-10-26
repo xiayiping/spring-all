@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
-import org.xyp.function.Fun;
+import org.xyp.shared.function.Fun;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRuleDesc;

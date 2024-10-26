@@ -3,7 +3,7 @@ package org.xyp.sample.spring.common.sslcert;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
-import org.xyp.function.wrapper.ResultOrError;
+import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.sample.spring.common.sslcert.config.KeyStoreSecretProperty;
 import org.xyp.sample.spring.common.sslcert.model.SecretStoreBundle;
 import org.xyp.sample.spring.common.sslcert.model.SecretTuple;
