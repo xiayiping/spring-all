@@ -6,7 +6,7 @@ import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.shared.id.generator.IdGenerator;
 import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
 import org.xyp.shared.id.generator.table.dialect.IdGenDialect;
-import org.xyp.shared.id.generator.table.dialect.IdGenProperties;
+import org.xyp.shared.id.generator.table.config.IdGenProperties;
 import org.xyp.shared.id.generator.table.domain.BatchIdResult;
 import org.xyp.shared.id.generator.table.exception.IdGenerationException;
 
@@ -238,15 +238,8 @@ public class LongIdDbTableGenerator implements IdGenerator<Long> {
                     return res;
                 } else {
                     val newState = new BatchIdResult(entityName, 0, calculatedIdIncrease, defaultStepSize, defaultFetchSize);
-//                    try {
                     initIdValueToTable(entityName, newState, connection);
-//                    } catch (Exception se) {
-//                        if (idGenDialect.needUpgradeLockIfIdRecordNotExist()) {
-//                            return waitShortAndRetryGetBatchIdResultInTransaction(entityName, defaultStepSize, defaultFetchSize, connection, calculatedIdIncrease, retryMax, se);
-//                        } else {
-//                    throw new IdGenerationException(entityName, se);
-//                        }
-//                    }
+
                     recordInitializedPeeks.forEach(c -> c.accept(entityName, newState));
                     return newState;
                 }

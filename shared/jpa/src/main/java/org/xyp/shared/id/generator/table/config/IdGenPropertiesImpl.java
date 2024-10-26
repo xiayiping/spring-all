@@ -1,12 +1,11 @@
-package org.xyp.sample.spring.db.id;
+package org.xyp.shared.id.generator.table.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.xyp.shared.id.generator.table.dialect.DialectType;
-import org.xyp.shared.id.generator.table.dialect.IdGenProperties;
 
 @Data
-@ConfigurationProperties(prefix = "org.xyp.id-gen")
+@ConfigurationProperties(prefix = "org.xyp.shared.id-gen")
 public class IdGenPropertiesImpl implements IdGenProperties {
     String schema;
     String table;

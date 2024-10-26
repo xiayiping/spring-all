@@ -13,7 +13,7 @@
 %style{[%mdc{trace_id}%X{traceId},%mdc{span_id}%X{spanId}]}{bright_magenta}
 %style{[%thread]}{bright_magenta}
 (%F:%L) %blue{(%logger)}
-%n%n"/>
+%n"/>
 
     </Properties>
 

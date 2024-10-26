@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
@@ -17,7 +18,7 @@ import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.stereotype.Component;
 import org.xyp.sample.spring.db.id.domain.HasId;
-import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
+import org.xyp.shared.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,13 +59,14 @@ import java.util.Optional;
 public class Batch implements HasId<Long> {
 
     @SuppressWarnings("deprecation")
-    @org.springframework.data.annotation.Id
+    @Id
     @EmbeddedId
     @GeneratedValue(generator = BatchId.ID_NAME)
-    @GenericGenerator(name = BatchId.ID_NAME, type = HibernateIdTableGenerator.class, parameters = {
-        @org.hibernate.annotations.Parameter(name = HibernateIdTableGenerator.KEY_DEFAULT_FETCH_SIZE, value = "50"),
-        @org.hibernate.annotations.Parameter(name = HibernateIdTableGenerator.KEY_DEFAULT_STEP_SIZE, value = "2"),
+    @GenericGenerator(name = BatchId.ID_NAME, type = HibernateIdTableGeneratorLegacy.class, parameters = {
+        @org.hibernate.annotations.Parameter(name = HibernateIdTableGeneratorLegacy.KEY_DEFAULT_FETCH_SIZE, value = "50"),
+        @org.hibernate.annotations.Parameter(name = HibernateIdTableGeneratorLegacy.KEY_DEFAULT_STEP_SIZE, value = "2"),
     })
+//    @CustomizedTableIdGenerator(name = BatchId.ID_NAME)
     @JsonUnwrapped
     private BatchId id;
 
@@ -186,18 +188,18 @@ public class Batch implements HasId<Long> {
 
     @Component
     @ReadingConverter
-    public static class BatchIdReadingConverter implements Converter<Long, Batch.BatchId> {
+    public static class BatchIdReadingConverter implements Converter<Long, BatchId> {
         @Override
-        public Batch.BatchId convert(Long source) {
-            return new Batch.BatchId(source);
+        public BatchId convert(Long source) {
+            return new BatchId(source);
         }
     }
 
     @Component
     @WritingConverter
-    public static class BatchIdWritingConverter implements Converter<Batch.BatchId, Long> {
+    public static class BatchIdWritingConverter implements Converter<BatchId, Long> {
         @Override
-        public Long convert(Batch.BatchId source) {
+        public Long convert(BatchId source) {
             return source.id();
         }
     }
@@ -206,8 +208,8 @@ public class Batch implements HasId<Long> {
     @ReadingConverter
     public static class BatchRefReadingConverter implements Converter<Long, BatchRef<Batch>> {
         @Override
-        public Batch.BatchRef<Batch> convert(Long source) {
-            return new Batch.BatchRef<>(source);
+        public BatchRef<Batch> convert(Long source) {
+            return new BatchRef<>(source);
         }
     }
 
@@ -215,7 +217,7 @@ public class Batch implements HasId<Long> {
     @WritingConverter
     public static class BatchRefWritingConverter implements Converter<BatchRef<Batch>, Long> {
         @Override
-        public Long convert(Batch.BatchRef<Batch> source) {
+        public Long convert(BatchRef<Batch> source) {
             return source.id();
         }
     }

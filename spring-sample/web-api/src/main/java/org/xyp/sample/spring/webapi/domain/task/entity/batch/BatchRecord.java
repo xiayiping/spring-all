@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
-import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
+import org.xyp.shared.id.generator.table.hibernate.CustomizedTableIdGenerator;
+import org.xyp.shared.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,8 @@ public record BatchRecord(
     @SuppressWarnings("deprecation")
     @EmbeddedId
     @GeneratedValue(generator = Batch.BatchId.ID_NAME)
-    @GenericGenerator(name = Batch.BatchId.ID_NAME, type = HibernateIdTableGenerator.class)
+    @GenericGenerator(name = Batch.BatchId.ID_NAME, type = HibernateIdTableGeneratorLegacy.class)
+    @CustomizedTableIdGenerator(name = Batch.BatchId.ID_NAME)
     @JsonUnwrapped
     Batch.BatchId id,
 
@@ -90,4 +92,5 @@ public record BatchRecord(
     public int hashCode() {
         return Objects.hash(id, companyId, batchName);
     }
+
 }

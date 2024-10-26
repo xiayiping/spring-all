@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.stereotype.Component;
 import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.domain.IdWrapper;
-import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
+import org.xyp.shared.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -37,7 +37,8 @@ public class BatchRule implements HasId<Long> {
     @org.springframework.data.annotation.Id
     @EmbeddedId
     @GeneratedValue(generator = BatchRuleId.ID_NAME)
-    @GenericGenerator(name = BatchRuleId.ID_NAME, type = HibernateIdTableGenerator.class)
+    @GenericGenerator(name = BatchRuleId.ID_NAME, type = HibernateIdTableGeneratorLegacy.class)
+//    @CustomizedTableIdGenerator(name = BatchRuleId.ID_NAME)
     private BatchRuleId id;
 
     @org.springframework.data.relational.core.mapping.Column("rule_name")

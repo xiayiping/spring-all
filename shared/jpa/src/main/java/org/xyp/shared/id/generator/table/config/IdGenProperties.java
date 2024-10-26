@@ -1,4 +1,6 @@
-package org.xyp.shared.id.generator.table.dialect;
+package org.xyp.shared.id.generator.table.config;
+
+import org.xyp.shared.id.generator.table.dialect.DialectType;
 
 public interface IdGenProperties {
 
@@ -16,5 +18,4 @@ public interface IdGenProperties {
 
     DialectType getDialect();
 
-    long getWaitInMilliSecIfCreateIdRecordError();
 }

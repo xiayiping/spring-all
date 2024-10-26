@@ -12,6 +12,8 @@ spring:
       hibernate:
         default_schema: public
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create
   security:
     oauth2:
       resourceserver:
@@ -26,11 +28,12 @@ spring:
 
 org:
   xyp:
-    id-gen:
-      schema: public
-      table: id_table
-      entity-name-column: entity_name
-      prev-value-column: prev_value
-      step-size-column: step_size
-      fetch-size-column: fetch_size
-      dialect: postgres
+    shared:
+      id-gen:
+        schema: public
+        table: id_table
+        entity-name-column: entity_name
+        prev-value-column: prev_value
+        step-size-column: step_size
+        fetch-size-column: fetch_size
+        dialect: postgres

@@ -12,6 +12,8 @@ spring:
       hibernate:
         default_schema: KYC
     database-platform: org.hibernate.dialect.SQLServerDialect
+    hibernate:
+      ddl-auto: create
   security:
     oauth2:
       resourceserver:
@@ -26,11 +28,12 @@ spring:
 
 org:
   xyp:
-    id-gen:
-      schema: KYC
-      table: IdTable
-      entity-name-column: entityName
-      prev-value-column: lastVal
-      step-size-column: step
-      fetch-size-column: fetchSize
-      dialect: mssql
+    shared:
+      id-gen:
+        schema: KYC
+        table: IdTable
+        entity-name-column: entityName
+        prev-value-column: lastVal
+        step-size-column: step
+        fetch-size-column: fetchSize
+        dialect: mssql

@@ -3,22 +3,21 @@ package org.xyp.sample.spring.webapi.infra.config;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.mybatis.spring.annotation.MapperScan;
-import org.xyp.shared.id.generator.IdGenerator;
-import org.xyp.shared.id.generator.table.dialect.*;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.xyp.shared.id.generator.table.impl.LongIdDbTableGenerator;
-import org.xyp.sample.spring.db.id.IdGenPropertiesImpl;
-import org.xyp.sample.spring.webapi.domain.task.repository.jpa.TaskDaoJpa;
+import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchDaoJpa;
+import org.xyp.sample.spring.webapi.domain.task.repository.jpa2.StockRepository;
 import org.xyp.sample.spring.webapi.domain.task.repository.mybatis.BatchDaoMybatis;
+import org.xyp.shared.id.generator.IdGenerator;
+import org.xyp.shared.id.generator.table.config.IdGenProperties;
+import org.xyp.shared.id.generator.table.dialect.*;
+import org.xyp.shared.id.generator.table.impl.LongIdDbTableGenerator;
 
 @Slf4j
 @Configuration
-@EnableJpaRepositories(basePackageClasses = TaskDaoJpa.class)
+@EnableJpaRepositories(basePackageClasses = {StockRepository.class, BatchDaoJpa.class})
 @MapperScan(basePackageClasses = BatchDaoMybatis.class)
-@ConfigurationPropertiesScan(basePackageClasses = {IdGenPropertiesImpl.class})
+//@ConfigurationPropertiesScan(basePackageClasses = {IdGenPropertiesImpl.class})
 public class JpaDbConfig {
 
     public static volatile IdGenerator<Long> SPRING_BEAN = null;
@@ -27,7 +26,7 @@ public class JpaDbConfig {
         log.info("JpaDbConfig ... ...");
     }
 
-    @Bean
+    //    @Bean
     public IdGenDialect idGenDialect(IdGenProperties idGenProperties) {
         return switch (idGenProperties.getDialect()) {
             case MSSQL -> new IdGenDialectMssql(idGenProperties);
@@ -36,10 +35,11 @@ public class JpaDbConfig {
         };
     }
 
-    @Bean
-    IdGenerator<Long> idGenerator(IdGenPropertiesImpl idGenProperties) {
+    //    @Bean
+    IdGenerator<Long> idGenerator(IdGenProperties idGenProperties) {
         val generator = new LongIdDbTableGenerator(idGenDialect(idGenProperties), idGenProperties);
         SPRING_BEAN = generator;
+        System.out.println(SPRING_BEAN);
         return generator;
     }
 }

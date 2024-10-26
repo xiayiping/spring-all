@@ -1,17 +1,16 @@
-package org.xyp.sample.spring.db.id.generator.jpa;
+package org.xyp.shared.id.generator.table;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
-import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 @Slf4j
-class ConnectionFromAccess implements JdbcConnectionAccessorFactory {
+public class ConnectionFromAccess implements JdbcConnectionAccessorFactory {
     private final JdbcConnectionAccess access;
 
-    ConnectionFromAccess(JdbcConnectionAccess access) {
+    public ConnectionFromAccess(JdbcConnectionAccess access) {
         this.access = access;
     }
 

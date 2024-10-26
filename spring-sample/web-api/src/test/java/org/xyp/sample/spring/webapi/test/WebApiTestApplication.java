@@ -7,7 +7,7 @@ import org.xyp.sample.spring.webapi.WebApiApplication;
 
 import static org.springframework.core.env.AbstractEnvironment.DEFAULT_PROFILES_PROPERTY_NAME;
 
-@Import(WebApiApplication.class)
+@Import({WebApiApplication.class, })
 @SpringBootApplication
 public class WebApiTestApplication {
 

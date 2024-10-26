@@ -12,9 +12,9 @@ import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.stereotype.Component;
 import org.xyp.sample.spring.db.id.domain.HasId;
-import org.xyp.sample.spring.db.id.generator.jpa.HibernateIdTableGenerator;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
 import org.springframework.core.convert.converter.Converter;
+import org.xyp.shared.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -39,8 +39,9 @@ public class Task implements HasId<Long> {
     // unwrap the id to flatten to parent object
     @JsonUnwrapped
     @EmbeddedId
+//    @CustomizedTableIdGenerator(name = TaskId.ID_NAME)
     @GeneratedValue(generator = TaskId.ID_NAME)
-    @GenericGenerator(name = TaskId.ID_NAME, type = HibernateIdTableGenerator.class)
+    @GenericGenerator(name = TaskId.ID_NAME, type = HibernateIdTableGeneratorLegacy.class)
     private TaskId id;
 
     @org.springframework.data.relational.core.mapping.Column("company_id")

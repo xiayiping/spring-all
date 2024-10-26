@@ -1,6 +1,7 @@
 package org.xyp.shared.id.generator.table.dialect;
 
 import org.apache.commons.lang3.StringUtils;
+import org.xyp.shared.id.generator.table.config.IdGenProperties;
 
 import java.util.Optional;
 

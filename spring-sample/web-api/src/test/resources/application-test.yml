@@ -1,8 +1,10 @@
-
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: "jdbc:h2:mem:mydb"
+    url: "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS test\\;SET SCHEMA test"
+    # DB_CLOSE_DELAY=-1:
+    # This ensures that the in-memory database is not automatically closed when the last connection is closed.
+    # The database will remain available until the JVM shuts down.
     username: sa
     password: sa
     hikari:
@@ -12,6 +14,8 @@ spring:
       hibernate:
         default_schema: test
     database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
   security:
     oauth2:
       resourceserver:
@@ -26,11 +30,12 @@ spring:
 
 org:
   xyp:
-    id-gen:
-      schema: test
-      table: id_table
-      entity-name-column: entity_name
-      prev-value-column: prev_value
-      step-size-column: step_size
-      fetch-size-column: fetch_size
-      dialect: h2
+    shared:
+      id-gen:
+        schema: test
+        table: id_table
+        entity-name-column: entity_name
+        prev-value-column: prev_value
+        step-size-column: step_size
+        fetch-size-column: fetch_size
+        dialect: h2

@@ -6,12 +6,15 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
+import org.xyp.sample.spring.webapi.domain.task.entity.stock.StockEntity;
+import org.xyp.sample.spring.webapi.domain.task.repository.jpa2.StockRepository;
 import org.xyp.shared.function.Fun;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule;
@@ -23,12 +26,14 @@ import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchRecordDaoJpa
 import org.xyp.sample.spring.webapi.domain.task.repository.jpa.TaskDaoJpa;
 import org.xyp.sample.spring.webapi.domain.task.repository.mybatis.BatchDaoMybatis;
 import org.xyp.sample.spring.webapi.domain.task.service.BatchService;
+import org.xyp.shared.id.generator.table.config.IdGeneratorConfig;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
 @Slf4j
+@Import(IdGeneratorConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
@@ -57,6 +62,8 @@ class TestJpaRepo {
     BatchDaoMybatis batchDaoMybatis;
     @Autowired
     BatchService batchService;
+    @Autowired
+    StockRepository stockRepository;
 
     Batch.BatchId id = null;
     Batch bt = null;
@@ -198,5 +205,14 @@ class TestJpaRepo {
         val res = batchService.update(batchPojo);
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.companyId()).isEqualTo(2);
+    }
+
+    @Test
+    void testNewIdGenerator() {
+        StockEntity s = new StockEntity();
+        s.setSymbol("s-symbol");
+        System.out.println(s);
+        val saved = stockRepository.save(s);
+        System.out.println(saved);
     }
 }
