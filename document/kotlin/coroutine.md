@@ -268,3 +268,445 @@ In this case, `scopedLambda` not only delays but also launches a new coroutine w
 - Use **`suspend CoroutineScope.() -> Unit`** when you need to launch new coroutines or interact with the coroutine context inside the lambda.
 
 Choosing between these two depends on whether you need to interact with `CoroutineScope` capabilities inside your lambda or not.
+
+
+## runBlocking vs GlobalScope
+
+No, `**runBlocking**` is **not** a global scope. While it may seem similar in some ways, it has a very different purpose and behavior compared to `GlobalScope`.
+
+Here’s a breakdown of the important distinctions:
+
+### 1. **What is `runBlocking`?**
+
+- `runBlocking` is a **special coroutine builder** that **blocks the current thread** (usually the main thread) until all the coroutines inside it have completed.
+- It is often used in **main functions** or **test code** where you need to bridge between regular blocking code and suspending functions (coroutines).
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    // This coroutine blocks the main thread
+    launch {
+        delay(1000L)
+        println("Hello from runBlocking!")
+    }
+    println("This line will be printed first since runBlocking waits")
+}
+```
+
+In the above example:
+- The `runBlocking` coroutine blocks the main thread until the inner coroutine (launched with `launch`) completes.
+- Because it **blocks the thread**, it **waits** for the `launch` block to finish before exiting.
+
+### Characteristics of `runBlocking`:
+- **Thread Blocking**: It blocks the thread it is running on (e.g., the main thread). This is very different from other coroutine builders like `launch` or `async`, which are non-blocking.
+- **Structured Concurrency**: It follows **structured concurrency**, meaning the parent coroutine (`runBlocking`) waits for all its child coroutines to complete before finishing.
+
+### 2. **What is `GlobalScope`?**
+
+- `GlobalScope` is a **global coroutine scope** that does not tie the lifecycle of coroutines to any specific scope or parent.
+- Coroutines launched in `GlobalScope` live for the lifetime of the entire application unless they are explicitly canceled.
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() {
+    GlobalScope.launch {
+        delay(1000L)
+        println("Hello from GlobalScope!")
+    }
+    Thread.sleep(1500L)  // Keep the main thread alive to see the result
+}
+```
+
+In this example:
+- The coroutine launched in `GlobalScope` runs independently of the main thread and continues even after the main function finishes, unless you explicitly block or delay the main thread (e.g., with `Thread.sleep`).
+
+### Characteristics of `GlobalScope`:
+- **Non-blocking**: Coroutines launched in `GlobalScope` do not block the thread and are detached from any structured concurrency.
+- **No Lifecycle Management**: `GlobalScope` **does not follow structured concurrency** principles. This means that coroutines launched in `GlobalScope` are not automatically canceled when the parent or enclosing scope ends. This can lead to potential memory leaks or resource management issues.
+- **Long-Lived Coroutines**: Coroutines in `GlobalScope` are essentially application-wide and continue running as long as the application is alive unless manually canceled.
+
+### Key Differences Between `runBlocking` and `GlobalScope`:
+
+| Feature                  | `runBlocking`                                           | `GlobalScope`                                      |
+|--------------------------|--------------------------------------------------------|----------------------------------------------------|
+| **Thread Blocking**       | Blocks the thread it's running on until completion.    | Non-blocking; runs coroutines concurrently.        |
+| **Scope Type**            | Coroutine scope tied to the current thread's lifecycle (local). | Global scope; not tied to any specific thread or parent coroutine. |
+| **Structured Concurrency**| Yes (waits for all child coroutines to complete).      | No (coroutines are not tied to any parent).        |
+| **Use Case**              | Bridging blocking code and suspend functions, tests, or scripts. | Application-wide or long-living coroutines.        |
+| **Lifecycle Management**  | Child coroutines are canceled when the `runBlocking` scope completes. | Coroutines live independently of their launching context. |
+
+### 3. **When Should You Use `runBlocking`?**
+
+- **Blocking Main Thread**: `runBlocking` is typically used in **main functions** or **tests** where you need to call suspending functions from a non-suspending context, and you need to block the main thread until all coroutines complete.
+
+  ```kotlin
+  fun main() = runBlocking {
+      launch {
+          delay(1000L)
+          println("Task completed!")
+      }
+      println("Waiting for task...")
+  }
+  ```
+
+- **Test Code**: In unit tests, `runBlocking` is often used to run coroutines in a blocking way to ensure that the test finishes only after all coroutines have completed.
+
+  ```kotlin
+  @Test
+  fun testCoroutine() = runBlocking {
+      val result = someSuspendingFunction() // Call a suspending function
+      assertEquals(expectedResult, result)
+  }
+  ```
+
+### 4. **When Should You Use `GlobalScope`?**
+
+- **Long-Living Coroutines**: `GlobalScope` is suitable for long-lived coroutines that should stay active for the entire lifetime of the application (e.g., background services or tasks that run independently of any specific UI component or lifecycle).
+
+  However, **be cautious**: since `GlobalScope` is not tied to any specific lifecycle, excessive use of `GlobalScope` can lead to memory leaks, dangling coroutines, or forgotten jobs that consume resources.
+
+- **Application-Wide Tasks**: If you have a task that should run regardless of the current activity or fragment lifecycle (e.g., logging, analytics, or app-wide background processing), `GlobalScope` might be appropriate.
+
+  ```kotlin
+  GlobalScope.launch(Dispatchers.IO) {
+      // Long-running background task
+      fetchDataFromNetwork()
+  }
+  ```
+
+### 5. **Why `runBlocking` is NOT GlobalScope**:
+- **`runBlocking`** is a **blocking coroutine builder** that runs on the current thread and is primarily used for testing or in `main()` functions to bridge between blocking and non-blocking worlds.
+- **`GlobalScope`** is a global coroutine scope that launches coroutines that are detached from any specific parent or lifecycle, potentially running independently for the entire duration of the application.
+
+### Conclusion:
+
+- **`runBlocking`** should be used when you need to block the current thread (usually in test cases or scripts).
+- **`GlobalScope`** is for long-running coroutines that do not need to be tied to any parent or specific lifecycle, but use it cautiously to avoid memory leaks or resource issues.
+
+In most real-world applications, **structured concurrency** is preferred, meaning you should use `CoroutineScope`, `viewModelScope`, `lifecycleScope`, or other scoped approaches rather than `GlobalScope` or `runBlocking` for managing coroutines.
+
+
+## Other way to create coroutine scope
+
+Yes, there are several ways to create a coroutine scope in Kotlin, aside from using `runBlocking`. Each way serves different purposes depending on the context, such as launching coroutines in a lifecycle-aware scope, an application-wide scope, or using custom scopes. Below are the most common ways to create a coroutine scope:
+
+### 1. **`GlobalScope`**
+`GlobalScope` is a global coroutine scope that launches coroutines that are tied to the lifetime of the entire application.
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() {
+    GlobalScope.launch {
+        // Coroutine running in GlobalScope
+        delay(1000L)
+        println("Hello from GlobalScope!")
+    }
+    Thread.sleep(1500L) // Keep the main thread alive to see the result
+}
+```
+
+- **Use Cases**: `GlobalScope` is useful for application-wide coroutines that live as long as the application does.
+- **Downsides**: Avoid using `GlobalScope` for structured concurrency because it doesn't tie the coroutine to a specific scope that can be canceled, and it can lead to memory leaks if not handled carefully.
+
+### 2. **`CoroutineScope` with a Custom Context**
+You can create a **custom coroutine scope** using `CoroutineScope` and passing a `CoroutineContext`, such as a `Job` or a `Dispatcher`.
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() {
+    val customScope = CoroutineScope(Dispatchers.Default)
+
+    customScope.launch {
+        // Coroutine running in the custom scope
+        delay(1000L)
+        println("Hello from custom CoroutineScope!")
+    }
+    Thread.sleep(1500L) // Keep the main thread alive to see the result
+}
+```
+
+- **Use Cases**: Create a custom scope for running coroutines that should be tied to that specific scope's lifecycle.
+- **Common Contexts**:
+    - `Dispatchers.Default`: Uses a background thread pool.
+    - `Dispatchers.IO`: Optimized for I/O operations.
+    - `Dispatchers.Main`: For Android or UI-thread operations.
+    - You can also use a custom `Job` or `SupervisorJob` to handle cancellation.
+
+### 3. **`viewModelScope` (Android-specific)**
+In Android, if you're using Jetpack's `ViewModel`, you can use **`viewModelScope`** to launch coroutines that are tied to a `ViewModel`'s lifecycle. This scope automatically cancels coroutines when the `ViewModel` is cleared.
+
+```kotlin
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
+
+class MyViewModel : ViewModel() {
+    fun fetchData() {
+        viewModelScope.launch {
+            // Coroutine tied to the ViewModel's lifecycle
+            delay(1000L)
+            println("Data fetched")
+        }
+    }
+}
+```
+
+- **Use Cases**: Use `viewModelScope` when you want coroutines to automatically be canceled when the `ViewModel` is cleared (e.g., when the user navigates away from the screen).
+
+### 4. **`lifecycleScope` (Android-specific)**
+In Android, **`lifecycleScope`** is associated with the lifecycle of an `Activity` or `Fragment`. Coroutines launched in this scope are automatically canceled when the lifecycle is destroyed (e.g., when the user navigates away from the activity or fragment).
+
+```kotlin
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.*
+
+class MyActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        lifecycleScope.launch {
+            // Coroutine tied to the Activity's lifecycle
+            delay(1000L)
+            println("Hello from lifecycleScope!")
+        }
+    }
+}
+```
+
+- **Use Cases**: Use `lifecycleScope` for activities or fragments when you want coroutines to respect the lifecycle and automatically cancel when the lifecycle owner is destroyed.
+
+### 5. **`supervisorScope`**
+A `supervisorScope` is similar to `coroutineScope`, but failures in child coroutines do not cancel the parent or sibling coroutines. Only the failing coroutine is canceled.
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    supervisorScope {
+        launch {
+            delay(1000L)
+            println("This will always print")
+        }
+        launch {
+            throw RuntimeException("This will not cancel the other coroutine")
+        }
+    }
+}
+```
+
+- **Use Cases**: Use `supervisorScope` when you want to launch multiple coroutines but ensure that a failure in one coroutine doesn’t cancel other coroutines.
+
+### 6. **`coroutineScope`**
+`coroutineScope` creates a new scope and suspends until all launched child coroutines are completed. Unlike `runBlocking`, it does not block the current thread.
+
+```kotlin
+import kotlinx.coroutines.*
+
+suspend fun doSomething() = coroutineScope {
+    launch {
+        delay(1000L)
+        println("Coroutine inside coroutineScope")
+    }
+}
+
+fun main() = runBlocking {
+    doSomething()
+}
+```
+
+- **Use Cases**: Use `coroutineScope` to create a scope within a suspending function. It ensures that all coroutines launched inside it complete before proceeding.
+
+### 7. **`actor` (for Channels)**
+In Kotlin's `kotlinx.coroutines` library, you can use `actor` to create a coroutine that processes incoming messages via a channel.
+
+```kotlin
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
+
+fun main() = runBlocking {
+    val actor = actor<Int> {
+        for (msg in channel) {
+            println("Received message: $msg")
+        }
+    }
+
+    actor.send(1)
+    actor.send(2)
+    actor.close()
+}
+```
+
+- **Use Cases**: Use `actor` when you want a coroutine to process messages sent to it via a channel. This is useful for implementing actor-like concurrency models.
+
+### 8. **`MainScope`**
+`MainScope` is a predefined scope that is often used in Android applications. It combines `SupervisorJob` and `Dispatchers.Main`.
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() {
+    val mainScope = MainScope()
+
+    mainScope.launch {
+        // Coroutine running in the MainScope
+        delay(1000L)
+        println("Hello from MainScope!")
+    }
+    Thread.sleep(1500L) // Keep the main thread alive to see the result
+}
+```
+
+- **Use Cases**: `MainScope` is useful in applications that interact with the UI thread and need coroutines that are lifecycle-aware and can be canceled when needed.
+
+### Key Differences Between `runBlocking` and Other Scopes
+
+- **`runBlocking`**: It **blocks** the thread it is called on until all coroutines inside it complete. It's generally used for testing or starting coroutines in `main()` functions for quick examples or scripts.
+
+- **Other Scopes**: Scopes like `GlobalScope`, `CoroutineScope`, `viewModelScope`, or `lifecycleScope` do **not block** the current thread. They allow coroutines to run asynchronously and respect the scope's lifecycle, which is more appropriate for real-world applications.
+
+### Summary of Other Ways to Create Coroutine Scopes:
+
+| Method              | Description                                                                                   | Use Case                                                                                 |
+|---------------------|-----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| **`GlobalScope`**    | Global coroutines that live as long as the application.                                        | Application-wide coroutines, but use with caution due to lack of structured concurrency.  |
+| **`CoroutineScope`** | Custom scope with a `CoroutineContext` like `Dispatchers.Default` or a `Job`.                  | Use for creating custom scopes that manage coroutine lifecycles.                         |
+| **`viewModelScope`** | Android-specific scope tied to the `ViewModel`'s lifecycle.                                    | Use in Android `ViewModel` for lifecycle-aware coroutines.                               |
+| **`lifecycleScope`** | Android-specific scope tied to the lifecycle of an `Activity` or `Fragment`.                   | Use in Android `Activity` or `Fragment` for lifecycle-aware coroutines.                  |
+| **`supervisorScope`**| A scope where sibling coroutines don’t cancel each other on failure.                           | Use when you want independent failure handling for child coroutines.                     |
+| **`coroutineScope`** | Creates a new scope for suspending functions, waits for child coroutines to complete.          | Use for structured concurrency inside suspending functions.                              |
+| **`actor`**          | Coroutine that processes messages sent to it via a channel.                                    | Use for actor-like concurrency models with channels.                                     |
+| **`MainScope`**      | A predefined scope combining `SupervisorJob` and `Dispatchers.Main`.                           | Use in Android or UI applications where coroutines need to run on the main thread.        |
+
+Each of these approaches serves different purposes and allows you to control the lifecycle and concurrency behavior of your coroutines effectively.
+
+
+In Kotlin coroutines, both `launch` and `withContext` are used to execute code in coroutines, but they have key differences in terms of **purpose**, **return value**, and **concurrency**.
+
+### 1. **`launch`**
+
+- **Purpose**: `launch` is used to **fire-and-forget**. It launches a new coroutine that runs concurrently with the rest of the program. It's primarily used when you don't need a result, and you don't want to wait for the coroutine to finish.
+- **Return Type**: It returns a `Job`, which represents the coroutine. You can use this `Job` to cancel or wait for the coroutine, but it does **not** return a result.
+- **Concurrency**: `launch` is designed to run tasks **concurrently** (in parallel) with the rest of your code. It doesn't block the coroutine that launched it.
+
+#### Example using `launch`:
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    // Launching a coroutine that runs concurrently
+    val job = launch {
+        delay(1000L)  // Simulate async work
+        println("Task inside launch done")
+    }
+
+    println("Task outside launch")
+    
+    // Wait for the launched coroutine to complete
+    job.join()
+}
+```
+
+**Output**:
+```
+Task outside launch
+Task inside launch done
+```
+
+- `launch` is non-blocking, so "Task outside launch" is printed immediately, while the coroutine runs in the background.
+
+### 2. **`withContext`**
+
+- **Purpose**: `withContext` is used to **switch the context** (e.g., changing the thread or dispatcher) within a coroutine. It **suspends** the coroutine until the block inside `withContext` completes, making it a blocking operation within the coroutine.
+- **Return Type**: It returns the result of the lambda block passed to it. This is useful when you want to wait for the result of a computation or operation.
+- **Concurrency**: `withContext` does not introduce concurrency. It **does not create a new coroutine**; it just switches the context of the current coroutine and waits for the block to finish.
+
+#### Example using `withContext`:
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    // Switching to a different context (Dispatcher)
+    val result = withContext(Dispatchers.IO) {
+        delay(1000L)  // Simulate async work
+        "Task result"
+    }
+
+    println("Task completed with result: $result")
+}
+```
+
+**Output**:
+```
+Task completed with result: Task result
+```
+
+- The coroutine is suspended while `withContext` runs, and it waits for the result to be returned before moving on.
+
+### Key Differences Between `launch` and `withContext`:
+
+| Feature                    | `launch`                                      | `withContext`                                    |
+|----------------------------|-----------------------------------------------|--------------------------------------------------|
+| **Purpose**                 | Fire-and-forget, runs concurrently.           | Switch context and wait for the result.          |
+| **Return Type**             | Returns a `Job` (no result).                  | Returns the result of the block.                 |
+| **Concurrency**             | Launches a new coroutine, runs concurrently.  | Doesn't introduce concurrency, just switches context. |
+| **Suspension**              | Doesn't suspend the parent coroutine (unless you `join` it). | Suspends the current coroutine until the block completes. |
+| **Use Case**                | When you don't need a result and want to run concurrently. | When you need to switch to a different context and wait for a result. |
+| **Context Switching**       | Runs in the current context unless specified. | Switches to the specified context (e.g., `Dispatchers.IO`). |
+
+## launch vs withContext
+
+### Choosing Between `launch` and `withContext`:
+
+- **Use `launch`** when:
+    - You want to start a new coroutine that runs concurrently with other coroutines.
+    - You don't care about the result of the coroutine and don't need to wait for it to finish (though you can wait using `job.join()`).
+    - You want to perform background work like starting a new network request or launching a UI update in parallel.
+
+- **Use `withContext`** when:
+    - You need to switch to a different coroutine context, such as moving to `Dispatchers.IO` for I/O work or `Dispatchers.Default` for CPU-intensive tasks.
+    - You need to **wait for the result** of the block inside `withContext`.
+    - You want to ensure that the coroutine is **suspended** until the block of code completes.
+
+### Example Combining `launch` and `withContext`:
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    // Launch a coroutine concurrently
+    launch {
+        println("Starting background task in launch")
+
+        // Switch to IO dispatcher for a blocking task
+        val result = withContext(Dispatchers.IO) {
+            delay(1000L)  // Simulate I/O work
+            "Data from network"
+        }
+
+        println("Background task completed with result: $result")
+    }
+
+    println("Main thread continues without waiting for the launch block")
+}
+```
+
+**Output**:
+```
+Main thread continues without waiting for the launch block
+Starting background task in launch
+Background task completed with result: Data from network
+```
+
+In this example:
+- The `launch` coroutine runs in parallel with the rest of the program.
+- Inside the `launch` coroutine, `withContext(Dispatchers.IO)` is used to temporarily switch to an IO dispatcher for the simulated I/O task. The parent coroutine waits for the result of `withContext`, but the outer `launch` still runs concurrently with the rest of the program.
+
+### Summary:
+- **`launch`**: Runs code concurrently (in parallel) without blocking the parent coroutine. It's for fire-and-forget tasks with no need for a result.
+- **`withContext`**: Switches the context of the current coroutine and waits for a result, suspending the coroutine until the task is complete. Use it when you need to perform work in a different context and return a result.
