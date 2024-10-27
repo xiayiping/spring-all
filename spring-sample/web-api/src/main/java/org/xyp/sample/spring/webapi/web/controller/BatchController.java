@@ -6,7 +6,7 @@ import lombok.val;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
-import org.xyp.sample.spring.tracing.Trace;
+//import org.xyp.sample.spring.tracing.Trace;
 import org.xyp.sample.spring.webapi.domain.task.pojo.BatchPojo;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.task.entity.task.Task;
@@ -64,7 +64,7 @@ public class BatchController {
             .orElse(null);
     }
 
-    @Trace(value = "batch.get")
+//    @Trace(value = "batch.get")
     @GetMapping("/batch/{id}")
     public EntityModel<Batch> batch(@PathVariable Long id) {
         batchService.dummy();

@@ -20,6 +20,7 @@
     <modules>
         <module>shared/base</module>
         <module>shared/jpa</module>
+        <module>shared/secret</module>
         <module>spring-sample/web-api</module>
         <!--
         <module>demo-image</module>

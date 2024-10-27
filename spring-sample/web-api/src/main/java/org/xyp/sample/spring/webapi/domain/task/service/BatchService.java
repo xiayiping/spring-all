@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.xyp.sample.spring.tracing.Trace;
+//import org.xyp.sample.spring.tracing.Trace;
 import org.xyp.sample.spring.webapi.domain.task.pojo.BatchPojo;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule;
@@ -110,7 +110,7 @@ public class BatchService {
             )).build();
     }
 
-    @Trace("batchService.dummy")
+//    @Trace("batchService.dummy")
     public void dummy() {
         log.info("for future use");
     }

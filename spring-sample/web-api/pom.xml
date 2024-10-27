@@ -36,11 +36,11 @@
             <version>${revision}</version>
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>org.xyp.sample.spring</groupId>
             <artifactId>tracing</artifactId>
             <version>${revision}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.webjars</groupId>

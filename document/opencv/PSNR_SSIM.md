@@ -14,17 +14,20 @@ PSNR is expressed in decibels (dB) and is derived from the Mean Squared Error (M
 
 **Formula:**
 
-\[
+
+$$
 \text{PSNR} = 10 \cdot \log_{10} \left( \frac{{\text{MAX}^2}}{{\text{MSE}}} \right)
-\]
+$$
+
 
 Where:
 - **MAX** is the maximum possible pixel value of the image. For an 8-bit image, MAX is typically 255.
 - **MSE (Mean Squared Error)** is defined as:
 
-\[
+$$
 \text{MSE} = \frac{{1}}{{mn}} \sum_{i=0}^{m-1} \sum_{j=0}^{n-1} \left[ I(i,j) - K(i,j) \right]^2
-\]
+$$
+
 
 Here, \( I \) is the original image, \( K \) is the processed image, and \( m \) and \( n \) are the dimensions of the images.
 
@@ -70,23 +73,23 @@ SSIM evaluates the similarity between two images based on three components: lumi
 
 **Formula:**
 
-\[
+$$
 \text{SSIM}(x, y) = \left( \frac{{2\mu_x \mu_y + C_1}}{{\mu_x^2 + \mu_y^2 + C_1}} \right) \cdot \left( \frac{{2\sigma_x \sigma_y + C_2}}{{\sigma_x^2 + \sigma_y^2 + C_2}} \right) \cdot \left( \frac{{\sigma_{xy} + C_3}}{{\sigma_x \sigma_y + C_3}} \right)
-\]
+$$
 
 Where:
-- \( \mu_x \) and \( \mu_y \) are the average luminance of images \( x \) and \( y \).
-- \( \sigma_x^2 \) and \( \sigma_y^2 \) are the variance of images \( x \) and \( y \).
-- \( \sigma_{xy} \) is the covariance of images \( x \) and \( y \).
-- \( C_1, C_2, C_3 \) are small constants to stabilize the division.
+- \( $ \mu_x $ \) and \( $ \mu_y $ \) are the average luminance of images \( x \) and \( y \).
+- \( $ \sigma_x^2 $ \) and \( $ \sigma_y^2 $ \) are the variance of images \( x \) and \( y \).
+- \( $ \sigma_{xy} $ \) is the covariance of images \( x \) and \( y \).
+- \( $ C_1, C_2, C_3 $ \) are small constants to stabilize the division.
 
 **Simplified Version:**
 
 In many implementations, especially when weights are appropriately set, SSIM can be represented as:
 
-\[
+$$
 \text{SSIM}(x, y) = \frac{{(2\mu_x \mu_y + C_1)(2\sigma_{xy} + C_2)}}{{(\mu_x^2 + \mu_y^2 + C_1)(\sigma_x^2 + \sigma_y^2 + C_2)}}
-\]
+$$
 
 ### **2.3. Interpretation**
 
@@ -128,6 +131,7 @@ In many implementations, especially when weights are appropriately set, SSIM can
 | **Computational Complexity** | Low                                         | Higher                                                |
 | **Use Cases**            | When simplicity and computational speed are needed | When perceptual quality is paramount                  |
 | **Handling of Complex Distortions** | Limited                                       | Better handling of texture and structural distortions |
+
 
 ### **When to Use Which Metric**
 
