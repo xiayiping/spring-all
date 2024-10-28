@@ -1,5 +1,4 @@
-<!-- Wrap your entire content in a div with a style attribute -->
-<div style="font-size: 1.3em;">
+## Seven Layers
 
 The seven layers of the OSI (Open Systems Interconnection) model are a conceptual framework used to understand and implement network communication protocols. Each layer in the OSI model has a specific function and interacts with the layers directly above and below it. Here’s a breakdown of the seven layers:
 
@@ -81,4 +80,3 @@ The OSI model provides a standardized framework to understand how different netw
 
 Understanding these layers helps in troubleshooting, designing, and implementing networked systems, ensuring interoperability across different systems and technologies.
 
-</div>
