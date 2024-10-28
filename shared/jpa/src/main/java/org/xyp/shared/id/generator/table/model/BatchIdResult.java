@@ -1,4 +1,4 @@
-package org.xyp.shared.id.generator.table.domain;
+package org.xyp.shared.id.generator.table.model;
 
 
 public record BatchIdResult(

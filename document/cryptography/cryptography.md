@@ -34,11 +34,8 @@ use AES (Advanced Encryption Standard)
 Application: encrypt a wallet (or zip file)
 
 ```plantuml
-@startuml
 password --> AESKey : Password-Based key deviation function \n pbkdf2 sha256
-AESKey --> encrypt
-encrypt: encrypt a wallet (or zip file)
-@enduml
+AESKey --> encrypt : encrypt a wallet (or zip file)
 ```
 
 ```mermaid

@@ -25,7 +25,7 @@ import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.shared.id.generator.IdGenerator;
 import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
 import org.xyp.shared.id.generator.table.config.IdGenProperties;
-import org.xyp.shared.id.generator.table.domain.BatchIdResult;
+import org.xyp.shared.id.generator.table.model.BatchIdResult;
 import org.xyp.shared.id.generator.table.impl.LongIdDbTableGenerator;
 import org.xyp.sample.spring.webapi.infra.config.JpaDbConfig;
 

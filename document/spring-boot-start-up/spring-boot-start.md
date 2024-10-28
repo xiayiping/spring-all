@@ -66,20 +66,18 @@ Spring boot cloud, the yml processing starts from `BootstrapConfigFileApplicatio
 
 normal spring, the yml processing starts from `ConfigDataEnvironmentPostProcessor`
 
-[plantuml]
-----
-@startuml
+```plantuml
+
 box BootstrapConfigFileApplicationListener
 
 BootstrapConfigFileApplicationListener -> Loader.load
 
 endbox
-@enduml
+```
 ----
 
-[plantuml]
-----
-@startuml
+```plantuml
+
 Alice -> Bob: Authentication Request
 Bob --> Alice: Authentication Response
 
@@ -90,12 +88,11 @@ ConfigDataEnvironmentPostProcessor -> processAndApply
 box "ConfigDataEnvironment"
 participant processAndApply
 endbox
-@enduml
+```
 ----
 
 
-=== Application Listeners
-----
+### Application Listeners
 org.springframework.context.ApplicationListener=\
 org.springframework.boot.ClearCachesApplicationListener,\
 org.springframework.boot.builder.ParentContextCloserApplicationListener,\
@@ -106,8 +103,7 @@ org.springframework.boot.context.logging.LoggingApplicationListener,\
 org.springframework.boot.env.EnvironmentPostProcessorApplicationListener
 ----
 
-=== Application Listeners defined in spring-cloud-context
-----
+### Application Listeners defined in spring-cloud-context
 org.springframework.context.ApplicationListener=\
 org.springframework.cloud.bootstrap.BootstrapApplicationListener,\
 org.springframework.cloud.bootstrap.LoggingSystemShutdownListener,\
