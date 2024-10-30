@@ -23,7 +23,8 @@ import java.util.List;
 @Configuration
 @Import(VaultClientConfig.class)
 @EnableConfigurationProperties({KeyStoreSecretProperty.class, VaultClientProperties.class})
-public class SecretConfig {
+@ConditionalOnProperty(value = "org.xyp.shared.secret.keystore.enabled", matchIfMissing = true)
+public class KeyStoreConfig {
 
     @Bean
     @ConditionalOnBean(VaultClient.class)
@@ -38,7 +39,6 @@ public class SecretConfig {
 
     @Bean
     @Order(Integer.MAX_VALUE)
-    @ConditionalOnProperty(value = "tcghl.corej.secret.keystore.enabled", matchIfMissing = true)
     SecretSslBundleRegistrar secretSslBundleRegistry(
         SslBundleRegistrar baseSslBundleRegistrar,
         List<KeyStoreLoader> keyStoreLoader,
