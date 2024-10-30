@@ -31,11 +31,34 @@ spring:
 org:
   xyp:
     shared:
-      id-gen:
-        schema: test
-        table: id_table
-        entity-name-column: entity_name
-        prev-value-column: prev_value
-        step-size-column: step_size
-        fetch-size-column: fetch_size
-        dialect: h2
+      datasource:
+        configs:
+          main:
+            id-generator:
+              schema: test
+              table: id_table
+              entity-name-column: entity_name
+              prev-value-column: prev_value
+              step-size-column: step_size
+              fetch-size-column: fetch_size
+              dialect: h2
+              fallback: true
+          second:
+            id-generator:
+              schema: test
+              table: id_table
+              entity-name-column: entity_name
+              prev-value-column: prev_value
+              step-size-column: step_size
+              fetch-size-column: fetch_size
+              dialect: h2
+          third:
+            id-generator:
+              schema: test
+              table: id_table
+              entity-name-column: entity_name
+              prev-value-column: prev_value
+              step-size-column: step_size
+              fetch-size-column: fetch_size
+              dialect: h2
+

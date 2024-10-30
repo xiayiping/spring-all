@@ -1,17 +1,13 @@
 package org.xyp.sample.spring.webapi.infra.config;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchDaoJpa;
 import org.xyp.sample.spring.webapi.domain.task.repository.jpa2.StockRepository;
 import org.xyp.sample.spring.webapi.domain.task.repository.mybatis.BatchDaoMybatis;
-import org.xyp.shared.id.generator.IdGenerator;
-import org.xyp.shared.id.generator.table.config.IdGenProperties;
-import org.xyp.shared.id.generator.table.dialect.*;
-import org.xyp.shared.id.generator.table.impl.LongIdDbTableGenerator;
+import org.xyp.shared.db.id.generator.IdGenerator;
 
 @Slf4j
 @Configuration
@@ -26,20 +22,20 @@ public class JpaDbConfig {
         log.info("JpaDbConfig ... ...");
     }
 
-    //    @Bean
-    public IdGenDialect idGenDialect(IdGenProperties idGenProperties) {
-        return switch (idGenProperties.getDialect()) {
-            case MSSQL -> new IdGenDialectMssql(idGenProperties);
-            case H2 -> new IdGenDialectH2(idGenProperties);
-            default -> new IdGenDialectPostgres(idGenProperties);
-        };
-    }
-
-    //    @Bean
-    IdGenerator<Long> idGenerator(IdGenProperties idGenProperties) {
-        val generator = new LongIdDbTableGenerator(idGenDialect(idGenProperties), idGenProperties);
-        SPRING_BEAN = generator;
-        System.out.println(SPRING_BEAN);
-        return generator;
-    }
+//    //    @Bean
+//    public IdGenDialect idGenDialect(IdGenProperties idGenProperties) {
+//        return switch (idGenProperties.getDialect()) {
+//            case MSSQL -> new IdGenDialectMssql(idGenProperties);
+//            case H2 -> new IdGenDialectH2(idGenProperties);
+//            default -> new IdGenDialectPostgres(idGenProperties);
+//        };
+//    }
+//
+//    //    @Bean
+//    IdGenerator<Long> idGenerator(IdGenProperties idGenProperties) {
+//        val generator = new LongIdDbTableGenerator(idGenDialect(idGenProperties), idGenProperties);
+//        SPRING_BEAN = generator;
+//        System.out.println(SPRING_BEAN);
+//        return generator;
+//    }
 }

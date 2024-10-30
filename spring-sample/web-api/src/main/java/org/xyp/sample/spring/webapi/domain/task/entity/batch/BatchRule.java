@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.stereotype.Component;
 import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.domain.IdWrapper;
-import org.xyp.shared.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
+import org.xyp.shared.db.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
 
 import java.util.Objects;
 import java.util.Optional;

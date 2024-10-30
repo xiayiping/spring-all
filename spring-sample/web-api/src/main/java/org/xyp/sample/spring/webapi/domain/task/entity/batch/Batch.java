@@ -18,7 +18,7 @@ import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.stereotype.Component;
 import org.xyp.sample.spring.db.id.domain.HasId;
-import org.xyp.shared.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
+import org.xyp.shared.db.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
 
 import java.util.Collection;
 import java.util.List;

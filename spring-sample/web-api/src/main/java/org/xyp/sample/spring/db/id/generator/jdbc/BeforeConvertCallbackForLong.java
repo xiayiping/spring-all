@@ -8,8 +8,8 @@ import org.xyp.shared.function.Fun;
 import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.sample.spring.db.id.domain.HasId;
 import org.xyp.sample.spring.db.id.generator.DatasourceConnectionHolderFactory;
-import org.xyp.shared.id.generator.IdGenerator;
-import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
+import org.xyp.shared.db.id.generator.IdGenerator;
+import org.xyp.shared.db.id.generator.table.JdbcConnectionAccessorFactory;
 
 import javax.sql.DataSource;
 

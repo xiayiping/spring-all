@@ -26,7 +26,7 @@ import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchRecordDaoJpa
 import org.xyp.sample.spring.webapi.domain.task.repository.jpa.TaskDaoJpa;
 import org.xyp.sample.spring.webapi.domain.task.repository.mybatis.BatchDaoMybatis;
 import org.xyp.sample.spring.webapi.domain.task.service.BatchService;
-import org.xyp.shared.id.generator.table.config.IdGeneratorConfig;
+import org.xyp.shared.db.id.generator.table.config.IdGeneratorConfig;
 
 import java.util.List;
 import java.util.Set;

@@ -21,13 +21,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
+import org.xyp.shared.db.datasource.DataSourcePropertiesGroup;
 import org.xyp.shared.function.wrapper.ResultOrError;
-import org.xyp.shared.id.generator.IdGenerator;
-import org.xyp.shared.id.generator.table.JdbcConnectionAccessorFactory;
-import org.xyp.shared.id.generator.table.config.IdGenProperties;
-import org.xyp.shared.id.generator.table.model.BatchIdResult;
-import org.xyp.shared.id.generator.table.impl.LongIdDbTableGenerator;
-import org.xyp.sample.spring.webapi.infra.config.JpaDbConfig;
+import org.xyp.shared.db.id.generator.IdGenerator;
+import org.xyp.shared.db.id.generator.table.JdbcConnectionAccessorFactory;
+import org.xyp.shared.db.id.generator.table.config.IdGeneratorConfig;
+import org.xyp.shared.db.id.generator.table.model.BatchIdResult;
+import org.xyp.shared.db.id.generator.table.impl.LongIdDbTableGenerator;
+
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -67,7 +68,7 @@ class TestIdGenerator {
     DataSource dataSource;
 
     @Autowired
-    IdGenProperties idGenProperties;
+    DataSourcePropertiesGroup idGenPropertiesGroup;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -75,12 +76,11 @@ class TestIdGenerator {
     @Test
     void test1() {
         Assertions.assertThat(dataSource).isNotNull();
-        Assertions.assertThat(idGenProperties).isNotNull();
+        Assertions.assertThat(idGenPropertiesGroup).isNotNull();
     }
 
     @Test
     void test2() throws ExecutionException, InterruptedException, SQLException {
-        val config = new JpaDbConfig();
         val fetchDbPeekers = List.<BiConsumer<String, BatchIdResult>>of((e, b) -> ResultOrError.doRun(() -> {
             System.out.println(Thread.currentThread().getName() + " fetch db for " + e);
             Thread.sleep(333);
@@ -93,15 +93,25 @@ class TestIdGenerator {
             System.out.println(Thread.currentThread().getName() + " id record initialized for " + e);
             Thread.sleep(333);
         }).getResult());
-        final IdGenerator<Long> gen1 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties), idGenProperties,
-            fetchDbPeekers, updateDbPeekers, initedDbPeekers
-        );
-        final IdGenerator<Long> gen2 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties), idGenProperties,
-            fetchDbPeekers, updateDbPeekers, initedDbPeekers
-        );
-        final IdGenerator<Long> gen3 = new LongIdDbTableGenerator(config.idGenDialect(idGenProperties), idGenProperties,
-            fetchDbPeekers, updateDbPeekers, initedDbPeekers
-        );
+
+        final IdGenerator<Long> gen1 = IdGeneratorConfig.getLongIdGenerator("main");
+        final IdGenerator<Long> gen2 = IdGeneratorConfig.getLongIdGenerator("second");
+        final IdGenerator<Long> gen3 = IdGeneratorConfig.getLongIdGenerator("third");
+        if (gen1 instanceof LongIdDbTableGenerator longIdDbTableGenerator) {
+            longIdDbTableGenerator.setRecordFetchedPeeks(fetchDbPeekers);
+            longIdDbTableGenerator.setRecordUpdatedPeeks(updateDbPeekers);
+            longIdDbTableGenerator.setRecordInitializedPeeks(initedDbPeekers);
+        }
+        if (gen2 instanceof LongIdDbTableGenerator longIdDbTableGenerator) {
+            longIdDbTableGenerator.setRecordFetchedPeeks(fetchDbPeekers);
+            longIdDbTableGenerator.setRecordUpdatedPeeks(updateDbPeekers);
+            longIdDbTableGenerator.setRecordInitializedPeeks(initedDbPeekers);
+        }
+        if (gen3 instanceof LongIdDbTableGenerator longIdDbTableGenerator) {
+            longIdDbTableGenerator.setRecordFetchedPeeks(fetchDbPeekers);
+            longIdDbTableGenerator.setRecordUpdatedPeeks(updateDbPeekers);
+            longIdDbTableGenerator.setRecordInitializedPeeks(initedDbPeekers);
+        }
 
         val id1Name = "id1";
         val factroy = new JdbcConnectionAccessorFactory() {

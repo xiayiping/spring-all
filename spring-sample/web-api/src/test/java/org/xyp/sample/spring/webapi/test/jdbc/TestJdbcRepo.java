@@ -28,7 +28,7 @@ import java.util.Set;
         errorMode = SqlConfig.ErrorMode.CONTINUE_ON_ERROR
     ),
     scripts = {
-        "classpath:/schema.sql",
+        "classpath:sql/schema.sql",
 //        "classpath:/sql/schema-mssql.sql",
 //        "classpath:/sql/schema-h2.sql",
     })
