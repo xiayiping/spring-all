@@ -22,9 +22,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Configuration
-public class IdGeneratorConfig {
+public class TableIdGeneratorConfig {
 
-    public IdGeneratorConfig() {
+    public TableIdGeneratorConfig() {
         log.info("id generator config loaded ... ...");
     }
 
@@ -62,11 +62,11 @@ public class IdGeneratorConfig {
             }
         });
 
+        TableIdGeneratorConfig.datasourceMap.putAll(dataSourceMap);
         referToMap.forEach((key, value) -> {
             longIdGeneratorMap.put(key, getLongIdGenerator(value));
             datasourceMap.put(key, getDataSource(value));
         });
-        IdGeneratorConfig.datasourceMap.putAll(dataSourceMap);
     }
 
     protected static final AtomicReference<IdGenerator<Long>> fallbackIdGenerator = new AtomicReference<>();

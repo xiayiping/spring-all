@@ -1,7 +1,5 @@
 package org.xyp.shared.db.id.generator;
 
-import org.xyp.shared.db.id.generator.table.JdbcConnectionAccessorFactory;
-
 import java.util.List;
 
 public interface IdGenerator<I> {

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.shared.db.id.generator.IdGenerator;
-import org.xyp.shared.db.id.generator.table.JdbcConnectionAccessorFactory;
+import org.xyp.shared.db.id.generator.JdbcConnectionAccessorFactory;
 import org.xyp.shared.db.id.generator.table.dialect.IdGenDialect;
 import org.xyp.shared.db.id.generator.table.config.IdGenProperties;
 import org.xyp.shared.db.id.generator.table.model.BatchIdResult;

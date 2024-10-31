@@ -1,4 +1,4 @@
-package org.xyp.shared.db.id.generator.table;
+package org.xyp.shared.db.id.generator;
 
 
 import javax.sql.DataSource;

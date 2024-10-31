@@ -13,13 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 public class JpaProperties {
 
-    List<String> jpaEntityBasePackages;
     String mybatisConfig;
     String hibernateDialect;
-    Integer hibernateBatchFetchSize;
-    Integer hibernateJdbcBatchSize;
-    Boolean hibernateShowSql;
-    Boolean hibernateGenerateStatistics;
+    Integer hibernateBatchFetchSize = 20;
+    Integer hibernateJdbcBatchSize = 20;
+    Boolean hibernateShowSql = false;
+    Boolean hibernateGenerateStatistics = false;
     HibernateToDdlEnum hibernateToDdl = HibernateToDdlEnum.Validate;
     /**
      * The PhysicalNamingStrategy defines how Hibernate maps logical names (names defined in your entity classes or those derived by the ImplicitNamingStrategy)

@@ -1,6 +1,6 @@
 package org.xyp.shared.db.id.generator.table.dialect;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 import org.xyp.shared.db.id.generator.table.config.IdGenProperties;
 
 import java.util.Optional;
@@ -16,7 +16,7 @@ public class IdGenDialectH2 implements IdGenDialect {
         IdGenProperties idGenProperties
     ) {
         final String schemaPrefix = Optional.ofNullable(idGenProperties.getSchema())
-            .filter(s -> !StringUtils.isEmpty(s))
+            .filter(StringUtils::hasText)
             .map(s -> s + ".")
             .orElse("");
         updateIdSql = "update "

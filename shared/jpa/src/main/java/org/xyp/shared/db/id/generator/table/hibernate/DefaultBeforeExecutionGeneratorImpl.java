@@ -6,8 +6,8 @@ import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.generator.BeforeExecutionGenerator;
 import org.hibernate.generator.EventType;
 import org.xyp.shared.function.wrapper.ResultOrError;
-import org.xyp.shared.db.id.generator.table.DatasourceConnectionHolderFactory;
-import org.xyp.shared.db.id.generator.table.config.IdGeneratorConfig;
+import org.xyp.shared.db.id.generator.DatasourceConnectionHolderFactory;
+import org.xyp.shared.db.id.generator.table.config.TableIdGeneratorConfig;
 import org.xyp.shared.db.id.generator.table.exception.IdGenerationException;
 
 import java.util.EnumSet;
@@ -53,8 +53,8 @@ public class DefaultBeforeExecutionGeneratorImpl implements BeforeExecutionGener
             return null;
         }
 
-        val idGenerator = IdGeneratorConfig.getLongIdGenerator(this.datasource);
-        val dataSource = IdGeneratorConfig.getDataSource(this.datasource);
+        val idGenerator = TableIdGeneratorConfig.getLongIdGenerator(this.datasource);
+        val dataSource = TableIdGeneratorConfig.getDataSource(this.datasource);
         val id = ResultOrError.on(() -> {
                     if (0 < defaultFetchSize && 0 < defaultStepSize) {
                         return idGenerator.nextId(

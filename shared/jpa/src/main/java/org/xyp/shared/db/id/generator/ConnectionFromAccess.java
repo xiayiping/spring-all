@@ -1,4 +1,4 @@
-package org.xyp.shared.db.id.generator.table;
+package org.xyp.shared.db.id.generator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
@@ -17,7 +17,6 @@ public class ConnectionFromAccess implements JdbcConnectionAccessorFactory {
     @Override
     public Connection open() throws SQLException {
         log.debug("<jdbcConnection action=\"obtain\" from=\"JdbcConnectionAccess\">");
-        Connection connection = access.obtainConnection();
-        return connection;
+        return access.obtainConnection();
     }
 }

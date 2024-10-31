@@ -24,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.xyp.shared.db.datasource.DataSourcePropertiesGroup;
 import org.xyp.shared.function.wrapper.ResultOrError;
 import org.xyp.shared.db.id.generator.IdGenerator;
-import org.xyp.shared.db.id.generator.table.JdbcConnectionAccessorFactory;
-import org.xyp.shared.db.id.generator.table.config.IdGeneratorConfig;
+import org.xyp.shared.db.id.generator.JdbcConnectionAccessorFactory;
+import org.xyp.shared.db.id.generator.table.config.TableIdGeneratorConfig;
 import org.xyp.shared.db.id.generator.table.model.BatchIdResult;
 import org.xyp.shared.db.id.generator.table.impl.LongIdDbTableGenerator;
 
@@ -94,9 +94,9 @@ class TestIdGenerator {
             Thread.sleep(333);
         }).getResult());
 
-        final IdGenerator<Long> gen1 = IdGeneratorConfig.getLongIdGenerator("main");
-        final IdGenerator<Long> gen2 = IdGeneratorConfig.getLongIdGenerator("second");
-        final IdGenerator<Long> gen3 = IdGeneratorConfig.getLongIdGenerator("third");
+        final IdGenerator<Long> gen1 = TableIdGeneratorConfig.getLongIdGenerator("main");
+        final IdGenerator<Long> gen2 = TableIdGeneratorConfig.getLongIdGenerator("second");
+        final IdGenerator<Long> gen3 = TableIdGeneratorConfig.getLongIdGenerator("third");
         if (gen1 instanceof LongIdDbTableGenerator longIdDbTableGenerator) {
             longIdDbTableGenerator.setRecordFetchedPeeks(fetchDbPeekers);
             longIdDbTableGenerator.setRecordUpdatedPeeks(updateDbPeekers);

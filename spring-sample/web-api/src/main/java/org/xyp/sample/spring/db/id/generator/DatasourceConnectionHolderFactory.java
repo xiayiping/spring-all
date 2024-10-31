@@ -1,7 +1,7 @@
 package org.xyp.sample.spring.db.id.generator;
 
 
-import org.xyp.shared.db.id.generator.table.JdbcConnectionAccessorFactory;
+import org.xyp.shared.db.id.generator.JdbcConnectionAccessorFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
