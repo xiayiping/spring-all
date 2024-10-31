@@ -198,3 +198,75 @@ This service orchestrates the workflow of placing an order: checking inventory, 
 | **Example**                      | `DiscountService`, `LoanApprovalService`                    | `OrderService`, `UserRegistrationService`                  |
 
 By applying these criteria, you can more easily determine whether a service should be categorized as a **domain service** or an **application service**.
+
+
+## Security Related
+
+In Domain-Driven Design (DDD), there are different layers that organize the application's structure based on responsibility:
+
+1. **Domain Layer**: Contains the business logic and core entities.
+2. **Application Layer**: Coordinates the domain objects to execute business processes.
+3. **Infrastructure Layer**: Deals with technical concerns such as database access, messaging, and security.
+4. **Presentation Layer**: Manages the user interface and handles incoming requests.
+
+### Where to Place Security Configuration in DDD?
+
+The **Infrastructure Layer** is the most appropriate place for security configuration such as Spring Security's filter chain configuration. This is because security is a cross-cutting concern that doesn't directly impact the domain logic, but rather supports the application's technical needs, such as authentication, authorization, and protection of resources.
+
+#### Reasons to Place Security in the Infrastructure Layer:
+- **Separation of Concerns**: The Infrastructure Layer deals with external systems and technical details. Security configuration, including setting up filters, user authentication, and authorization, is part of the infrastructure that enables the application to function securely.
+- **Cross-Cutting Concern**: Security is not tied to any specific domain logic, but instead affects the entire application. It cuts across multiple layers, and placing it in the Infrastructure Layer ensures it does not mix with core business logic.
+- **Modularity**: By placing security configuration in the Infrastructure Layer, you can easily change or update the security mechanisms without affecting the domain or application logic.
+
+### Example of Security Configuration in a DDD Setup
+
+Here’s how you might organize your application structure in a DDD context:
+
+```
+/src
+  /main
+    /java
+      /com
+        /example
+          /domain          # Domain Layer (Entities, Value Objects, Aggregates, Repositories)
+          /application      # Application Layer (Service Layer, Use Cases)
+          /infrastructure   # Infrastructure Layer (Repositories, Security, Messaging, etc.)
+            /security       # Security configuration lives here
+              SecurityConfig.java
+          /presentation     # Presentation Layer (Controllers, API endpoints)
+```
+
+### Example of Spring Security Configuration in the Infrastructure Layer
+
+```java
+package com.example.infrastructure.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .formLogin(withDefaults())
+            .httpBasic();
+        return http.build();
+    }
+}
+```
+
+This configuration is placed in the `infrastructure.security` package within the **Infrastructure Layer**.
+
+### Conclusion
+
+In DDD, security configurations like Spring Security's filter chain should be placed in the **Infrastructure Layer**. This keeps your business logic clean from technical concerns and ensures good separation of responsibilities.

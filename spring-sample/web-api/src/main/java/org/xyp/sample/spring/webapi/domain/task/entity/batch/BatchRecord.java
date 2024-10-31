@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
-import org.xyp.shared.id.generator.table.hibernate.CustomizedTableIdGenerator;
-import org.xyp.shared.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
+import org.xyp.shared.db.id.generator.table.hibernate.CustomizedTableIdGenerator;
+import org.xyp.shared.db.id.generator.table.hibernate.HibernateIdTableGeneratorLegacy;
 
 import java.util.ArrayList;
 import java.util.List;

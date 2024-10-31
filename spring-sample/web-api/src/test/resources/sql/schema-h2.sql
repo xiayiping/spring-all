@@ -1,7 +1,7 @@
 create schema if not exists test;
 set schema test;
 
--- drop table if exists id_table;
+drop table if exists id_table;
 create table if not exists id_table
 (
     entity_name varchar(256) not null primary key,
@@ -9,7 +9,6 @@ create table if not exists id_table
     step_size   integer      not null,
     fetch_size  integer      not null
 );
-
 
 
 insert into id_table

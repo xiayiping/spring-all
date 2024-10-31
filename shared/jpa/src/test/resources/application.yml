@@ -1,0 +1,12 @@
+org:
+  xyp:
+    shared:
+      datasource:
+        configs:
+          main:
+            properties:
+              driver-class-name:
+            jpa-properties:
+              hibernate-dialect:
+            id-generator:
+              refer-to:
