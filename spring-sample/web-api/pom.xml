@@ -21,6 +21,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <jpa-streamer-version>3.0.2</jpa-streamer-version>
     </properties>
 
     <dependencies>
@@ -192,6 +193,17 @@
             <version>1.10</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.speedment.jpastreamer</groupId>
+            <artifactId>jpastreamer-core</artifactId>
+            <version>${jpa-streamer-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.speedment.jpastreamer.integration.spring</groupId>
+            <artifactId>spring-boot-jpastreamer-autoconfigure</artifactId>
+            <version>${jpa-streamer-version}</version>
+        </dependency>
     </dependencies>
 
     <build>

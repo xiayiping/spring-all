@@ -6,7 +6,6 @@ server:
 spring:
   application:
     name: web-api
-
   datasource:
     driver-class-name: ${db_driver}
     url: ${db_url}
@@ -40,9 +39,9 @@ spring:
     oauth2:
       resourceserver:
         opaquetoken:
-          introspection-uri: ${oauth2_introspection_uri}
-          client-id: ${oauth2_client_id}
-          client-secret: ${oauth2_client_secret}
+          introspection-uri: ss
+          client-id: gg
+          client-secret: ee
 #        jwt:
 #          issuer-uri: "http://${v_host}:8081"
 #          issuer-uri: https://token.actions.githubusercontent.com
