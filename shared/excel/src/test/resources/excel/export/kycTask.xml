@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sheet name="kyc.tasks" titleColor="AQUA" titleBold="true" titleFontSize="12"
+       startRow="1" >
+    <column key="action" title="Action" empty="true" titleColor="RED"/>
+    <column key="comment" title="Comment" empty="true" titleColor="YELLOW"/>
+    <column key="id" title="TaskID"/>
+    <column key="kycBatch.id" title="BatchID"/>
+
+    <column key="status" title="Status"/>
+
+    <column key="kycBatch.batchName" title="BatchName"/>
+    <column key="kycBatch.employeeGroupName" title="EmployeeGroup"/>
+    <column key="companyId" title="CompanyID"/>
+    <column key="companyName" title="CompanyName"/>
+    <column key="employeeId" title="EmployeeID"/>
+
+    <column key="idInfo.idDocNo" title="IdentityDocNo"/>
+    <column key="idInfo.identityDocIssueCountryEn" title="IdentityDocIssueCountry"/>
+    <column key="idInfo.idProofDocTypeName" title="IdProofDocType"/>
+    <column key="idInfo.identityOtherProofDocType" title="otherIDProofDocType"/>
+    <column key="idInfo.idDocIssueDate" title="idDocIssueDate" format="yyyy-mm-dd"/>
+    <column key="idInfo.expiryDateOfIdDoc" title="expiryDateOfIdDoc" format="yyyy-mm-dd"/>
+    <column key="idInfo.chineseFullNameRO" title="chineseName"/>
+    <column key="idInfo.nationalityEn" title="Nationality"/>
+    <column key="idInfo.dateOfBirth" title="dateOfBirth" format="yyyy-mm-dd"/>
+    <column key="idInfo.taxCodesStringEn" title="TaxCodes"/>
+
+    <column key="addressInfo.phoneNumber" title="phoneNumber"/>
+    <column key="addressInfo.postCode" title="postCode"/>
+    <column key="addressInfo.addressProofType" title="addressProofType"/>
+    <column key="addressInfo.otherProofDocType" title="otherAddressProofDocType"/>
+
+    <column key="lastUpdateTime" title="LastUpdateTime" format="yyyy-mm-dd hh:mm:ss"/>
+</sheet>

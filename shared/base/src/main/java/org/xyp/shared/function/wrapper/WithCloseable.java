@@ -2,10 +2,7 @@ package org.xyp.shared.function.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.xyp.shared.function.ExceptionalBiFunction;
-import org.xyp.shared.function.ExceptionalConsumer;
-import org.xyp.shared.function.ExceptionalFunction;
-import org.xyp.shared.function.ExceptionalSupplier;
+import org.xyp.shared.function.*;
 
 import java.util.Optional;
 import java.util.function.*;
@@ -177,6 +174,53 @@ public class WithCloseable<C extends AutoCloseable, T> {
             this.exceptionConsumer
         );
     }
+
+    public WithCloseable<C, T> doOnError(ExceptionalBiConsumer<C, Throwable> consumer) {
+        final var frame = getStackStep();
+        return new WithCloseable<>(
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
+                final var lastOutput = previousStackInfo.output();
+                try {
+                    if (previousStackInfo.isError()) {
+                        consumer.accept(previousStackInfo.closeable(), previousStackInfo.throwable());
+                        final var closeable = previousStackInfo.closeable();
+                        return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, lastOutput, null, previousStackInfo.throwable());
+                    } else {
+                        return previousStackInfo;
+                    }
+                } catch (Throwable t) {
+                    final var closeable = previousStackInfo.closeable();
+                    return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, lastOutput, null, t);
+                }
+            },
+            this.exceptionConsumer
+        );
+    }
+
+    public WithCloseable<C, T> mapOnError(ExceptionalBiFunction<C, Throwable, T> consumer) {
+        final var frame = getStackStep();
+        return new WithCloseable<>(
+            () -> {
+                final var previousStackInfo = closeableSupplier.get();
+                final var lastOutput = previousStackInfo.output();
+                try {
+                    if (previousStackInfo.isError()) {
+                        val newValueForError = consumer.apply(previousStackInfo.closeable(), previousStackInfo.throwable());
+                        final var closeable = previousStackInfo.closeable();
+                        return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, previousStackInfo.throwable(), newValueForError, null);
+                    } else {
+                        return previousStackInfo;
+                    }
+                } catch (Throwable t) {
+                    final var closeable = previousStackInfo.closeable();
+                    return new StackStepInfoWithCloseable<>(frame, previousStackInfo, closeable, lastOutput, null, t);
+                }
+            },
+            this.exceptionConsumer
+        );
+    }
+
 
     @SuppressWarnings("unchecked")
     public <U> WithCloseable<C, U> mapWithCloseable(ExceptionalBiFunction<? super C, ? super T, ? extends U> biFunction) {

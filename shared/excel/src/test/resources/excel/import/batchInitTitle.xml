@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sheet startRow="2" endRow="2" >
+    <column key="companyId" type="INT"/>
+    <column key="batchName" type="STRING"/>
+    <column key="endDate" type="LOCAL_DATE"/>
+</sheet>
