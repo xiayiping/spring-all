@@ -365,6 +365,127 @@ class WithCloseableTest {
         Assertions.assertThat(lazy.closeAndGetResult().getError()).isInstanceOf(ArithmeticException.class);
     }
 
+    @Test
+    void test16() {
+        val holder = ValueHolder.of(0);
+        var lazy = WithCloseable.open(MockCloseable::new)
+            .map(c -> 1)
+            .map(c -> c / 0)
+            .map(c -> c + 1)
+            .continueWithOptional()
+            .doOnError(((mockCloseable, throwable) -> {
+                Assertions.assertThat(mockCloseable).isNotNull();
+                holder.setValue(holder.value() + 1);
+            }))
+            .flatMap(o -> ResultOrError.on(() -> {
+                holder.setValue(holder.value() + 1);
+                return 3;
+            }));
+        Assertions.assertThat(lazy.closeAndGetResult(IllegalArgumentException.class, IllegalArgumentException::new).getError())
+            .isNotNull();
+        Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isFalse();
+        Assertions.assertThat(lazy.closeAndGetResult().getError()).isInstanceOf(ArithmeticException.class);
+
+        Assertions.assertThat(holder.value()).isEqualTo(3);
+
+        lazy.closeAndGetResult().doIf(ignored -> true, res -> {
+            res.traceDebugOrError(() -> true, System.out::println, () -> true, System.out::println);
+        });
+        lazy.closeAndGetResult().getStackStepInfo().ifPresentOrElse(stack -> {
+            StackStepInfo<?> current = stack;
+            var num = 6;
+            while (current != null) {
+                num--;
+                current = current.previous();
+            }
+            Assertions.assertThat(num).isZero();
+        }, Assertions::assertThatException);
+    }
+
+    @Test
+    void test17() {
+        val holder = ValueHolder.of(0);
+        var lazy = WithCloseable.open(MockCloseable::new)
+            .map(c -> 1)
+            .map(c -> c + 1)
+            .continueWithOptional()
+            .doOnError(((mockCloseable, throwable) -> {
+                Assertions.assertThat(mockCloseable).isNotNull();
+                holder.setValue(holder.value() + 1);
+            }))
+            .flatMap(o -> ResultOrError.on(() -> {
+                holder.setValue(holder.value() -1);
+                return 3;
+            }));
+        Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isTrue();
+        lazy.closeAndGetResult().doIf(ignored -> true, res -> {
+            res.traceDebugOrError(() -> true, System.out::println, () -> true, System.out::println);
+        });
+
+        Assertions.assertThat(holder.value()).isEqualTo(-2);
+
+        lazy.closeAndGetResult().getStackStepInfo().ifPresentOrElse(stack -> {
+            StackStepInfo<?> current = stack;
+            var num = 6;
+            while (current != null) {
+                num--;
+                current = current.previous();
+            }
+            Assertions.assertThat(num).isZero();
+        }, Assertions::assertThatException);
+    }
+
+    @Test
+    void test18() {
+        val holder = ValueHolder.of(0);
+        var lazy = WithCloseable.open(MockCloseable::new)
+            .map(c -> 1)
+            .map(c -> c / 0)
+            .map(c -> c + 1)
+            .mapOnError(((mockCloseable, throwable) -> {
+                Assertions.assertThat(mockCloseable).isNotNull();
+                holder.setValue(holder.value() + 1);
+                return 999;
+            }))
+            .flatMap(o -> ResultOrError.on(() -> {
+                holder.setValue(holder.value() + 1);
+                return o;
+            }));
+        Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isTrue();
+        Assertions.assertThat(lazy.closeAndGetResult().get()).isEqualTo(999);
+
+        Assertions.assertThat(holder.value()).isEqualTo(4);
+
+        lazy.closeAndGetResult().doIf(ignored -> true, res -> {
+            res.traceDebugOrError(() -> true, System.out::println, () -> true, System.out::println);
+        });
+    }
+
+    @Test
+    void test19() {
+        val holder = ValueHolder.of(0);
+        var lazy = WithCloseable.open(MockCloseable::new)
+            .map(c -> 1)
+            .map(c -> c + 1)
+            .mapOnError(((mockCloseable, throwable) -> {
+                Assertions.assertThat(mockCloseable).isNotNull();
+                holder.setValue(holder.value() + 1);
+                return 999;
+            }))
+            .flatMap(o -> ResultOrError.on(() -> {
+                holder.setValue(holder.value() + 1);
+                return o;
+            }));
+        Assertions.assertThat(lazy.closeAndGetResult().isSuccess()).isTrue();
+        Assertions.assertThat(lazy.closeAndGetResult().get()).isEqualTo(2);
+
+        Assertions.assertThat(holder.value()).isEqualTo(2);
+
+        lazy.closeAndGetResult().doIf(ignored -> true, res -> {
+            res.traceDebugOrError(() -> true, System.out::println, () -> true, System.out::println);
+        });
+    }
+
     @Getter
     static class MockCloseable implements AutoCloseable {
         boolean closed = false;

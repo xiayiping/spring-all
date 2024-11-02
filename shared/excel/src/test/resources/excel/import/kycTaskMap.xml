@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sheet startRow="2" >
+    <column key="action" type="STRING"/>
+    <column key="comment" type="STRING"/>
+    <column key="taskId" type="LONG"/>
+    <column key="batchId" type="LONG"/>
+</sheet>

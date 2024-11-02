@@ -176,6 +176,25 @@ public class ResultOrError<R> {
         );
     }
 
+    public ResultOrError<R> mapOnError(ExceptionalFunction<Throwable, ? extends R> mapper) {
+        final var frame = getStackStep();
+        return new ResultOrError<>(
+            () -> {
+                final var prevStack = supplier.get();
+                try {
+                    if (prevStack.isError()) {
+                        val newOutputForError = mapper.apply(prevStack.throwable());
+                        return new StackStepInfo<>(frame, prevStack, prevStack.throwable(), newOutputForError, null);
+                    }
+                    return prevStack;
+                } catch (Throwable throwable) {
+                    final var lastOutput = prevStack.output();
+                    return new StackStepInfo<>(frame, prevStack, lastOutput, null, throwable);
+                }
+            }
+        );
+    }
+
     @SuppressWarnings("unchecked")
     static <R, U> StackStepInfo<U> getStackStepInfoByMapper(
         ExceptionalFunction<? super R, ? extends U> mapper,

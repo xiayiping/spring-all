@@ -21,6 +21,7 @@
         <module>shared/base</module>
         <module>shared/jpa</module>
         <module>shared/secret</module>
+        <module>shared/excel</module>
         <module>spring-sample/web-api</module>
         <!--
         <module>demo-image</module>

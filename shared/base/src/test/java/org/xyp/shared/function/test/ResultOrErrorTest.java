@@ -813,6 +813,55 @@ class ResultOrErrorTest {
         }, Assertions::assertThatException);
     }
 
+    @Test
+    void test42() {
+        ValueHolder<Boolean> doOnErrorChecked = new ValueHolder<>(false);
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .map(i -> i / 0)
+            .mapOnError(e -> {
+                doOnErrorChecked.setValue(true);
+                return -999;
+            })
+            .map(ww -> ww + 1)
+            .map(ww -> ww + 1)
+            .getResult()
+            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()))
+            .doIf(ignored -> true, res -> {
+                res.traceDebugOrError(()->true, System.out::println, () -> true, System.out::println);
+            });
+
+        Assertions.assertThat(opt.isSuccess()).isTrue();
+        Assertions.assertThat(opt.getError()).isNull();
+        Assertions.assertThat(opt.get()).isEqualTo(-997);
+        Assertions.assertThat(doOnErrorChecked.value()).isTrue();
+    }
+
+    @Test
+    void test43() {
+        ValueHolder<Boolean> doOnErrorChecked = new ValueHolder<>(false);
+        val opt = ResultOrError.on(() -> 1)
+            .filter(i -> i > 0)
+            .map(i -> i - 4)
+            .mapOnError(e -> {
+                doOnErrorChecked.setValue(true);
+                return -999;
+            })
+            .map(ww -> ww + 1)
+            .map(ww -> ww + 1)
+            .getResult()
+            .mapError(ValidateException.class, e -> new ValidateException(e.getMessage()))
+            .doIf(ignored -> true, res -> {
+                res.traceDebugOrError(()->true, System.out::println, () -> true, System.out::println);
+            });
+
+        Assertions.assertThat(opt.isSuccess()).isTrue();
+        Assertions.assertThat(doOnErrorChecked.value()).isFalse();
+        Assertions.assertThat(opt.get()).isEqualTo(-1);
+    }
+
+
     @Data
     static
     class Person {
