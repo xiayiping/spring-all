@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
 import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

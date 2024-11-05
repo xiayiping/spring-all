@@ -53,8 +53,8 @@ public class DefaultBeforeExecutionGeneratorImpl implements BeforeExecutionGener
             return null;
         }
 
-        val idGenerator = TableIdGeneratorConfig.getLongIdGenerator(this.datasource);
-        val dataSource = TableIdGeneratorConfig.getDataSource(this.datasource);
+        val idGenerator = TableIdGeneratorConfig.getLongIdGenerator.apply(this.datasource);
+        val dataSource = TableIdGeneratorConfig.getDataSource.apply(this.datasource);
         val id = ResultOrError.on(() -> {
                     if (0 < defaultFetchSize && 0 < defaultStepSize) {
                         return idGenerator.nextId(

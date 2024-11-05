@@ -10,6 +10,7 @@ import org.xyp.shared.excel.model.ExportColumnModel;
 import org.xyp.shared.excel.model.ExportSheetModel;
 import org.xyp.shared.excel.readwriter.ExcelCellWriter;
 import org.xyp.shared.function.wrapper.ResultOrError;
+import org.xyp.shared.utils.BeanUtils;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -251,7 +252,7 @@ public class ExcelExporter implements IExport<Workbook> {
 
                 Object value = ResultOrError.on(() -> {
                         String key = columnModel.getKey();
-                        return BeanUtil.propertyValue(valueMap, key);
+                        return BeanUtils.propertyValue(valueMap, key);
                     }).getResult()
                     .getOrFallBackForError(ex -> {
                         log.trace("{}  Use null", ex.getMessage());

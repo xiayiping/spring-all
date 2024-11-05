@@ -1,13 +1,11 @@
 package org.xyp.shared.db.id.generator.table.hibernate;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.MappingException;
 import org.hibernate.generator.BeforeExecutionGenerator;
 import org.hibernate.id.Configurable;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
-import org.xyp.shared.db.id.generator.IdGenerator;
 
 import java.util.Optional;
 import java.util.Properties;

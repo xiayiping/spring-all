@@ -1,6 +1,6 @@
 package org.xyp.shared.db.id.generator.table.dialect;
 
-import org.springframework.util.StringUtils;
+import org.xyp.shared.utils.StringUtils;
 import org.xyp.shared.db.id.generator.table.config.IdGenProperties;
 
 import java.util.Optional;

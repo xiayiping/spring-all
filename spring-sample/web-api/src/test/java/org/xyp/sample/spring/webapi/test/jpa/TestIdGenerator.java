@@ -94,9 +94,9 @@ class TestIdGenerator {
             Thread.sleep(333);
         }).getResult());
 
-        final IdGenerator<Long> gen1 = TableIdGeneratorConfig.getLongIdGenerator("main");
-        final IdGenerator<Long> gen2 = TableIdGeneratorConfig.getLongIdGenerator("second");
-        final IdGenerator<Long> gen3 = TableIdGeneratorConfig.getLongIdGenerator("third");
+        final IdGenerator<Long> gen1 = TableIdGeneratorConfig.getLongIdGenerator.apply("main");
+        final IdGenerator<Long> gen2 = TableIdGeneratorConfig.getLongIdGenerator.apply("second");
+        final IdGenerator<Long> gen3 = TableIdGeneratorConfig.getLongIdGenerator.apply("third");
         if (gen1 instanceof LongIdDbTableGenerator longIdDbTableGenerator) {
             longIdDbTableGenerator.setRecordFetchedPeeks(fetchDbPeekers);
             longIdDbTableGenerator.setRecordUpdatedPeeks(updateDbPeekers);

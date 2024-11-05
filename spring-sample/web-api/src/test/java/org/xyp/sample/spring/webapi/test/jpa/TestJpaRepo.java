@@ -13,27 +13,27 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.transaction.annotation.Transactional;
-import org.xyp.sample.spring.webapi.domain.task.entity.stock.StockEntity;
-import org.xyp.sample.spring.webapi.domain.task.repository.jpa2.StockRepository;
-import org.xyp.shared.function.Fun;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.Batch;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRule;
 import org.xyp.sample.spring.webapi.domain.task.entity.batch.BatchRuleDesc;
+import org.xyp.sample.spring.webapi.domain.task.entity.stock.StockEntity;
 import org.xyp.sample.spring.webapi.domain.task.entity.task.Task;
 import org.xyp.sample.spring.webapi.domain.task.pojo.BatchPojo;
 import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchDaoJpa;
 import org.xyp.sample.spring.webapi.domain.task.repository.jpa.BatchRecordDaoJpa;
 import org.xyp.sample.spring.webapi.domain.task.repository.jpa.TaskDaoJpa;
+import org.xyp.sample.spring.webapi.domain.task.repository.jpa2.StockRepository;
 import org.xyp.sample.spring.webapi.domain.task.repository.mybatis.BatchDaoMybatis;
 import org.xyp.sample.spring.webapi.domain.task.service.BatchService;
-import org.xyp.shared.db.id.generator.table.config.TableIdGeneratorConfig;
+import org.xyp.shared.db.id.generator.table.config.TableIdGeneratorSpringConfig;
+import org.xyp.shared.function.Fun;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
 @Slf4j
-@Import(TableIdGeneratorConfig.class)
+@Import(TableIdGeneratorSpringConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest

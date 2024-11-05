@@ -2,7 +2,6 @@ package org.xyp.shared.excel;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -12,6 +11,7 @@ import org.xml.sax.ext.DefaultHandler2;
 import org.xyp.shared.excel.model.ExportColumnModel;
 import org.xyp.shared.excel.model.ExportSheetModel;
 import org.xyp.shared.function.wrapper.ResultOrError;
+import org.xyp.shared.utils.ResourceUtils;
 
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
@@ -55,7 +55,7 @@ public class ExportConfigurationContainer {
         configReader.setContentHandler(handler);
 
         File file = ResultOrError.on(() ->
-            new DefaultResourceLoader().getResource(props.getExportConfigRoot()).getFile()).get();
+            ResourceUtils.getFile(props.getExportConfigRoot())).get();
         var rootPathLoc = file.getAbsolutePath()
             .replace("\\", "/");
         while (rootPathLoc.endsWith("/")) {
