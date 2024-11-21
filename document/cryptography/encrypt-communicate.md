@@ -153,4 +153,12 @@ providing a standardized way to authenticate users and obtain identity tokens.
 6. User Information:
     - The OIDC client can use the access token to request additional user information from the OpenID provider's userinfo endpoint.
 
-SpringOpaqueTokenIntrospector is used for obtain opa
+SpringOpaqueTokenIntrospector is used for obtain opaque token
+
+
+## grant type (flow)
+
+- Web application with server backend: `authorization code flow` 
+- Native mobile app: `authorization code flow with PKCE`
+- Javascript app with API backend `implicit flow`
+- microservices and APIs: `client credentials flow`
