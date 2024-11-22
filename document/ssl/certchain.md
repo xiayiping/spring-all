@@ -72,7 +72,7 @@ openssl x509 -req -sha256 -days ${leaf_valid_day} -in ./cert-leaf.csr \
   -out ./cert-leaf.pem \
   -extfile ./req-leaf.conf -extensions v3_req \
   -CAcreateserial -clrext 
-
+  
 openssl x509 -in cert-leaf.pem -text -noout
 
 ######## trust store chain ########

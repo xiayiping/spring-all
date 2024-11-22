@@ -544,3 +544,48 @@ vault write -format=json ${pki_int_path}/issue/${role_name_int} \
 
 ```
 
+
+
+## curl kv engine
+
+```shell
+
+export VAULT_ADDR='http://127.0.0.1:8200'
+export VAULT_TOKEN='your-vault-token'
+
+curl \
+  --header "X-Vault-Token: $VAULT_TOKEN" \
+  $VAULT_ADDR/v1/sys/mounts
+  
+curl \
+  --header "X-Vault-Token: $VAULT_TOKEN" \
+  $VAULT_ADDR/v1/secret/data/my-secret
+  
+## list all engines
+curl \
+  --header "X-Vault-Token: $VAULT_TOKEN" \
+  --cacert $VAULT_CA_PATH \
+  $VAULT_ADDR/v1/sys/mounts
+ 
+## create kv engine v2 named 'secret'
+curl --request POST \
+  --header "X-Vault-Token: $VAULT_TOKEN" \
+  --cacert $VAULT_CA_PATH \
+  --data '{"type":"kv-v2"}' \
+  $VAULT_ADDR/v1/sys/mounts/secret
+ 
+## add K-V
+curl --request POST \
+  --header "X-Vault-Token: $VAULT_TOKEN" \
+  --cacert $VAULT_CA_PATH \
+  --data @data.json \
+  $VAULT_ADDR/v1/secret/data/stage/msa/esop/infra/mtls
+ 
+## list all K-V
+curl --header "X-Vault-Token: $VAULT_TOKEN" \
+  --cacert $VAULT_CA_PATH \
+  $VAULT_ADDR/v1/secret/data/stage/msa/esop/infra/mtls
+curl --header "X-Vault-Token: $VAULT_TOKEN" \
+  --cacert $VAULT_CA_PATH \
+  $VAULT_ADDR/v1/secret/data/stage/msa/esop/mtls/apigw
+```
