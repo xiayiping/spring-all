@@ -40,6 +40,10 @@ systemctl stop trex.service
 systemctl restart trex.service
 journalctl  -u trex.service
 sudo journalctl -xeu apigw.service
+
+## start with env
+sudo systemctl set-environment MY_ENV_VAR="yyy" && sudo systemctl restart go-app
+
 ```
 
 ## sudo-er add
