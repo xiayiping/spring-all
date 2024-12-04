@@ -42,7 +42,8 @@ journalctl  -u trex.service
 sudo journalctl -xeu apigw.service
 
 ## start with env
-sudo systemctl set-environment MY_ENV_VAR="yyy" && sudo systemctl restart go-app
+sudo systemctl set-environment MY_ENV_VAR="ttt" && sudo systemctl restart go-app && sudo systemctl unset-environment MY_ENV_VAR
+sudo systemctl show-environment
 
 ```
 
