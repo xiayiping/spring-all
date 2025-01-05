@@ -10,15 +10,15 @@ import java.util.stream.Stream;
 public class TestReactive {
 
     @Test
-    void reactTest() {
+    void reactTest() throws InterruptedException {
 //        Flux.fromStream(()-> Stream.of(1,2,3,4,5,6,7))
             Mono.just(1)
             .map(i -> {
                 System.out.println(i + " " + Thread.currentThread().getName());
                 return i + 1;
             })
-//            .subscribeOn(Schedulers.parallel())
-//            .publishOn(Schedulers.boundedElastic())
+            .subscribeOn(Schedulers.parallel())
+            .publishOn(Schedulers.immediate())
             .map(i -> {
                 System.out.println(i + " " + Thread.currentThread().getName());
                 return i + 1;
@@ -28,9 +28,14 @@ public class TestReactive {
                 System.out.println(i + " " + Thread.currentThread().getName());
                 return i + 1;
             })
+                .subscribeOn(Schedulers.single())
+//                .subscribe()
+//                .dispose();
                 .block()
+                ;
 //            .toStream()
 //            .forEach(System.out::println)
+            Thread.sleep(1500L);
         ;
     }
 }
