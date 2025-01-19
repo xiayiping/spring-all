@@ -22,11 +22,11 @@ $$
 $$
 
 Where:
-- \( $ r $ \) is the annualized interest rate (expressed as a decimal, e.g., 5% = 0.05).
+- ( $ r $ ) is the annualized interest rate (expressed as a decimal, e.g., 5% = 0.05).
 - 365 assumes there are 365 days in a year (for simplicity; leap years would use 366).
 
 ### Explanation:
-- \( $ e^{r / 365} $ \) represents the continuous compounding over a single day.
+- $ e^{r / 365} $ represents the continuous compounding over a single day.
 - Subtracting 1 at the end gives you the effective overnight rate for that day.
 
 ### Example:
@@ -66,5 +66,5 @@ This approximation is very close to the result from the exponential formula, and
 ### Summary
 
 - The **federal funds rate** is typically stated as an **annualized rate**.
-- To convert it to a **daily overnight rate**, you can use the formula \( e^{\left(\frac{r}{365}\right)} - 1 \), where \( r \) is the annual rate in decimal form.
+- To convert it to a **daily overnight rate**, you can use the formula $ e^{\left(\frac{r}{365}\right)} - 1 $, where \( r \) is the annual rate in decimal form.
 - For small rates, a simpler approximation is to divide the annualized rate by 365 to get the effective daily rate.

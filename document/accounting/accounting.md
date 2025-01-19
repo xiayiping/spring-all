@@ -142,9 +142,9 @@ In accounting, **equity** (also known as **owner's equity** or **shareholder's e
 
 The **accounting equation** is the foundation of double-entry accounting:
 
-\[
+$$
 \text{Assets} = \text{Liabilities} + \text{Equity}
-\]
+$$
 
 This equation shows that **equity** is the difference between **assets** and **liabilities**. Any changes in assets or liabilities will ultimately affect equity.
 
