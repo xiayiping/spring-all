@@ -58,3 +58,20 @@ I only know
 - data_dir
 - server
 - ui
+
+# Useful Commands
+
+```shell
+
+## list all nodes
+consul members
+curl http://<consul-server>:8500/v1/catalog/nodes
+## list all services
+consul catalog services
+curl http://<consul-server>:8500/v1/catalog/services
+## list all nodes for provided service
+consul catalog nodes -service=web
+curl http://<consul-server>:8500/v1/catalog/service/web
+
+
+```

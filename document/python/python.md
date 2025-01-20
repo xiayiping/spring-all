@@ -4,6 +4,8 @@
 python -m pip freeze > requirements.txt
 ## to apply the requirement.txt
 python -m pip install -r requirements.txt
+## or
+pyp install -r requirements.txt
 ```
 
 
