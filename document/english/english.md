@@ -12,3 +12,8 @@ knowledge
 you and I are doing
 
 in September
+
+
+### phases
+
+be surprised at sth
