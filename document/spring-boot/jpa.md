@@ -3,7 +3,7 @@
   * [PrePersist action and domain events](#prepersist-action-and-domain-events)
 * [Spring Boot](#spring-boot)
   * [Data](#data)
-* [JPA Transaction](#jpa-transaction)
+  * [JPA Transaction](#jpa-transaction)
     * [Steps to Customize Transaction Rollback:](#steps-to-customize-transaction-rollback)
     * [Example 1: Using `@Transactional` with Custom Rollback Logic](#example-1-using-transactional-with-custom-rollback-logic)
     * [Example 2: Manual Transaction Management with `PlatformTransactionManager`](#example-2-manual-transaction-management-with-platformtransactionmanager)
@@ -58,43 +58,7 @@
     * [**A. Example Using Criteria API**](#a-example-using-criteria-api)
   * [**8. Summary and Recommendations**](#8-summary-and-recommendations)
   * [**9. Additional Resources**](#9-additional-resources)
-  * [Write Subquery](#write-subquery)
-    * [**Problem Statement:**](#problem-statement)
-    * [**Solution Using JPA Specification**](#solution-using-jpa-specification)
-      * [**Steps:**](#steps)
-    * [**Code Example**](#code-example)
-      * [Example Entities:](#example-entities)
-      * [Specification for `WHERE EXISTS`:](#specification-for-where-exists)
-    * [**Explanation:**](#explanation-1)
-    * [**Using the Specification in a Repository**](#using-the-specification-in-a-repository)
-    * [**Generated SQL**](#generated-sql)
-    * [**Dynamic Querying (Optional)**](#dynamic-querying-optional)
-    * [**Advanced Example: Adding More Conditions**](#advanced-example-adding-more-conditions)
-    * [**Conclusion**](#conclusion-2)
-  * [Join Query](#join-query)
-  * [**1. Basic Structure of a `Specification`**](#1-basic-structure-of-a-specification)
-    * [**Definition of `Specification`**](#definition-of-specification)
-  * [**2. Writing a Join in a `Specification`**](#2-writing-a-join-in-a-specification)
-    * [**Steps to Build a Join Query**](#steps-to-build-a-join-query)
-    * [**Example: Basic Join with Conditions**](#example-basic-join-with-conditions)
-      * [**Entities**](#entities)
-      * [**Specification for Join**](#specification-for-join)
-    * [**Explanation**](#explanation-2)
-  * [**3. Using the Specification in a Repository**](#3-using-the-specification-in-a-repository)
-    * [**Repository**](#repository)
-    * [**Using the Specification**](#using-the-specification)
-  * [**4. Advanced Joins**](#4-advanced-joins)
-    * [**Example: Multiple Joins**](#example-multiple-joins)
-      * [Query: Find all tasks assigned to employees in a specific department.](#query-find-all-tasks-assigned-to-employees-in-a-specific-department)
-    * [**Example: Left Join**](#example-left-join)
-    * [**Example: Filtering on Joined Entities**](#example-filtering-on-joined-entities)
-      * [Query: Find employees with a department name that starts with "Sales".](#query-find-employees-with-a-department-name-that-starts-with-sales)
-  * [**5. Combining Multiple Specifications**](#5-combining-multiple-specifications)
-  * [**6. Real-World Tips**](#6-real-world-tips)
-  * [**Conclusion**](#conclusion-3)
 <!-- TOC -->
-
-
 # JPA
 
 ## PrePersist action and domain events
@@ -1445,3 +1409,341 @@ To further enhance your understanding and proficiency in creating dynamic querie
 These resources provide in-depth explanations, advanced use cases, and best practices that can help you master dynamic querying in Spring Boot applications using Spring Data JPA.
 
 ---
+
+## Projection using Specification
+
+If you want to use JPA Specifications to project specific fields (instead of fetching entire entities), you can achieve this by modifying the `CriteriaQuery` in the Specification to select only the desired fields. The result will typically be a tuple, DTO, or array, depending on your projection requirements.
+
+---
+
+### Steps to Project Specific Fields with JPA Specifications
+
+Below is a detailed guide for achieving this.
+
+---
+
+#### 1. **Define a Specification for Projection**
+
+Use the `CriteriaQuery` in the `Specification` to specify the fields you want to project. For example:
+
+```java
+import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.*;
+
+public class MyEntitySpecification {
+
+    public static Specification<MyEntity> projectToSpecificFields() {
+        return (root, query, criteriaBuilder) -> {
+            // Specify the fields to include in the projection
+            query.multiselect(
+                root.get("id"),       // Project the ID
+                root.get("name"),     // Project the name
+                root.get("someField") // Project another field
+            );
+
+            // You can add predicates (conditions) here if needed
+            return null;
+        };
+    }
+}
+```
+
+---
+
+#### 2. **Modify Repository to Support Tuple/DTO Results**
+
+By default, Spring Data JPA repositories expect entities as results. When projecting specific fields, you need to handle the results as tuples or map them to a DTO manually.
+
+Here are two common approaches:
+
+---
+
+##### **Option 1: Use `Tuple` for Results**
+
+`Tuple` is a JPA construct that allows you to handle projected values without creating a DTO class.
+
+Example Implementation:
+
+```java
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+import javax.persistence.Tuple;
+import java.util.List;
+
+public interface MyEntityRepository extends JpaRepository<MyEntity, Long>, JpaSpecificationExecutor<MyEntity> {
+    List<Tuple> findAll(Specification<MyEntity> spec);
+}
+```
+
+Usage:
+
+```java
+import org.springframework.stereotype.Service;
+
+import javax.persistence.Tuple;
+import java.util.List;
+
+@Service
+public class MyEntityService {
+
+    private final MyEntityRepository myEntityRepository;
+
+    public MyEntityService(MyEntityRepository myEntityRepository) {
+        this.myEntityRepository = myEntityRepository;
+    }
+
+    public List<Tuple> getProjectedFields() {
+        Specification<MyEntity> spec = MyEntitySpecification.projectToSpecificFields();
+        return myEntityRepository.findAll(spec);
+    }
+}
+```
+
+When processing the result, you can extract the projected fields like this:
+
+```java
+List<Tuple> results = myEntityService.getProjectedFields();
+for (Tuple tuple : results) {
+    Long id = tuple.get(0, Long.class);       // First field (ID)
+    String name = tuple.get(1, String.class); // Second field (Name)
+    String someField = tuple.get(2, String.class); // Third field (SomeField)
+}
+```
+
+---
+
+##### **Option 2: Map Results to a DTO**
+
+Instead of using `Tuple`, you can map the projected fields directly into a DTO class. For this, you need a custom repository implementation.
+
+1. **Create a DTO Class**:
+
+```java
+public class MyEntityDTO {
+    private Long id;
+    private String name;
+    private String someField;
+
+    public MyEntityDTO(Long id, String name, String someField) {
+        this.id = id;
+        this.name = name;
+        this.someField = someField;
+    }
+
+    // Getters and setters (optional)
+}
+```
+
+2. **Create a Custom Repository Interface**:
+
+```java
+import java.util.List;
+
+public interface MyEntityCustomRepository {
+    List<MyEntityDTO> findProjectedFields(Specification<MyEntity> specification);
+}
+```
+
+3. **Implement the Custom Repository**:
+
+```java
+import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
+import java.util.List;
+
+public class MyEntityCustomRepositoryImpl implements MyEntityCustomRepository {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Override
+    public List<MyEntityDTO> findProjectedFields(Specification<MyEntity> specification) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<MyEntityDTO> query = cb.createQuery(MyEntityDTO.class);
+        Root<MyEntity> root = query.from(MyEntity.class);
+
+        // Project specific fields into the DTO
+        query.select(cb.construct(
+            MyEntityDTO.class,
+            root.get("id"),
+            root.get("name"),
+            root.get("someField")
+        ));
+
+        // Apply the Specification if provided
+        if (specification != null) {
+            Predicate predicate = specification.toPredicate(root, query, cb);
+            query.where(predicate);
+        }
+
+        return entityManager.createQuery(query).getResultList();
+    }
+}
+```
+
+4. **Use the Custom Repository**:
+
+```java
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class MyEntityService {
+
+    private final MyEntityCustomRepository customRepository;
+
+    public MyEntityService(MyEntityCustomRepository customRepository) {
+        this.customRepository = customRepository;
+    }
+
+    public List<MyEntityDTO> getProjectedFields() {
+        Specification<MyEntity> spec = MyEntitySpecification.projectToSpecificFields();
+        return customRepository.findProjectedFields(spec);
+    }
+}
+```
+
+---
+
+#### 3. **Using the DTO in Your Application**
+
+You can now use the DTO (`MyEntityDTO`) to access the projected fields:
+
+```java
+List<MyEntityDTO> results = myEntityService.getProjectedFields();
+
+for (MyEntityDTO dto : results) {
+    System.out.println("ID: " + dto.getId());
+    System.out.println("Name: " + dto.getName());
+    System.out.println("SomeField: " + dto.getSomeField());
+}
+```
+
+---
+
+### Notes:
+1. **Using `query.multiselect`**:
+  - If you don't use DTO mapping, `query.multiselect` will result in `Tuple` or an `Object[]` depending on your repository setup.
+  - DTO mapping (`cb.construct`) is cleaner for structured results.
+
+2. **Distinct Results**:
+  - If you're working with `fetch` joins or relationships that may duplicate root entities, use `query.distinct(true)`.
+
+3. **Dynamic Projections**:
+  - If you want to dynamically decide which fields to project, you'll need to adjust the `Specification` to build the `CriteriaQuery` accordingly.
+
+---
+
+### Summary
+
+- Use `query.multiselect` in the `Specification` to specify the fields for projection.
+- Return the results as `Tuple`, `Object[]`, or map them to a DTO.
+- For better maintainability, prefer mapping to a DTO directly using `cb.construct`.
+
+Let me know if you need further clarification on any of these steps!
+
+
+### Project to Long
+
+```java
+
+import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.*;
+
+public class MyEntitySpecification {
+
+    public static Specification<MyEntity> projectToId() {
+        return (root, query, criteriaBuilder) -> {
+            // Project only the `id` field as Long
+            query.select(root.get("id").as(Long.class));
+            
+            // Return null because projections don't require a predicate
+            return null;
+        };
+    }
+}
+```
+
+### Project children Properties 
+
+```java
+// below code isn't supported by spring JpaSpecificationExecutor 
+import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.*;
+
+public class ParentEntitySpecification {
+
+    public static Specification<ParentEntity> projectParentAndChildFields() {
+        return (root, query, criteriaBuilder) -> {
+            // Join the child entity
+            Join<ParentEntity, ChildEntity> childJoin = root.join("children", JoinType.LEFT);
+
+            // Project fields from both the parent and child
+            query.select(criteriaBuilder.construct(
+                ParentChildProjectionDTO.class,
+                root.get("id"),            // Parent's ID
+                root.get("parentField"),   // Parent's field
+                childJoin.get("childField") // Child's field
+            ));
+
+            // Return null because projections don't require a predicate
+            return null;
+        };
+    }
+}
+
+// only work for entityManager
+
+public <T> List<T> findBy(Condition condition, ProjectionModel<T> projectionModel) {
+
+  val specification = SpecificationBuilder.spec(SampleEntity.class, condition, projectionModel);
+
+  // Step 1: Get the CriteriaBuilder from the EntityManager
+  CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+  // Step 2: Create a CriteriaQuery for the entity
+  CriteriaQuery<T> query = criteriaBuilder.createQuery(projectionModel.target());
+
+  // Step 3: Define the root (the FROM clause)
+  Root<SampleEntity> root = query.from(SampleEntity.class);
+
+  // Step 4: Apply the Specification's Predicate to the CriteriaQuery
+  if (specification != null) {
+    query.where(specification.toPredicate(root, query, criteriaBuilder));
+  }
+
+  // Step 5: Execute the query
+  return entityManager.createQuery(query).getResultList();
+
+}
+
+```
+
+### Fetch child of Child
+
+```java
+public class AuthorSpecifications {
+
+  public static Specification<Author> fetchBooksAndChapters() {
+    return (Root<Author> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+      // Only fetch for SELECT queries (not COUNT)
+      if (query.getResultType() != Long.class) {
+        // Fetch books (child of Author)
+        Fetch<Author, Book> booksFetch = root.fetch("books", JoinType.LEFT);
+
+        // Fetch chapters (child of Book)
+        booksFetch.fetch("chapters", JoinType.LEFT);
+      }
+      return cb.conjunction(); // No filtering, just fetching
+    };
+  }
+}
+```
