@@ -165,11 +165,11 @@ The entity making the payment (e.g., an employer, company, or financial institut
 
 ### **Withholding Tax vs. Income Tax**
 
-| **Aspect**              | **Withholding Tax**                         | **Income Tax**                                |
-|-------------------------|---------------------------------------------|----------------------------------------------|
-| **Timing**              | Collected at the time of payment.           | Paid after filing a tax return.              |
-| **Who Collects It?**    | Deducted by the payer (e.g., employer, bank).| Paid directly by the taxpayer.               |
-| **Purpose**             | Prepayment of income tax.                   | Final tax liability determined by tax return.|
+| **Aspect**              | **Withholding Tax**                                       | **Income Tax**                                          |
+|-------------------------|-----------------------------------------------------------|---------------------------------------------------------|
+| **Timing**              | Collected at the time of payment.                         | Paid after filing a tax return.                         |
+| **Who Collects It?**    | Deducted by the payer (e.g., employer, bank).             | Paid directly by the taxpayer.                          |
+| **Purpose**             | Prepayment of income tax.                                 | Final tax liability determined by tax return.           |
 | **Applicability**       | Applies to specific payments (e.g., salaries, dividends). | Applies to an individual/entity’s total taxable income. |
 
 ---
@@ -300,10 +300,10 @@ To avoid large refunds (overpayment) or balances due (underpayment) at tax time,
 
 ## **6. Summary Table**
 
-| **Situation**            | **Action Required**                                                                 |
-|--------------------------|-------------------------------------------------------------------------------------|
+| **Situation**              | **Action Required**                                                                                           |
+|----------------------------|---------------------------------------------------------------------------------------------------------------|
 | **Withholding < Tax Owed** | Pay the remaining balance when filing your tax return. Consider making estimated payments to avoid penalties. |
-| **Withholding > Tax Owed** | File your tax return to claim a refund for the overpaid amount. Adjust future withholdings if needed.            |
+| **Withholding > Tax Owed** | File your tax return to claim a refund for the overpaid amount. Adjust future withholdings if needed.         |
 
 ---
 
@@ -429,13 +429,13 @@ To claim the benefits of the U.S.-China tax treaty, the following steps are typi
 
 ### **6. Summary Table: Key Withholding Tax Rates**
 
-| **Type of Income**         | **Default U.S. Rate** | **Treaty Rate (U.S. to China)** |
-|----------------------------|-----------------------|----------------------------------|
-| **Dividends**              | 30%                  | 10%                             |
-| **Interest**               | 30%                  | 10%                             |
-| **Royalties (general)**    | 30%                  | 10%                             |
-| **Royalties (equipment)**  | 30%                  | 7%                              |
-| **Capital Gains**          | Varies               | Taxed in the country of residence (except U.S. real property). |
+| **Type of Income**         | **Default U.S. Rate** | **Treaty Rate (U.S. to China)**                                |
+|----------------------------|-----------------------|----------------------------------------------------------------|
+| **Dividends**              | 30%                   | 10%                                                            |
+| **Interest**               | 30%                   | 10%                                                            |
+| **Royalties (general)**    | 30%                   | 10%                                                            |
+| **Royalties (equipment)**  | 30%                   | 7%                                                             |
+| **Capital Gains**          | Varies                | Taxed in the country of residence (except U.S. real property). |
 
 ---
 

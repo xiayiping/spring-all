@@ -80,12 +80,12 @@ The **SQL standard** defines four isolation levels, which strike a balance betwe
 
 ## **1. Isolation Levels Overview**
 
-| Isolation Level         | Dirty Reads | Non-Repeatable Reads | Phantom Reads | Description                                                                 |
-|-------------------------|-------------|-----------------------|---------------|-----------------------------------------------------------------------------|
-| **Read Uncommitted**    | ✅ Allowed  | ✅ Allowed            | ✅ Allowed    | Transactions can see uncommitted changes made by others (low isolation).    |
-| **Read Committed**      | ❌ Prevented| ✅ Allowed            | ✅ Allowed    | Transactions only see committed changes by others.                         |
-| **Repeatable Read**     | ❌ Prevented| ❌ Prevented          | ✅ Allowed    | Ensures the same data is read consistently within a transaction.            |
-| **Serializable**        | ❌ Prevented| ❌ Prevented          | ❌ Prevented  | Fully isolates transactions (highest isolation, but lowest performance).    |
+| Isolation Level         | Dirty Reads  | Non-Repeatable Reads   | Phantom Reads   | Description                                                              |
+|-------------------------|--------------|------------------------|-----------------|--------------------------------------------------------------------------|
+| **Read Uncommitted**    | ✅ Allowed    | ✅ Allowed              | ✅ Allowed       | Transactions can see uncommitted changes made by others (low isolation). |
+| **Read Committed**      | ❌ Prevented  | ✅ Allowed              | ✅ Allowed       | Transactions only see committed changes by others.                       |
+| **Repeatable Read**     | ❌ Prevented  | ❌ Prevented            | ✅ Allowed       | Ensures the same data is read consistently within a transaction.         |
+| **Serializable**        | ❌ Prevented  | ❌ Prevented            | ❌ Prevented     | Fully isolates transactions (highest isolation, but lowest performance). |
 
 ---
 
@@ -375,12 +375,12 @@ Yes, databases use **locks** (among other mechanisms) to help enforce isolation 
 
 ## **5. Summary**
 
-| Isolation Level       | Mechanism Used                             | Lock Types Used               |
-|-----------------------|--------------------------------------------|-------------------------------|
-| **Read Uncommitted**  | No strict locking, minimal constraints     | None or minimal locks         |
+| Isolation Level       | Mechanism Used                             | Lock Types Used                  |
+|-----------------------|--------------------------------------------|----------------------------------|
+| **Read Uncommitted**  | No strict locking, minimal constraints     | None or minimal locks            |
 | **Read Committed**    | Shared and exclusive locks                 | Shared (read), Exclusive (write) |
-| **Repeatable Read**   | Shared locks for reads, MVCC for reads     | Shared, Exclusive, Gap Locks  |
-| **Serializable**      | Range locks, predicate locks, or MVCC      | Range Locks, Serializable Locks|
+| **Repeatable Read**   | Shared locks for reads, MVCC for reads     | Shared, Exclusive, Gap Locks     |
+| **Serializable**      | Range locks, predicate locks, or MVCC      | Range Locks, Serializable Locks  |
 
 - **Databases use locks and/or MVCC** to enforce isolation levels.
 - Higher isolation levels (like Serializable) require stricter locking or range-based mechanisms, which can reduce concurrency.
@@ -640,15 +640,15 @@ Used in specialized scenarios like data warehousing or time-series data.
 
 ## **Summary of Normal Forms**
 
-| **Normal Form**  | **Key Concept**                                | **Goal**                                |
+| **Normal Form**   | **Key Concept**                                | **Goal**                                |
 |-------------------|------------------------------------------------|-----------------------------------------|
-| **1NF**          | Atomic values, no repeating groups             | Ensure atomicity                        |
-| **2NF**          | No partial dependency (on composite keys)      | Eliminate partial dependencies          |
-| **3NF**          | No transitive dependency                       | Eliminate transitive dependencies       |
-| **BCNF**         | Every determinant is a superkey                | Stricter version of 3NF                 |
-| **4NF**          | No multivalued dependencies                    | Eliminate multivalued dependencies      |
-| **5NF**          | No join dependencies                           | Complete decomposition                  |
-| **6NF**          | Irreducible relations                          | Fully normalized temporal data          |
+| **1NF**           | Atomic values, no repeating groups             | Ensure atomicity                        |
+| **2NF**           | No partial dependency (on composite keys)      | Eliminate partial dependencies          |
+| **3NF**           | No transitive dependency                       | Eliminate transitive dependencies       |
+| **BCNF**          | Every determinant is a superkey                | Stricter version of 3NF                 |
+| **4NF**           | No multivalued dependencies                    | Eliminate multivalued dependencies      |
+| **5NF**           | No join dependencies                           | Complete decomposition                  |
+| **6NF**           | Irreducible relations                          | Fully normalized temporal data          |
 
 ---
 

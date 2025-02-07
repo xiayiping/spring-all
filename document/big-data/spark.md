@@ -46,12 +46,12 @@ When you use the `Spark` API, such as `spark.read().format("csv").load("data1.cs
 
 ### **4. Summary of Where Things Happen**
 
-| **Operation**                              | **Where It Happens**                                                                                     | **Data in Memory**                                                                                                     |
-|--------------------------------------------|----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| `spark.read.format("csv").load()`           | Data is read lazily from the file system (e.g., HDFS, local disk, S3).                                   | By default, data is not cached in memory; it is read in partitions as needed.                                          |
-| `.join`                                     | Executed on the Spark cluster (executors); involves shuffling and distributed computation.               | Spark tries to use memory, but may spill to disk if data is too large.                                                 |
-| `.except`                                   | Executed on the Spark cluster (executors); involves shuffling and distributed computation.               | Same as `.join`, Spark uses memory when available, but spills to disk if needed.                                       |
-| `.cache()` or `.persist()`                  | Explicitly caches the data in memory (or disk if memory is insufficient).                                | Data is cached in memory across the cluster, reducing re-reading of source files in subsequent operations.             |
+| **Operation**                     | **Where It Happens**                                                                       | **Data in Memory**                                                                                                     |
+|-----------------------------------|--------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `spark.read.format("csv").load()` | Data is read lazily from the file system (e.g., HDFS, local disk, S3).                     | By default, data is not cached in memory; it is read in partitions as needed.                                          |
+| `.join`                           | Executed on the Spark cluster (executors); involves shuffling and distributed computation. | Spark tries to use memory, but may spill to disk if data is too large.                                                 |
+| `.except`                         | Executed on the Spark cluster (executors); involves shuffling and distributed computation. | Same as `.join`, Spark uses memory when available, but spills to disk if needed.                                       |
+| `.cache()` or `.persist()`        | Explicitly caches the data in memory (or disk if memory is insufficient).                  | Data is cached in memory across the cluster, reducing re-reading of source files in subsequent operations.             |
 
 ---
 
