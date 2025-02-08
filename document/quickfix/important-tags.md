@@ -2,9 +2,9 @@
 
 ## 7. BegSeqNo
 
-## 16. EndSeqNo
-
 ## 8. BeginString (FIX4/4.2 // FIXT // LFIXT)
+
+## 16. EndSeqNo
 
 ## 34. MsgSeqNum
 
@@ -59,9 +59,21 @@ used for some case when need comment, like in 35=5 (logout), the field is used f
 
 ## 1. Account
 
+## 11. ClOrdID
+unique ID assigned by order routing firm. Uniqueness must be guaranteed within a single trading day.
+
+Firms should consider embedding a date within the field to assure uniqueness across days when submitting 
+multi-day orders.
+
 ## 15. Currency
 
+## 37. OrderID
+Unique ID assigned by broker.  Uniquess be guaranteed within a single trading day.
+
 ## 40. OrderType
+
+## 60. TransactTime
+Time of execution/order creation(in UTC), sed in **Execution Reports**
 
 ## 97. PossResend
 

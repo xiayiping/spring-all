@@ -325,3 +325,75 @@ If QuickFIX/J cannot find the requested messages in its message store (e.g., bec
 - Ensure your session configuration (`quickfix.cfg`) is set up properly, especially with `PersistMessages=Y` to enable proper message storage and retrieval.
 
 Let QuickFIX/J handle the resend logic for you, and only intervene if you have specific custom requirements.
+
+
+# Happens Before
+
+In the **Financial Information eXchange (FIX) protocol**, the **`SeqNum` (Sequence Number)** is used to maintain the order of messages between counterparties and detect gaps or duplicate messages in the communication stream. While the sequence number (`SeqNum`) **generally reflects the chronological order of messages**, it does **not strictly guarantee "happens-before" semantics** in all cases. Here's why:
+
+---
+
+## **1. How `SeqNum` Works in FIX Protocol**
+- Each FIX message is assigned a unique, incrementing `SeqNum` by the sender.
+- The receiving party uses the `SeqNum` to:
+    - Detect missing messages (e.g., gaps in sequence numbers).
+    - Detect duplicate messages (e.g., if a message with the same `SeqNum` is received again).
+- The `SeqNum` is essential for ensuring message synchronization and reliability across FIX sessions.
+
+**Key Properties of `SeqNum`:**
+- Messages with **smaller `SeqNum` values are sent earlier** by the sender.
+- The receiving application can use `SeqNum` to request retransmission (using the **ResendRequest (35=2)** message) if a message is missing.
+
+---
+
+## **2. Does `SeqNum` Guarantee "Happens-Before"?**
+The `SeqNum` **does not strictly guarantee "happens-before" semantics** in the sense that the actual business events corresponding to the messages may not always occur in the same order as their sequence numbers. This is due to a few reasons:
+
+### **2.1 Out-of-Order Delivery**
+In practice, network latencies, disconnections, or retransmissions can cause FIX messages to arrive **out of order** at the receiving side. For example:
+- Message `SeqNum=5` might arrive before `SeqNum=4` due to network delays or retries.
+- The FIX engine ensures that messages are processed in order (e.g., buffering out-of-sequence messages until the missing ones are received).
+
+### **2.2 Application-Level Semantics**
+While `SeqNum` ensures the order of messages at the protocol level, it **does not guarantee the temporal order of business actions**. For example:
+- A message with `SeqNum=10` might refer to an earlier business action than a message with `SeqNum=9`.
+- The sender's application may generate messages in a different order than the actual occurrence of business events.
+
+### **2.3 Retransmissions and Duplicates**
+If the sender retransmits messages (e.g., due to a **ResendRequest**), you might receive older messages with smaller sequence numbers after processing newer ones. This can occur when:
+- The receiver detects a gap and requests missing messages.
+- The sender retransmits messages, including duplicates or previously received messages.
+
+---
+
+## **3. Implications for Handling Execution Results**
+If you only process messages with larger `SeqNum` values and discard smaller ones, you risk:
+1. **Missing critical information**:
+    - For example, a missing `ExecReport` (35=8) with a smaller `SeqNum` might contain the final status of an earlier order.
+2. **Inconsistent application state**:
+    - Out-of-order delivery or retransmissions can result in gaps that need to be reconciled before processing messages.
+
+### **Best Practices for Handling Execution Results:**
+1. **Always Process Messages in Sequence Order**:
+    - Use `SeqNum` to ensure that messages are processed in order, even if they arrive out of order.
+    - If a gap is detected, issue a **ResendRequest (35=2)** to request the missing messages before processing subsequent ones.
+
+2. **Handle Retransmitted Messages Gracefully**:
+    - If a duplicate message with the same `SeqNum` is received, discard it (your FIX engine should already handle this).
+
+3. **Understand Business Semantics**:
+    - The order of `SeqNum` does not always correspond to the temporal order of business actions. Use other fields in the FIX message (e.g., `ExecType`, `LastPx`, `OrderID`) to interpret the meaning of execution results.
+
+4. **Message Gap Detection**:
+    - Ensure your FIX engine or application detects gaps in the `SeqNum` and requests retransmission when necessary.
+
+---
+
+## **4. Summary**
+- The `SeqNum` in FIX protocol **ensures message ordering at the protocol level** but does not strictly guarantee "happens-before" semantics for business events.
+- You cannot rely solely on processing messages with larger `SeqNum` values and discarding smaller ones. Instead, you must:
+    - Process messages in strict sequence order.
+    - Handle retransmissions, duplicates, and gaps appropriately.
+    - Use additional application-level fields to interpret the business meaning of the messages.
+
+By adhering to these practices, you can ensure consistency and correctness when handling execution results or other FIX messages.
