@@ -397,3 +397,113 @@ If you only process messages with larger `SeqNum` values and discard smaller one
     - Use additional application-level fields to interpret the business meaning of the messages.
 
 By adhering to these practices, you can ensure consistency and correctness when handling execution results or other FIX messages.
+
+# Typical way logout
+
+In the FIX protocol, disconnecting in a **normal and clean way** involves following the proper session-level procedure to ensure that both sides of the connection are aware of the session termination. The recommended way to disconnect is by sending a **Logout message (35=5)** and waiting for confirmation before closing the connection.
+
+---
+
+### **Steps to Disconnect Properly in FIX**
+
+#### **1. Send a Logout Message (35=5)**
+
+The party wishing to terminate the FIX session sends a `Logout` message to notify the counterparty of its intention to disconnect. The `Logout` message can optionally include a reason for logout in the `Text (58)` field.
+
+Example of a `Logout` message:
+```
+8=FIX.4.4|9=...|35=5|34=...|49=SENDER|56=TARGET|58=Normal session termination|10=...
+```
+
+#### **2. Wait for the Logout Acknowledgment**
+
+The counterparty should respond with its own `Logout` message to acknowledge the session termination. Once the `Logout` message is received from the counterparty, either side can safely close the connection.
+
+Example of a Logout acknowledgment:
+```
+8=FIX.4.4|9=...|35=5|34=...|49=TARGET|56=SENDER|58=Logout acknowledged|10=...
+```
+
+#### **3. Close the TCP Connection**
+
+After both parties have exchanged `Logout` messages, the connection can be cleanly closed by either side.
+
+---
+
+### **Code Example for Initiating Logout in QuickFIX/J**
+
+If you're using **QuickFIX/J**, here’s an example of how to properly disconnect:
+
+```java
+import quickfix.Session;
+import quickfix.SessionID;
+
+public class FixDisconnectExample {
+
+    public static void disconnectSession(SessionID sessionId) {
+        try {
+            Session session = Session.lookupSession(sessionId);
+            if (session != null && session.isLoggedOn()) {
+                System.out.println("Sending Logout message...");
+                session.logout("Normal session termination"); // Sends Logout message
+            } else {
+                System.out.println("Session is not logged on: " + sessionId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        // Replace with your SessionID
+        SessionID sessionId = new SessionID("FIX.4.4", "SENDER", "TARGET");
+        disconnectSession(sessionId);
+    }
+}
+```
+
+---
+
+### **Key Notes on Logout**
+
+1. **Mutual Logout Exchange**:
+    - Both parties must exchange `Logout (35=5)` messages to terminate the session cleanly.
+    - The session should not be considered terminated until the counterparty's `Logout` message is received.
+
+2. **Wait Before Closing the Connection**:
+    - If you close the TCP connection immediately after sending the `Logout` message, the counterparty may not have a chance to send its `Logout` message, leading to an improper session termination.
+    - Ideally, wait for the counterparty's `Logout` message before closing the connection.
+
+3. **Session Status After Logout**:
+    - Once the session is terminated, all session settings (e.g., sequence numbers) should be preserved to resume the session later unless you're resetting sequence numbers (`141=Y` during the next `Logon`).
+
+4. **Handling Counterparty-Initiated Logout**:
+    - If the counterparty sends a `Logout` message first, your FIX engine should respond with its own `Logout` message before closing the connection.
+
+---
+
+### **When to Use Logout**
+
+You should send a `Logout` message in the following scenarios:
+1. **Normal Session Termination**: The session has completed its purpose, and you want to disconnect cleanly.
+2. **Error Conditions**: If an error occurs that prevents the session from continuing (e.g., sequence number mismatch or business-level errors), you can send a `Logout` with an appropriate reason in the `Text (58)` field.
+
+---
+
+### **Improper Ways to Disconnect**
+Avoid the following actions, as they may lead to session issues:
+1. **Abruptly Closing the TCP Connection**:
+    - This can leave the counterparty unaware of the disconnection, possibly causing reconnection issues or out-of-sequence errors when the session resumes.
+
+2. **Skipping the Logout Message**:
+    - Not sending a `Logout` message violates the FIX protocol and can result in the counterparty considering the session as broken.
+
+---
+
+### **Conclusion**
+To disconnect in a normal way in the FIX protocol:
+1. Send a `Logout (35=5)` message.
+2. Wait for the counterparty to respond with its `Logout (35=5)` message.
+3. Close the TCP connection after the logout exchange is complete.
+
+This ensures a clean termination of the session and prevents issues when reconnecting or resuming the session later.
