@@ -26,6 +26,14 @@ multi-day orders.
 
 ## 20. ExecTransType
 
+0 = New
+
+1 = Cancel
+
+2 = Correct
+
+3 = Status
+
 ## 21. HandlInst
 1. Automated execution order, private, no Broker intervention
    - The order is processed entirely by electronic systems without any manual intervention by the broker.
@@ -64,7 +72,7 @@ Tag 55 could be omitted if stocks are identified via security identifiers. For p
 the default configuration is to expect a space between symbol and suffix (example: ‘BRK B’).
 However, we can also support tags 55 and 65, which would be 55=BRK / 65=B.
 
-## 31. Price
+## 31. LastPx
 
 ## 32. LastShares
 
@@ -256,6 +264,8 @@ I = Funari (Limit Day Order with unexecuted portion handled as Market On Close. 
 
 P = Pegged
 
+## 41. OrigClOrdId
+
 ## 43. PossDupFlag (Y/N)
 
 Y = re-transmission when 35=A (logon)
@@ -313,6 +323,16 @@ Time of execution/order creation(in UTC), sed in **Execution Reports**
 - .....
 
 ## 100. ExDestination
+
+## 102. CxlRejReason
+
+0 = Too late to cancel
+
+1 = Unknown order
+
+2 = Broker Option
+
+3 = Order already in Pending Cancel or Pending Replace status
 
 ## 103. OrderRejReason
 
