@@ -122,15 +122,15 @@ $$
 
 ## **3. PSNR vs. SSIM: A Comparative Overview**
 
-| **Aspect**               | **PSNR**                                      | **SSIM**                                              |
-|--------------------------|-----------------------------------------------|-------------------------------------------------------|
-| **Nature**               | Error-based (pixel-wise comparison)           | Perception-based (structural comparison)              |
-| **Value Range**          | Typically 20-50 dB                             | 0 to 1                                                |
-| **Alignment with Human Perception** | Low                                         | High                                                  |
-| **Sensitivity to Structural Changes** | Low                                         | High                                                  |
-| **Computational Complexity** | Low                                         | Higher                                                |
-| **Use Cases**            | When simplicity and computational speed are needed | When perceptual quality is paramount                  |
-| **Handling of Complex Distortions** | Limited                                       | Better handling of texture and structural distortions |
+| **Aspect**                            | **PSNR**                                            | **SSIM**                                                 |
+|---------------------------------------|-----------------------------------------------------|----------------------------------------------------------|
+| **Nature**                            | Error-based (pixel-wise comparison)                 | Perception-based (structural comparison)                 |
+| **Value Range**                       | Typically 20-50 dB                                  | 0 to 1                                                   |
+| **Alignment with Human Perception**   | Low                                                 | High                                                     |
+| **Sensitivity to Structural Changes** | Low                                                 | High                                                     |
+| **Computational Complexity**          | Low                                                 | Higher                                                   |
+| **Use Cases**                         | When simplicity and computational speed are needed  | When perceptual quality is paramount                     |
+| **Handling of Complex Distortions**   | Limited                                             | Better handling of texture and structural distortions    |
 
 
 ### **When to Use Which Metric**

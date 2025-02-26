@@ -25,12 +25,12 @@ These methods are part of the **`VarHandle` API**, introduced in **Java 9**, and
 
 The memory visibility guarantees of `getOpaque()` and `setOpaque()` are weaker than their counterparts `get()` and `set()`:
 
-| Method             | Visibility Guarantee                                                                 |
-|--------------------|--------------------------------------------------------------------------------------|
-| **`get()`**        | **Full visibility guarantee**: Always returns the latest value (uses volatile semantics). |
-| **`set()`**        | **Full visibility guarantee**: Ensures changes are visible to other threads immediately (volatile semantics). |
+| Method             | Visibility Guarantee                                                                                                           |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| **`get()`**        | **Full visibility guarantee**: Always returns the latest value (uses volatile semantics).                                      |
+| **`set()`**        | **Full visibility guarantee**: Ensures changes are visible to other threads immediately (volatile semantics).                  |
 | **`getOpaque()`**  | **Weak visibility guarantee**: May return a stale value. Updates are eventually visible to other threads, but not immediately. |
-| **`setOpaque()`**  | **Weak visibility guarantee**: Updates may not be immediately visible to other threads. |
+| **`setOpaque()`**  | **Weak visibility guarantee**: Updates may not be immediately visible to other threads.                                        |
 
 ### **Key Points:**
 - **`getOpaque()` and `setOpaque()` do not establish a happens-before relationship**. This means changes made with `setOpaque()` may not be visible right away to other threads calling `getOpaque()` (or `get()`).
@@ -963,14 +963,14 @@ The visibility of a value written using `setOpaque` to a value read using `getOp
 
 To understand the visibility guarantees of `setOpaque` and `getOpaque`, let’s compare them with other memory semantics:
 
-| **Operation**       | **Visibility Guarantee**                                                                                                   | **Memory Ordering**                                                                                           |
-|----------------------|---------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| **`setOpaque`**      | Eventually visible to all threads, but no guarantee of when.                                                             | Writes can be reordered with respect to other writes.                                                         |
-| **`getOpaque`**      | May return a stale value; eventually consistent.                                                                          | Reads can be reordered with respect to other reads or writes.                                                 |
-| **`setRelease`**     | Ensures visibility of the write to threads performing a subsequent `getAcquire`.                                          | All writes before `setRelease` are visible to other threads after the `setRelease`.                           |
-| **`getAcquire`**     | Guarantees that all writes that happened before a `setRelease` are visible when the `getAcquire` completes.               | Prevents reordering of subsequent operations with the `getAcquire` read.                                      |
-| **`setVolatile`**    | Immediately visible to all threads.                                                                                      | Full memory ordering: all writes before the `setVolatile` are visible to all threads after the `setVolatile`. |
-| **`getVolatile`**    | Guarantees that the latest value is read (no stale value).                                                               | Prevents reordering of prior operations with the `getVolatile` read.                                          |
+| **Operation**       | **Visibility Guarantee**                                                                                       | **Memory Ordering**                                                                                           |
+|---------------------|----------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| **`setOpaque`**     | Eventually visible to all threads, but no guarantee of when.                                                   | Writes can be reordered with respect to other writes.                                                         |
+| **`getOpaque`**     | May return a stale value; eventually consistent.                                                               | Reads can be reordered with respect to other reads or writes.                                                 |
+| **`setRelease`**    | Ensures visibility of the write to threads performing a subsequent `getAcquire`.                               | All writes before `setRelease` are visible to other threads after the `setRelease`.                           |
+| **`getAcquire`**    | Guarantees that all writes that happened before a `setRelease` are visible when the `getAcquire` completes.    | Prevents reordering of subsequent operations with the `getAcquire` read.                                      |
+| **`setVolatile`**   | Immediately visible to all threads.                                                                            | Full memory ordering: all writes before the `setVolatile` are visible to all threads after the `setVolatile`. |
+| **`getVolatile`**   | Guarantees that the latest value is read (no stale value).                                                     | Prevents reordering of prior operations with the `getVolatile` read.                                          |
 
 ### Key Point:
 - `setOpaque` and `getOpaque` are **weaker** than `setRelease`/`getAcquire` or `setVolatile`/`getVolatile`.
@@ -1048,14 +1048,14 @@ Here’s a detailed comparison and explanation:
 
 The **key differences** between plain and opaque operations are summarized in the table below:
 
-| Feature                     | **Plain (e.g., `get()`/`set()`)**                                     | **Opaque (e.g., `getOpaque()`/`setOpaque()`)**                                    |
-|-----------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| **Memory Ordering**          | No memory ordering guarantees.                                      | Prevents certain kinds of reordering but still weaker than `release/acquire`.     |
-| **Visibility**               | No guarantees about visibility to other threads.                   | Guarantees **eventual visibility** but not immediate visibility.                  |
-| **Effect on Cache Coherence**| Relies entirely on hardware cache coherence.                       | Relies on hardware cache coherence but ensures eventual propagation of updates.   |
-| **Reordering Allowed**       | Reads and writes can be freely reordered.                          | Reads and writes are weakly ordered (slightly stronger than plain).               |
-| **Performance**              | Fastest (lowest overhead).                                          | Slightly slower than plain but still faster than volatile or synchronized.        |
-| **Use Case**                 | Non-concurrent or thread-local access.                             | Concurrent scenarios where eventual consistency is acceptable.                    |
+| Feature                       | **Plain (e.g., `get()`/`set()`)**                | **Opaque (e.g., `getOpaque()`/`setOpaque()`)**                                    |
+|-------------------------------|--------------------------------------------------|-----------------------------------------------------------------------------------|
+| **Memory Ordering**           | No memory ordering guarantees.                   | Prevents certain kinds of reordering but still weaker than `release/acquire`.     |
+| **Visibility**                | No guarantees about visibility to other threads. | Guarantees **eventual visibility** but not immediate visibility.                  |
+| **Effect on Cache Coherence** | Relies entirely on hardware cache coherence.     | Relies on hardware cache coherence but ensures eventual propagation of updates.   |
+| **Reordering Allowed**        | Reads and writes can be freely reordered.        | Reads and writes are weakly ordered (slightly stronger than plain).               |
+| **Performance**               | Fastest (lowest overhead).                       | Slightly slower than plain but still faster than volatile or synchronized.        |
+| **Use Case**                  | Non-concurrent or thread-local access.           | Concurrent scenarios where eventual consistency is acceptable.                    |
 
 ---
 
@@ -1164,12 +1164,12 @@ System.out.println(value); // Will eventually print 42, but not guaranteed immed
 
 ## **6. Summary**
 
-| **Aspect**              | **Plain**                                              | **Opaque**                                               |
-|--------------------------|-------------------------------------------------------|----------------------------------------------------------|
-| **Visibility**           | No guarantees; may observe stale values indefinitely. | Guarantees **eventual visibility** (via cache coherence). |
-| **Memory Ordering**      | No guarantees; reads/writes can be freely reordered.  | Prevents reordering of opaque reads/writes but is weaker than acquire/release. |
-| **Performance**          | Fastest (no synchronization overhead).               | Slightly slower than plain but more efficient than volatile. |
-| **Use Case**             | Non-concurrent or thread-local data.                 | Concurrent data where eventual consistency is acceptable. |
+| **Aspect**            | **Plain**                                             | **Opaque**                                                                     |
+|-----------------------|-------------------------------------------------------|--------------------------------------------------------------------------------|
+| **Visibility**        | No guarantees; may observe stale values indefinitely. | Guarantees **eventual visibility** (via cache coherence).                      |
+| **Memory Ordering**   | No guarantees; reads/writes can be freely reordered.  | Prevents reordering of opaque reads/writes but is weaker than acquire/release. |
+| **Performance**       | Fastest (no synchronization overhead).                | Slightly slower than plain but more efficient than volatile.                   |
+| **Use Case**          | Non-concurrent or thread-local data.                  | Concurrent data where eventual consistency is acceptable.                      |
 
 In summary:
 - **Plain operations** are the weakest and most efficient but offer no visibility or ordering guarantees, making them suitable for non-concurrent scenarios.

@@ -20,13 +20,13 @@ Together, debit and credit entries must always balance in a double-entry account
 
 The effect of debits and credits depends on the type of account being affected. Here's a breakdown of how debits and credits affect the **five major types of accounts**:
 
-| **Account Type**       | **Debit (Dr)**                  | **Credit (Cr)**                   |
-|------------------------|---------------------------------|-----------------------------------|
-| **Assets**             | Increase                        | Decrease                         |
-| **Liabilities**        | Decrease                        | Increase                         |
-| **Equity (Capital)**   | Decrease                        | Increase                         |
-| **Revenue (Income)**   | Decrease                        | Increase                         |
-| **Expenses**           | Increase                        | Decrease                         |
+| **Account Type**       | **Debit (Dr)**     | **Credit (Cr)**       |
+|------------------------|--------------------|-----------------------|
+| **Assets**             | Increase           | Decrease              |
+| **Liabilities**        | Decrease           | Increase              |
+| **Equity (Capital)**   | Decrease           | Increase              |
+| **Revenue (Income)**   | Decrease           | Increase              |
+| **Expenses**           | Increase           | Decrease              |
 
 ---
 
@@ -118,15 +118,15 @@ This helps to recall which accounts are increased by debits and which are increa
 
 ### 7. **Summary of Debit and Credit Differences**
 
-| **Aspect**                     | **Debit (Dr)**                           | **Credit (Cr)**                          |
-|---------------------------------|------------------------------------------|------------------------------------------|
-| **Location in Journal Entry**   | Left side                                | Right side                               |
-| **Effect on Assets**            | Increases                                | Decreases                                |
-| **Effect on Liabilities**       | Decreases                                | Increases                                |
-| **Effect on Equity**            | Decreases                                | Increases                                |
-| **Effect on Revenue**           | Decreases                                | Increases                                |
-| **Effect on Expenses**          | Increases                                | Decreases                                |
-| **Used to Record**              | Inflows (for assets), expenses           | Outflows (for assets), revenues, liabilities |
+| **Aspect**                    | **Debit (Dr)**                 | **Credit (Cr)**                              |
+|-------------------------------|--------------------------------|----------------------------------------------|
+| **Location in Journal Entry** | Left side                      | Right side                                   |
+| **Effect on Assets**          | Increases                      | Decreases                                    |
+| **Effect on Liabilities**     | Decreases                      | Increases                                    |
+| **Effect on Equity**          | Decreases                      | Increases                                    |
+| **Effect on Revenue**         | Decreases                      | Increases                                    |
+| **Effect on Expenses**        | Increases                      | Decreases                                    |
+| **Used to Record**            | Inflows (for assets), expenses | Outflows (for assets), revenues, liabilities |
 
 ---
 

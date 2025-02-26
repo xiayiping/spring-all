@@ -64,13 +64,13 @@ Here’s the list of the four layers, moving from the **inside (core)** to the *
 
 ```
 +--------------------------+
-|     User Interface (UI)   |  <-- Outermost: Controllers, Views, APIs
+|    User Interface (UI)   |  <-- Outermost: Controllers, Views, APIs
 +--------------------------+
-|   Application Layer       |  <-- Use Cases, DTOs, Orchestration
+|  Application Layer       |  <-- Use Cases, DTOs, Orchestration
 +--------------------------+
-|   Domain Layer (Core)     |  <-- Entities, Aggregates, Domain Services
+|  Domain Layer (Core)     |  <-- Entities, Aggregates, Domain Services
 +--------------------------+
-| Infrastructure Layer      |  <-- Persistence, Repositories, External Adapters
+| Infrastructure Layer     |  <-- Persistence, Repositories, External Adapters
 +--------------------------+
 ```
 
@@ -189,13 +189,13 @@ This service orchestrates the workflow of placing an order: checking inventory, 
 
 ### Summary of Practical Differences:
 
-| **Aspect**                      | **Domain Service (Business Logic)**                         | **Application Service (Non-Business Logic)**              |
-|----------------------------------|-------------------------------------------------------------|-----------------------------------------------------------|
-| **Focus**                        | Implements core business rules                              | Orchestrates workflows and coordinates tasks               |
-| **Reusability**                  | Reusable across multiple use cases                          | Often specific to a particular use case                    |
-| **Dependencies**                 | No dependencies on external systems or infrastructure       | May depend on external systems, repositories, or infrastructure |
-| **Interaction with Domain Models** | Directly manipulates domain entities, aggregates, or value objects | Calls domain services and repositories to complete use cases |
-| **Example**                      | `DiscountService`, `LoanApprovalService`                    | `OrderService`, `UserRegistrationService`                  |
+| **Aspect**                         | **Domain Service (Business Logic)**                                | **Application Service (Non-Business Logic)**                    |
+|------------------------------------|--------------------------------------------------------------------|-----------------------------------------------------------------|
+| **Focus**                          | Implements core business rules                                     | Orchestrates workflows and coordinates tasks                    |
+| **Reusability**                    | Reusable across multiple use cases                                 | Often specific to a particular use case                         |
+| **Dependencies**                   | No dependencies on external systems or infrastructure              | May depend on external systems, repositories, or infrastructure |
+| **Interaction with Domain Models** | Directly manipulates domain entities, aggregates, or value objects | Calls domain services and repositories to complete use cases    |
+| **Example**                        | `DiscountService`, `LoanApprovalService`                           | `OrderService`, `UserRegistrationService`                       |
 
 By applying these criteria, you can more easily determine whether a service should be categorized as a **domain service** or an **application service**.
 

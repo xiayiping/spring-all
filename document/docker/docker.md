@@ -226,17 +226,17 @@ Docker and Podman are both containerization tools that allow you to create, mana
 
 ## Conclusion
 
-| **Feature**                | **Docker**                                   | **Podman**                                 |
-|----------------------------|----------------------------------------------|--------------------------------------------|
-| **Architecture**            | Daemon-based (root required)                 | Daemonless (rootless support)              |
-| **CLI**                     | Docker CLI                                  | Docker-compatible CLI                     |
-| **Image Compatibility**     | OCI-compliant, uses Docker Hub               | OCI-compliant, supports Docker Hub         |
-| **Security**                | Root daemon, supports rootless mode          | Rootless by design, more secure            |
-| **Pod Support**             | No native pod support                       | Native pod support (Kubernetes-like)       |
-| **Kubernetes Integration**  | Integrated with Docker Desktop               | Strong Kubernetes integration              |
-| **Container Lifecycle**     | Docker Compose, Docker Swarm                 | Systemd integration, Podman Compose        |
-| **OS Support**              | Linux, macOS, Windows (via Docker Desktop)   | Primarily Linux, macOS/Windows via VM      |
-| **Community**               | Large community, Docker Hub, Docker Desktop  | Smaller but growing, Red Hat ecosystem     |
+| **Feature**                | **Docker**                                  | **Podman**                             |
+|----------------------------|---------------------------------------------|----------------------------------------|
+| **Architecture**           | Daemon-based (root required)                | Daemonless (rootless support)          |
+| **CLI**                    | Docker CLI                                  | Docker-compatible CLI                  |
+| **Image Compatibility**    | OCI-compliant, uses Docker Hub              | OCI-compliant, supports Docker Hub     |
+| **Security**               | Root daemon, supports rootless mode         | Rootless by design, more secure        |
+| **Pod Support**            | No native pod support                       | Native pod support (Kubernetes-like)   |
+| **Kubernetes Integration** | Integrated with Docker Desktop              | Strong Kubernetes integration          |
+| **Container Lifecycle**    | Docker Compose, Docker Swarm                | Systemd integration, Podman Compose    |
+| **OS Support**             | Linux, macOS, Windows (via Docker Desktop)  | Primarily Linux, macOS/Windows via VM  |
+| **Community**              | Large community, Docker Hub, Docker Desktop | Smaller but growing, Red Hat ecosystem |
 
 Both Docker and Podman are powerful containerization tools, but the choice between them depends on your specific use cases:
 
