@@ -366,3 +366,215 @@ This is simpler but doesn't use delegation (`by`). The `LoggingDelegate` example
 - **Code Reusability**: You can apply the same behavior (e.g., logging, caching, validation) to multiple properties without rewriting the logic every time.
 - **Encapsulation**: The logic for `get` and `set` behavior is encapsulated in the delegate class, keeping your main class cleaner.
 
+# Extension Function
+```kotlin
+
+fun MutableList<Int>.swap(index1: Int, index2: Int) {
+    val tmp = this[index1] // 'this' corresponds to the list
+    this[index1] = this[index2]
+    this[index2] = tmp
+}
+```
+
+Extensions do not actually modify the classes they extend. By defining an extension, you are not inserting new members into a class, only making new functions callable with the dot-notation on variables of this type.
+
+Extension functions are dispatched statically. So which extension function is called is already known at compile time based on the receiver type. For example:
+
+```kotlin
+open class Shape
+class Rectangle: Shape()
+
+fun Shape.getName() = "Shape"
+fun Rectangle.getName() = "Rectangle"
+
+fun printClassName(s: Shape) {
+    println(s.getName())
+}
+
+printClassName(Rectangle())
+
+```
+This example prints **Shape**, because the extension function called depends only on the declared type of the 
+parameter s, which is the Shape class.
+
+If a class has a member function, and an extension function is defined which has the same receiver type, the same name, 
+and is applicable to given arguments, the member always wins. For example:
+
+```kotlin
+class Example {
+    fun printFunctionType() { println("Class method") }
+}
+
+fun Example.printFunctionType() { println("Extension function") }
+
+Example().printFunctionType()
+
+```
+
+This code prints **Class method**.
+
+However, it's perfectly OK for extension functions to overload member functions that have the same name but a different signature:
+
+```kotlin
+
+class Example {
+    fun printFunctionType() { println("Class method") }
+}
+
+fun Example.printFunctionType(i: Int) { println("Extension function #$i") }
+
+Example().printFunctionType(1)
+
+```
+
+### Nullable receiver
+
+Note that extensions can be defined with a nullable receiver type. 
+These extensions can be called on an object variable even if its value is null. 
+If the receiver is null, then this is also null. So when defining an extension with a nullable receiver type, 
+we recommend performing a this == null check inside the function body to avoid compiler errors.
+
+You can call toString() in Kotlin without checking for null, as the check already happens inside the extension function:
+
+```kotlin
+fun Any?.toString(): String {
+    if (this == null) return "null"
+    // After the null check, 'this' is autocast to a non-nullable type, so the toString() below
+    // resolves to the member function of the Any class
+    return toString()
+}
+
+```
+
+### reference
+
+for `Extention Properties`, `Companion object extensions`, `Scope of extensions` , `Declaring extensions as members`
+
+https://kotlinlang.org/docs/extensions.html#scope-of-extensions
+
+
+# By lazy and lateinit
+
+In Kotlin, `by lazy` and `lateinit` are two different ways to handle non-null properties that are initialized later, but they have distinct use cases and behaviors. Here's a detailed comparison:
+
+---
+
+### **1. `by lazy`**
+- **Definition**: `by lazy` is a property delegate used to initialize a property **lazily**, meaning the property will be initialized **only when it is accessed for the first time**.
+- **Key Characteristics**:
+    - The property is **read-only** (`val`).
+    - The initialization block is executed only once and the value is cached for future access.
+    - Thread-safe by default (unless explicitly set otherwise).
+    - Useful for properties that are expensive to compute or may not always be needed.
+
+- **Usage**:
+  ```kotlin
+  val lazyValue: String by lazy {
+      println("Initializing lazyValue...")
+      "Hello, Lazy Initialization"
+  }
+
+  fun main() {
+      println("Before accessing lazyValue")
+      println(lazyValue) // Initialization happens here
+      println(lazyValue) // Cached value is used
+  }
+
+  // Output:
+  // Before accessing lazyValue
+  // Initializing lazyValue...
+  // Hello, Lazy Initialization
+  // Hello, Lazy Initialization
+  ```
+
+- **Use Case**:
+    - When you want to initialize a property lazily and make it immutable (`val`).
+    - For example, initializing a property that depends on a database query or a computation that may not always be needed.
+
+---
+
+### **2. `lateinit`**
+- **Definition**: `lateinit` is a keyword that allows you to declare a **non-null `var` property** without initializing it at the time of declaration. The property must be initialized before it is accessed, otherwise, it will throw an exception.
+- **Key Characteristics**:
+    - The property is **mutable** (`var`).
+    - You must manually initialize it before accessing it.
+    - Cannot be used with `val` or primitive types (e.g., `Int`, `Double`).
+    - Throws an exception (`UninitializedPropertyAccessException`) if accessed before initialization.
+
+- **Usage**:
+  ```kotlin
+  lateinit var lateinitValue: String
+
+  fun main() {
+      println("Before initializing lateinitValue")
+      lateinitValue = "Hello, Late Initialization"
+      println(lateinitValue) // Access after manual initialization
+  }
+  ```
+
+- **Use Case**:
+    - When you need to initialize a mutable property (`var`) later, but you're sure it will be initialized before usage.
+    - Commonly used in Android development for properties like views (e.g., `TextView`, `RecyclerView`) where initialization happens after `onCreate`.
+
+---
+
+### **Key Differences**
+
+| Feature                 | `by lazy`                                       | `lateinit`                                      |
+|-------------------------|------------------------------------------------|------------------------------------------------|
+| **Property type**       | `val` (immutable, read-only)                   | `var` (mutable)                                |
+| **Initialization**      | Lazy (on first access)                         | Manual (must be explicitly set before access)  |
+| **Primitive types**     | Supported                                      | Not supported                                  |
+| **Thread-safety**       | Thread-safe by default                         | Not thread-safe                                |
+| **Exception Handling**  | No exceptions (value is computed on access)    | Throws `UninitializedPropertyAccessException` if accessed before initialization |
+| **Use Case**            | For expensive computations or immutable properties | For mutable properties that must be initialized later |
+
+---
+
+### **When to Use What?**
+
+- Use **`by lazy`** when:
+    - The property is immutable (`val`).
+    - The initialization is expensive or conditional and you want it to be initialized only when needed.
+    - Thread-safety is important (e.g., shared resources).
+
+- Use **`lateinit`** when:
+    - The property is mutable (`var`).
+    - You need to initialize it later in the lifecycle (e.g., in Android `onCreate()` or `onViewCreated()`).
+    - You're certain that the property will be initialized before accessing it.
+
+---
+
+### **Example in Android**
+
+- **`lateinit` Example**:
+  ```kotlin
+  class MainActivity : AppCompatActivity() {
+      lateinit var textView: TextView
+
+      override fun onCreate(savedInstanceState: Bundle?) {
+          super.onCreate(savedInstanceState)
+          setContentView(R.layout.activity_main)
+
+          textView = findViewById(R.id.textView) // Initialize later
+          textView.text = "Hello, World!"
+      }
+  }
+  ```
+
+- **`by lazy` Example**:
+  ```kotlin
+  class MainActivity : AppCompatActivity() {
+      val database by lazy { Database.getInstance(this) } // Initialize lazily
+
+      override fun onCreate(savedInstanceState: Bundle?) {
+          super.onCreate(savedInstanceState)
+          setContentView(R.layout.activity_main)
+
+          database.queryData() // Database is initialized here
+      }
+  }
+  ```
+
+In summary, use `by lazy` for **lazy immutable properties** and `lateinit` for **mutable properties that are initialized later**. Choose based on the requirements of your use case!
+
