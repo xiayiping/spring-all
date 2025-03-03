@@ -45,6 +45,11 @@ sudo journalctl -xeu apigw.service
 sudo systemctl set-environment MY_ENV_VAR="ttt" && sudo systemctl restart go-app && sudo systemctl unset-environment MY_ENV_VAR
 sudo systemctl show-environment
 
+## to remove service
+systemctl stop service
+systemctl disable service
+systemctl mask service
+
 ```
 
 ## sudo-er add
