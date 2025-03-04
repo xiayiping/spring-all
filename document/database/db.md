@@ -80,12 +80,12 @@ The **SQL standard** defines four isolation levels, which strike a balance betwe
 
 ## **1. Isolation Levels Overview**
 
-| Isolation Level         | Dirty Reads  | Non-Repeatable Reads   | Phantom Reads   | Description                                                              |
-|-------------------------|--------------|------------------------|-----------------|--------------------------------------------------------------------------|
-| **Read Uncommitted**    | ✅ Allowed    | ✅ Allowed              | ✅ Allowed       | Transactions can see uncommitted changes made by others (low isolation). |
-| **Read Committed**      | ❌ Prevented  | ✅ Allowed              | ✅ Allowed       | Transactions only see committed changes by others.                       |
-| **Repeatable Read**     | ❌ Prevented  | ❌ Prevented            | ✅ Allowed       | Ensures the same data is read consistently within a transaction.         |
-| **Serializable**        | ❌ Prevented  | ❌ Prevented            | ❌ Prevented     | Fully isolates transactions (highest isolation, but lowest performance). |
+| Isolation Level      | Dirty Reads  | Non-Repeatable Reads   | Phantom Reads   | Description                                                              |
+|----------------------|--------------|------------------------|-----------------|--------------------------------------------------------------------------|
+| **Read Uncommitted** | ✅ Allowed    | ✅ Allowed              | ✅ Allowed       | Transactions can see uncommitted changes made by others (low isolation). |
+| **Read Committed**   | ❌ Prevented  | ✅ Allowed              | ✅ Allowed       | Transactions only see committed changes by others.                       |
+| **Repeatable Read**  | ❌ Prevented  | ❌ Prevented            | ✅ Allowed       | Ensures the same data is read consistently within a transaction.         |
+| **Serializable**     | ❌ Prevented  | ❌ Prevented            | ❌ Prevented     | Fully isolates transactions (highest isolation, but lowest performance). |
 
 ---
 

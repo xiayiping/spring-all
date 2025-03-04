@@ -459,3 +459,50 @@ CUSIP and ISIN are standardized codes used to uniquely identify financial securi
 
 ### **Conclusion**
 Both **CUSIP** and **ISIN** are essential tools in the global financial ecosystem for uniquely identifying securities. While CUSIP is specific to U.S. and Canadian markets, ISIN is the international standard, often incorporating CUSIP for U.S.-issued securities. These identifiers ensure efficient trading, settlement, and regulatory reporting in financial markets worldwide.
+
+
+# Fill or Kill 
+
+In stock trading, **"Fill or Kill" (FOK)** and **"Immediate or Cancel" (IOC)** are two types of time-in-force conditions you can apply to an order. These conditions specify how long an order remains active in the market and under what circumstances it should be executed or canceled. Here's a breakdown of each:
+
+---
+
+### **1. Fill or Kill (FOK)**
+
+- **Definition**: A "Fill or Kill" order must be **executed immediately and in full** or else it is canceled entirely. Partial fills are not allowed.
+
+- **Purpose**: This type of order is typically used by traders who want to ensure that they get the entire quantity of shares they order (at the specified price or better) without delay. If the market cannot fulfill the entire order instantly, it is canceled.
+
+- **Use Case**: FOK orders are often used in large institutional trades, where the buyer or seller wants to avoid getting only a partial fill that could disrupt their trading strategy or result in inefficiencies.
+
+- **Example**:
+    - You place an FOK order to buy 1,000 shares of a stock at $100.
+    - If the market has fewer than 1,000 shares available at $100 or better, the entire order is canceled immediately.
+
+---
+
+### **2. Immediate or Cancel (IOC)**
+
+- **Definition**: An "Immediate or Cancel" order must be **executed immediately**, but unlike FOK, **partial fills are allowed**. Any portion of the order that cannot be filled immediately is canceled.
+
+- **Purpose**: This type of order is for traders who are willing to accept a partial execution of their order but don't want the unfilled portion to linger in the market.
+
+- **Use Case**: IOC orders are often used to quickly capture available liquidity without committing to waiting for the rest of the order to be filled.
+
+- **Example**:
+    - You place an IOC order to buy 1,000 shares of a stock at $100.
+    - If only 700 shares are available at $100 or better, 700 shares are purchased, and the remaining 300 shares are canceled.
+
+---
+
+### **Key Differences Between FOK and IOC**
+
+| **Aspect**                | **Fill or Kill (FOK)**                      | **Immediate or Cancel (IOC)**               |
+|---------------------------|---------------------------------------------|---------------------------------------------|
+| **Execution Requirement** | Must be fully filled or canceled            | Can be partially filled; remainder canceled |
+| **Speed**                 | Requires immediate execution                | Requires immediate execution                |
+| **Use Case**              | Large trades where completeness is critical | Quick trades with partial fills acceptable  |
+
+---
+
+Both FOK and IOC orders are useful tools for traders who need precise control over how and when their trades are executed. They are often used in fast-moving markets or when trading large quantities of stock.

@@ -1174,3 +1174,231 @@ System.out.println(value); // Will eventually print 42, but not guaranteed immed
 In summary:
 - **Plain operations** are the weakest and most efficient but offer no visibility or ordering guarantees, making them suitable for non-concurrent scenarios.
 - **Opaque operations** guarantee eventual visibility with weak memory ordering, making them a lightweight option for relaxed concurrency scenarios.
+
+# why synchronized is heavy 
+
+The **`synchronized`** keyword in Java is considered "heavier" than alternatives like **AQS (AbstractQueuedSynchronizer)** or **`Atomic` operations (`setRelease()`/`getAcquire()`)** because of how it works under the hood. To understand this, let's break it down:
+
+---
+
+## 1. **What Happens Underneath `synchronized`?**
+The `synchronized` keyword relies on the underlying **monitor locks** (provided by the JVM) to ensure mutual exclusion. Here's what makes it heavier:
+
+### a) **Monitor Lock Acquisition and Release**
+- When a thread enters a synchronized block, it attempts to acquire a **monitor lock** on the object being synchronized.
+- If the lock is already held by another thread, the thread is blocked and placed into a waiting queue managed by the JVM.
+- Once the thread holding the lock releases it, the waiting thread is notified and allowed to proceed.
+
+This involves multiple steps:
+- Locking and unlocking involve **native calls** (to the operating system) that manage the thread states.
+- When contention occurs, threads may be put into a **waiting state** and later woken up, which requires interaction with the OS-level scheduler.
+
+### b) **Kernel-Level Context Switching**
+- If a thread is blocked while waiting for a monitor lock, the JVM may need to interact with the operating system to schedule other threads.
+- This interaction involves **context switching**, which is expensive because the CPU must save the current thread's state and restore another thread's state.
+
+### c) **Biased Locking and Lock Inflation**
+To optimize for performance, the JVM uses **biased locking** and **lightweight locks**:
+- **Biased Locking**: If a lock is always accessed by the same thread, the JVM "biases" the lock to that thread, avoiding unnecessary synchronization overhead.
+- **Lightweight Locking**: If contention is detected, the JVM upgrades the lock to a heavier **monitor lock**.
+- **Lock Inflation**: When multiple threads contend for the same lock, the JVM inflates the lock, making it heavier and more expensive to acquire.
+
+These optimizations add complexity, and when contention occurs, the cost increases significantly.
+
+---
+
+## 2. **How `AQS` and `Atomic` Operations Work**
+Alternatives like **AQS** (used in `ReentrantLock`, `Semaphore`, etc.) and **`Atomic` classes** (like `AtomicInteger`) work differently, avoiding some of the overhead associated with `synchronized`.
+
+### a) **Atomic Operations**
+- Classes like `AtomicInteger` use **Compare-And-Swap (CAS)** instructions provided by the CPU.
+- CAS is a hardware-level instruction that atomically compares a value in memory with an expected value and updates it if they match.
+- CAS operations are **non-blocking** and do not require threads to be suspended or placed into a wait queue, avoiding the overhead of context switching.
+- The `setRelease()`/`getAcquire()` methods rely on **memory ordering semantics** (relaxed memory ordering), which are lighter than full synchronization.
+
+### b) **AQS (AbstractQueuedSynchronizer)**
+- AQS is a framework for building locks and synchronizers like `ReentrantLock`, `CountDownLatch`, and `Semaphore`.
+- It uses **CAS** for lightweight, non-blocking synchronization.
+- When contention occurs, AQS uses a **FIFO wait queue** to manage blocked threads, but it is more efficient than the monitor-based locking used by `synchronized`.
+- Unlike `synchronized`, AQS allows for more fine-grained control over thread scheduling, reducing contention and overhead.
+
+---
+
+## 3. **Why Is `synchronized` Heavier?**
+The key reasons `synchronized` is heavier compared to CAS or AQS-based mechanisms are:
+
+### a) **Blocking vs. Non-Blocking**
+- `synchronized` relies on blocking mechanisms where threads are suspended and require OS-level intervention (context switching).
+- CAS and AQS use non-blocking mechanisms (like spin-locks or CAS), which are lighter and avoid thread suspension.
+
+### b) **Monitor Locks vs. CAS**
+- Monitor locks used by `synchronized` involve complex JVM-level management, including biased locking, lightweight locking, and lock inflation.
+- CAS-based synchronization directly leverages hardware instructions, which are faster and more efficient.
+
+### c) **Thread State Management**
+- `synchronized` interacts with the OS to manage thread states (e.g., blocked, waiting, runnable), which adds overhead.
+- CAS and AQS avoid this by using busy-wait or spin mechanisms until contention is resolved.
+
+### d) **Memory Fences**
+- `synchronized` enforces stricter memory ordering guarantees than `setRelease()`/`getAcquire()`, requiring full memory barriers.
+- `setRelease()`/`getAcquire()` rely on **relaxed memory ordering**, which is lighter but sufficient for many use cases.
+
+---
+
+## 4. **When to Use `synchronized` vs. CAS/AQS?**
+- Use `synchronized` when simplicity is more important than performance or when dealing with complex critical sections.
+- Use CAS-based operations or AQS-based locks when performance is critical, and contention is likely.
+
+---
+
+## 5. **Summary Table**
+
+| Feature                 | `synchronized`        | CAS (`Atomic`)      | AQS (`ReentrantLock`)  |
+|-------------------------|-----------------------|---------------------|------------------------|
+| **Lock Type**           | Monitor-based         | Compare-And-Swap    | CAS + Wait Queue       |
+| **Blocking?**           | Yes (OS-level)        | No                  | Blocking (as needed)   |
+| **Thread Suspension?**  | Yes                   | No                  | Only on contention     |
+| **Memory Ordering**     | Strict (full fences)  | Relaxed (weaker)    | Configurable           |
+| **Performance**         | Heavier               | Lighter             | Moderate               |
+
+--- 
+
+By avoiding blocking and leveraging hardware instructions, CAS and AQS-based mechanisms are designed to minimize contention and improve performance, making them lighter than `synchronized`.
+
+
+# Thread State
+
+In Java, threads can be in one of several states during their lifecycle. These states are defined in the `java.lang.Thread.State` enum and represent the possible states a thread can be in at any given time. Here are the **Java thread states**, along with what they mean and how a thread transitions between them:
+
+---
+
+### 1. **NEW**
+- **Description**: The thread has been created but has not yet started.
+- **Characteristics**:
+    - The thread object has been instantiated using `new Thread()`, but `start()` has not been called.
+- **Example**:
+  ```java
+  Thread t = new Thread(); // Thread is in NEW state
+  ```
+- **Transition**:
+    - When `start()` is called, the thread transitions to the **RUNNABLE** state.
+
+---
+
+### 2. **RUNNABLE**
+- **Description**: The thread is ready to run and is either running or waiting for CPU time.
+- **Characteristics**:
+    - The thread has been started using `start()` and is now eligible to run.
+    - The thread may not always be actively executing because it depends on the JVM thread scheduler and CPU availability.
+- **Example**:
+  ```java
+  t.start(); // Thread is in RUNNABLE state
+  ```
+- **Transition**:
+    - The thread can transition between **RUNNABLE** and **WAITING**, **TIMED_WAITING**, or **BLOCKED** depending on what the thread is doing.
+
+---
+
+### 3. **BLOCKED**
+- **Description**: The thread is waiting to acquire a monitor lock to enter a synchronized block or method.
+- **Characteristics**:
+    - A thread enters the BLOCKED state when it tries to enter a synchronized block/method but another thread is already holding the required monitor lock.
+- **Example**:
+  ```java
+  synchronized (lock) {
+      // Thread A is inside the synchronized block
+      // Thread B will be BLOCKED until Thread A releases the lock
+  }
+  ```
+- **Transition**:
+    - The thread transitions to **RUNNABLE** once it acquires the monitor lock.
+
+---
+
+### 4. **WAITING**
+- **Description**: The thread is waiting indefinitely for another thread to perform a specific action.
+- **Characteristics**:
+    - A thread is in the WAITING state when it calls methods like:
+        - `Object.wait()` (without a timeout)
+        - `Thread.join()` (without a timeout)
+        - `LockSupport.park()`
+- **Example**:
+  ```java
+  synchronized (lock) {
+      lock.wait(); // Thread enters WAITING state
+  }
+  ```
+- **Transition**:
+    - The thread transitions to **RUNNABLE** when it is notified (`notify()`/`notifyAll()`), interrupted, or the action it is waiting for is completed.
+
+---
+
+### 5. **TIMED_WAITING**
+- **Description**: The thread is waiting for another thread to perform a specific action, but only for a specified amount of time.
+- **Characteristics**:
+    - A thread is in the TIMED_WAITING state when it calls methods like:
+        - `Thread.sleep(milliseconds)`
+        - `Object.wait(milliseconds)`
+        - `Thread.join(milliseconds)`
+        - `LockSupport.parkNanos(nanoseconds)`
+        - `LockSupport.parkUntil(deadline)`
+- **Example**:
+  ```java
+  Thread.sleep(1000); // Thread enters TIMED_WAITING state for 1 second
+  ```
+- **Transition**:
+    - The thread transitions to **RUNNABLE** when the specified time elapses or the expected action occurs (e.g., `notify()`).
+
+---
+
+### 6. **TERMINATED**
+- **Description**: The thread has completed execution and exited.
+- **Characteristics**:
+    - A thread enters the TERMINATED state after the `run()` or `call()` method has finished executing.
+    - The thread cannot be restarted once it reaches this state.
+- **Example**:
+  ```java
+  class MyThread extends Thread {
+      public void run() {
+          System.out.println("Thread is running...");
+      }
+  }
+  MyThread t = new MyThread();
+  t.start();
+  // After completing, the thread enters TERMINATED state
+  ```
+- **Transition**:
+    - A thread transitions to TERMINATED only once, and it remains in this state permanently.
+
+---
+
+## **Thread State Transitions Diagram**
+
+Here’s a simplified diagram of how a thread moves between states:
+
+```
+NEW --> RUNNABLE --> TERMINATED
+             |          ^
+             v          |
+           BLOCKED ---- |
+             |          |
+             v          v
+          WAITING / TIMED_WAITING
+```
+
+---
+
+## **Summary Table**
+
+| **State**         | **Description**                               | **How to Enter**                             | **How to Exit**                           |
+|-------------------|-----------------------------------------------|----------------------------------------------|-------------------------------------------|
+| **NEW**           | Thread is created but not yet started.        | Create a new thread (`new Thread()`).        | Call `start()`.                           |
+| **RUNNABLE**      | Thread is ready to run or running.            | Call `start()`.                              | CPU scheduler determines when it runs.    |
+| **BLOCKED**       | Thread is waiting for a monitor lock.         | Try to enter a synchronized block or method. | Acquires the lock.                        |
+| **WAITING**       | Thread is waiting indefinitely for an action. | Call `wait()`, `join()`, or `park()`.        | Notify (`notify()`, `interrupt()`, etc.). |
+| **TIMED_WAITING** | Thread is waiting for a specific time.        | Call `sleep()`, `wait(timeout)`, etc.        | Timeout expires or action occurs.         |
+| **TERMINATED**    | Thread has finished execution.                | Run method completes.                        | Thread remains in this state permanently. |
+
+---
+
+Understanding thread states is crucial for debugging concurrency issues and optimizing multithreaded applications. Each state reflects exactly what the thread is doing at a given point in time.
