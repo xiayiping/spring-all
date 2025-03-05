@@ -18,13 +18,15 @@ unique ID assigned by order routing firm. Uniqueness must be guaranteed within a
 Firms should consider embedding a date within the field to assure uniqueness across days when submitting
 multi-day orders.
 
+## 14. CumQty
+
 ## 15. Currency
 
 ## 16. EndSeqNo
 
 ## 17. ExecID
 
-## 20. ExecTransType
+## 20. ExecTransType (deprecated at 4.4 for 150 ExecType)
 
 0 = New
 
@@ -398,6 +400,8 @@ D = Restated (ExecutionRpt sent unsolicited by sellside, with ExecRestatementRea
 
 E = Pending Replace (e.g. result of Order Cancel/Replace Request <G>)
 
+## 151. LeavesQty
+
 ## 204. CustomerOrFirm
 
 - 0. Customer
@@ -440,6 +444,12 @@ The MsgType <35> of the FIX message being referenced.
 10 = SendingTime <52> accuracy problem
 
 11 = Invalid MsgType <35>
+
+## 434 CxlRejResponseTo
+
+1 = Order Cancel Request <F>
+
+2 = Order Cancel/Replace Request <G>
 
 # Comments
 
