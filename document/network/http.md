@@ -370,3 +370,121 @@ While HTTP/2 eliminates head-of-line blocking at the HTTP layer, **TCP-level hea
 - TCP still delivers all data in order, but HTTP/2 processes streams independently, allowing responses to arrive out of order.
 - Requests and responses can indeed flow concurrently, which is a significant performance improvement over HTTP/1.1.
 
+# HTTP connection refused
+
+The `net::ERR_CONNECTION_REFUSED` error typically means that your browser or application tried to establish a connection to a server, but the connection was refused. This issue can occur for various reasons. Here are the most common causes and their potential solutions:
+
+---
+
+## **1. The Server Is Not Running**
+- **Reason:** The server hosting the resource might not be running, or the service you are trying to access is down.
+- **Solution:**
+    - Verify that the server is running on the host machine.
+    - If it's your server, restart it and check for errors in its logs.
+    - If it's a third-party server, check its status page or contact the provider.
+
+---
+
+## **2. Incorrect Port Number**
+- **Reason:** You might be using the wrong port to access the server. Servers may run on non-default ports (e.g., `8080`, `3000`).
+- **Solution:**
+    - Double-check the port number in the URL (e.g., `http://localhost:3000`).
+    - Ensure that the server is configured to listen on the correct port.
+
+---
+
+## **3. Firewall or Security Software Blocking the Connection**
+- **Reason:** A firewall or antivirus software could block the connection.
+- **Solution:**
+    - Temporarily disable your firewall or antivirus and try again.
+    - If the connection works after disabling them, add an exception for the server in your firewall/antivirus settings.
+
+---
+
+## **4. Server IP Address Is Incorrect**
+- **Reason:** The IP address you’re trying to connect to might not point to the correct server.
+- **Solution:**
+    - Ensure the domain name or IP address in the URL is correct.
+    - If using a custom domain, verify that the DNS records are set up properly.
+
+---
+
+## **5. Server Listening on a Different Network Interface**
+- **Reason:** The server might only be listening on specific network interfaces (e.g., `127.0.0.1` instead of `0.0.0.0`).
+- **Solution:**
+    - Check the server configuration to ensure it's listening on all interfaces (`0.0.0.0`) if you want it to be accessible from other devices.
+    - If it’s supposed to be local-only, ensure you're accessing it via `localhost` or `127.0.0.1`.
+
+---
+
+## **6. Proxy or VPN Issues**
+- **Reason:** A proxy server or VPN might be interfering with your connection.
+- **Solution:**
+    - Disable the proxy or VPN temporarily and try again.
+    - Check your proxy settings in the browser or operating system.
+
+---
+
+## **7. CORS (Cross-Origin Resource Sharing) Restrictions**
+- **Reason:** If you're accessing the server via JavaScript in a browser, CORS policies might block the request.
+- **Solution:**
+    - Enable CORS on the server.
+    - Use a proxy server to bypass the CORS restriction during development.
+
+---
+
+## **8. Server Crashed or Misconfigured**
+- **Reason:** The server application could have crashed or is misconfigured.
+- **Solution:**
+    - Restart the server and monitor its logs for any errors.
+    - Verify the server configuration files.
+
+---
+
+## **9. Network Issues**
+- **Reason:** There might be a problem with your local network preventing the connection.
+- **Solution:**
+    - Restart your router or modem.
+    - Test the connection on another device to rule out local issues.
+
+---
+
+## **10. Incorrect Protocol (HTTP vs. HTTPS)**
+- **Reason:** The server might only support HTTPS, but you're trying to access it over HTTP.
+- **Solution:**
+    - Use `https://` instead of `http://` if the server requires it.
+    - Ensure the server has an SSL/TLS certificate installed if you control it.
+
+---
+
+By systematically checking these possibilities, you should be able to identify and resolve the issue causing the `net::ERR_CONNECTION_REFUSED` error. If the problem persists, consider providing additional details, such as the specific URL you’re trying to access, your network setup, or server logs, for more targeted assistance.
+
+The `net::ERR_CONNECTION_REFUSED` error indicates that the **TCP handshake did not complete**. In simpler terms, the connection was refused during the initial attempt to establish the handshake, meaning the handshake never started or completed.
+
+To break it down further:
+
+---
+
+### **What Happens During a TCP Connection Attempt:**
+1. **SYN (Client → Server):** The client sends a "SYN" (synchronize) packet to the server to request a connection.
+2. **SYN-ACK (Server → Client):** If the server is accepting connections, it responds with a "SYN-ACK" packet to acknowledge the request.
+3. **ACK (Client → Server):** The client sends an "ACK" (acknowledge) packet back to confirm the connection.
+
+Once these three steps are completed, the **TCP handshake is established**.
+
+---
+
+### **What Happens in the Case of `ERR_CONNECTION_REFUSED`:**
+- The server does not send a SYN-ACK packet back, meaning it **rejects or ignores the TCP connection request**.
+- This usually happens because:
+    - The server is not running or listening on the specified port.
+    - A firewall or security rule is blocking the connection.
+    - The server actively refuses the connection because it is configured not to accept connections from the client or on that port.
+
+In this case, the client does not receive the SYN-ACK response, so the handshake **never completes**.
+
+---
+
+### **Key Takeaway:**
+The `ERR_CONNECTION_REFUSED` error indicates that the **TCP handshake was refused, not completed**. The connection attempt fails before the handshake can be fully established.
+
