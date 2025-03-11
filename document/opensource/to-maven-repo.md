@@ -30,6 +30,8 @@
 
 上传代码到 Maven Central 需要一些额外的步骤，包括项目配置和签名验证。官方发行 Maven Central 包需要通过 [Sonatype OSSRH](https://central.sonatype.org/)（OSS Repository Hosting）。以下是详细步骤：
 
+now it's changed to https://central.sonatype.org/publish-ea/publish-ea-guide/#component-validation
+https://central.sonatype.org/publish-ea/publish-ea-guide/
 ### 1. **创建 GPG 密钥**
 
 Maven Central 要求你对构建的包进行签名。首先需要生成 GPG 密钥。
@@ -209,3 +211,119 @@ Maven Central 要求发布的 Artifact 需要进行签名，可以在 `pom.xml` 
 - [GitHub 官方指南](https://guides.github.com/activities/hello-world/)
 
 通过以上步骤，你就可以将代码开源到 GitHub 并成功发布到 Maven Central。
+
+
+# Advertise Project 
+
+Advertising your public project on GitHub effectively requires a combination of showcasing its value, engaging with the developer community, and leveraging multiple platforms. Below are actionable strategies you can follow to promote your GitHub project:
+
+---
+
+## **1. Optimize Your GitHub Repository**
+Before you advertise your project, make sure your repository is polished and ready for new visitors:
+
+### **1.1. Write a Clear and Compelling README**
+The README file is the first thing users see, so make it attractive and informative. Include:
+- **What the project does**.
+- **Why it’s useful**.
+- **How to install and use it** (with examples).
+- **Screenshots, GIFs, or demos** (if applicable).
+- **Contribution guidelines** to encourage collaboration.
+
+### **1.2. Add a License**
+Choose an open-source license that matches your goals (e.g., MIT, Apache 2.0). A license makes it clear others can use and contribute to your project.
+
+### **1.3. Use a Descriptive Repository Name**
+Make sure the repository name reflects the purpose of your project. Include relevant keywords to make it discoverable.
+
+### **1.4. Add Tags and Topics**
+Use GitHub topics to tag your repository with keywords related to your project. For example:
+- If your project is a JavaScript library, you might tag it with `javascript`, `library`, `web-development`, etc.
+- Topics help users discover your project when searching on GitHub.
+
+### **1.5. Include Badges**
+Add badges in your README (e.g., build status, downloads, license, etc.) to make your project look more professional. Use services like [Shields.io](https://shields.io) to generate badges.
+
+---
+
+## **2. Leverage Social Media**
+Social media is a powerful tool to share your work with a wider audience.
+
+### **2.1. Share on Twitter, LinkedIn, and Reddit**
+- Use platforms like **Twitter/X**, **LinkedIn**, or developer-specific subreddits (e.g., [r/programming](https://www.reddit.com/r/programming) or [r/webdev](https://www.reddit.com/r/webdev)) to announce your project.
+- Include a short description of your project, a link to the repository, and a quick demo (e.g., GIF or video).
+- Use hashtags like `#opensource`, `#programming`, or tags specific to your project’s language (e.g., `#python`, `#javascript`).
+
+### **2.2. Post on Developer Communities**
+- Share your project on platforms like **Dev.to**, **Hashnode**, and **Medium**. Write a blog post explaining the problem your project solves and how it works.
+- Join forums like **Hacker News** or **Stack Overflow** and share your project when it’s relevant.
+
+---
+
+## **3. Submit to Open Source Platforms**
+- Submit your project to websites that showcase open-source projects:
+   - [Product Hunt](https://www.producthunt.com): Great for launching innovative tools or products.
+   - [Awesome Lists](https://github.com/sindresorhus/awesome): Find a relevant list (e.g., `awesome-javascript`) and suggest adding your project.
+   - [Open Source Agenda](https://opensourceagenda.com): A platform for promoting open-source projects.
+
+---
+
+## **4. Engage with the Developer Community**
+Building relationships within the developer community can help promote your project organically.
+
+### **4.1. Participate in Open Source Events**
+- Take part in **Hacktoberfest** or other open-source events to get contributors to notice your project.
+- Present your project at meetups or conferences (in-person or virtual).
+
+### **4.2. Collaborate with Other Projects**
+- Find related projects on GitHub and contribute to them. Mention your project (when relevant) to draw attention.
+
+### **4.3. Respond to Issues and Pull Requests**
+- Be active in maintaining your repository. Respond to issues promptly and welcome contributions.
+- A well-maintained project is much more attractive to potential users and contributors.
+
+---
+
+## **5. Create Tutorials and Videos**
+People are more likely to use your project if they understand how it works.
+
+### **5.1. Write Tutorials**
+- Publish step-by-step tutorials on platforms like **Medium**, **Dev.to**, or your own blog.
+- Focus on solving specific use cases with your project.
+
+### **5.2. Create Video Tutorials**
+- Record screencasts or demos of your project and upload them to **YouTube** or **Twitch**. Explain how to set it up and demonstrate its key features.
+
+---
+
+## **6. Use GitHub Pages**
+If your project has a frontend (e.g., a web-based tool or library), host a live demo using [GitHub Pages](https://pages.github.com). A live demo makes it easier for people to see the value of your project.
+
+---
+
+## **7. Encourage Contributions**
+- Add a **`CONTRIBUTING.md`** file to guide contributors on how to help with your project.
+- Use the **"Good First Issue"** label to highlight beginner-friendly tasks.
+- Actively welcome contributions and thank contributors for their work.
+
+---
+
+## **8. Show Your Project in Action**
+- Create a **demo app** or **interactive example** that showcases your project’s capabilities.
+- Use platforms like [CodeSandbox](https://codesandbox.io) or [Replit](https://replit.com) to provide live examples.
+
+---
+
+## **9. Monitor Analytics**
+- Use GitHub’s built-in insights to monitor traffic to your repository.
+- Track stars, forks, and contributions to understand how well your project is being received.
+
+---
+
+## **10. Consistently Update and Improve**
+- Regularly update your repository with new features, bug fixes, and documentation improvements.
+- Active projects are more likely to gain attention compared to abandoned ones.
+
+---
+
+By following these steps, you can effectively advertise your GitHub project, attract users, and build a community around it.
