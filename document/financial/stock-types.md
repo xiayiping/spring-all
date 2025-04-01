@@ -58,3 +58,57 @@
 - **D类股**：针对特定投资者的特殊安排。
 
 这些分类并非全球统一标准，不同国家和公司可能定义不同的股票类别及其权利。
+
+
+# Authorized, Treasure, Allocated, Distributable
+
+Here is a breakdown of the terms **authorized stock**, **treasury stock**, **allocated stock**, and **distributable stock**, along with their meanings in the context of corporate finance:
+
+---
+
+### **1. Authorized Stock**
+- **Definition**: Authorized stock refers to the maximum number of shares a corporation is legally allowed to issue, as specified in its corporate charter (or articles of incorporation).
+- **Key Points**:
+  - It represents the upper limit of shares the company can issue to investors.
+  - Not all authorized shares are necessarily issued or outstanding; some may remain unissued for future use.
+  - Example: A company may authorize 10 million shares but only issue 5 million initially to retain flexibility for raising capital later.
+
+---
+
+### **2. Treasury Stock**
+- **Definition**: Treasury stock (or treasury shares) refers to shares that were previously issued to shareholders but have been repurchased by the company. These shares are held by the company itself and are not considered outstanding shares.
+- **Key Points**:
+  - Treasury stock does not have voting rights or receive dividends.
+  - Companies may repurchase shares to reduce the number of outstanding shares, support the stock price, or use them for employee compensation plans.
+  - Example: If a company issues 1 million shares and later buys back 100,000 shares, those 100,000 shares become treasury stock.
+
+---
+
+### **3. Allocated Stock**
+- **Definition**: Allocated stock refers to shares that have been set aside or designated for a specific purpose, such as employee stock options, restricted stock for executives, or shares reserved for future issuance in a stock offering.
+- **Key Points**:
+  - These shares are part of the authorized stock but might not yet be issued or outstanding.
+  - Allocated stock is often used in employee stock ownership plans (ESOPs) or as part of compensation packages.
+  - Example: A company may allocate 500,000 shares from its authorized stock for an employee stock option plan.
+
+---
+
+### **4. Distributable Stock**
+- **Definition**: Distributable stock refers to shares that are ready to be issued (distributed) to shareholders, often as part of a dividend, bonus issue, or stock split.
+- **Key Points**:
+  - Distributable stock is typically drawn from the unissued portion of authorized stock.
+  - It is used to reward shareholders or adjust the capital structure of the company.
+  - Example: A company might declare a stock dividend and issue 1 share for every 10 shares held by shareholders, distributing these shares from the authorized but unissued stock.
+
+---
+
+### Summary Table:
+
+| **Term**            | **Definition**                                                                                                   | **Key Feature**                                                                 |
+|----------------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| **Authorized Stock** | Maximum number of shares a company can issue, as specified in its corporate charter.                            | Legal limit, may not all be issued.                                             |
+| **Treasury Stock**   | Previously issued shares repurchased by the company.                                                            | Held by the company, no voting rights or dividends.                             |
+| **Allocated Stock**  | Shares set aside for specific purposes, such as employee stock options or future issuance.                      | Not yet issued but designated for a purpose.                                    |
+| **Distributable Stock** | Shares ready to be issued to shareholders as a dividend, bonus issue, or stock split.                         | Drawn from unissued authorized stock for distribution.                          |
+
+These categories help companies manage their stock structure and maintain flexibility for growth, compensation, and shareholder returns.

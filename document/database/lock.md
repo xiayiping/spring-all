@@ -276,3 +276,293 @@ Under MVCC, each transaction works with a **snapshot** of the database taken at 
 
 ### Summary
 Databases like PostgreSQL, MySQL (InnoDB), Oracle, and SQLite use MVCC to guarantee **Repeatable Read** without relying on traditional locking. MVCC ensures that transactions work on consistent snapshots of the data, avoiding **non-repeatable reads** while maintaining high concurrency. However, **phantom reads** may still occur unless a stricter isolation level, like **Serializable**, is used.
+
+# Lock Dialect
+
+Paging (also known as pagination) is the process of retrieving a subset of query results, typically for displaying large datasets in smaller chunks. The syntax for implementing paging differs between **MySQL**, **PostgreSQL**, and **SQL Server**, as each database system has its own approach. Below is a comparison of how pagination is handled in these systems.
+
+---
+
+### **1. MySQL**
+MySQL uses the `LIMIT` clause, optionally combined with `OFFSET`, to fetch a subset of rows.
+
+#### Syntax:
+```sql
+SELECT columns
+FROM table
+ORDER BY column
+LIMIT offset, row_count;
+```
+
+- **`offset`**: The number of rows to skip.
+- **`row_count`**: The number of rows to return.
+
+#### Example:
+Fetch 10 rows starting from the 20th row:
+```sql
+SELECT id, name
+FROM users
+ORDER BY id
+LIMIT 20, 10;
+```
+
+Alternatively, you can use:
+```sql
+LIMIT 10 OFFSET 20;
+```
+
+---
+
+### **2. PostgreSQL**
+PostgreSQL uses the `LIMIT` and `OFFSET` clauses to implement paging.
+
+#### Syntax:
+```sql
+SELECT columns
+FROM table
+ORDER BY column
+LIMIT row_count OFFSET offset;
+```
+
+- **`LIMIT`**: The maximum number of rows to return.
+- **`OFFSET`**: The number of rows to skip.
+
+#### Example:
+Fetch 10 rows starting from the 20th row:
+```sql
+SELECT id, name
+FROM users
+ORDER BY id
+LIMIT 10 OFFSET 20;
+```
+
+#### Alternative: `FETCH FIRST` Syntax (SQL Standard)
+PostgreSQL also supports the SQL standard `FETCH FIRST` syntax for limiting rows:
+```sql
+SELECT id, name
+FROM users
+ORDER BY id
+OFFSET 20 ROWS FETCH FIRST 10 ROWS ONLY;
+```
+
+---
+
+### **3. SQL Server**
+SQL Server uses the `OFFSET` and `FETCH` clauses for pagination, which were introduced in SQL Server 2012. These clauses must be combined with `ORDER BY`.
+
+#### Syntax:
+```sql
+SELECT columns
+FROM table
+ORDER BY column
+OFFSET offset ROWS FETCH NEXT row_count ROWS ONLY;
+```
+
+- **`OFFSET`**: The number of rows to skip.
+- **`FETCH NEXT`**: The number of rows to return.
+
+#### Example:
+Fetch 10 rows starting from the 20th row:
+```sql
+SELECT id, name
+FROM users
+ORDER BY id
+OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
+```
+
+#### Notes:
+- The `ORDER BY` clause is mandatory in SQL Server when using `OFFSET`/`FETCH`.
+- Without an `ORDER BY`, the result set order is not guaranteed.
+
+---
+
+### **Key Differences**
+
+| Feature               | MySQL                          | PostgreSQL                     | SQL Server                   |
+|-----------------------|---------------------------------|--------------------------------|-----------------------------|
+| Basic Syntax          | `LIMIT offset, row_count`      | `LIMIT row_count OFFSET offset` | `OFFSET offset ROWS FETCH NEXT row_count ROWS ONLY` |
+| Support for `OFFSET`  | Yes                            | Yes                            | Yes                         |
+| `ORDER BY` Mandatory  | No                             | No                             | Yes                         |
+| SQL Standard Syntax   | No                             | Yes (`FETCH FIRST`)            | Yes                         |
+
+---
+
+### **Performance Considerations**
+1. **Large Offsets**:
+    - Paging with large offsets can degrade performance in all systems since the database may have to scan and skip many rows.
+    - Use indexed columns in the `ORDER BY` clause for better performance.
+    - Consider using "keyset pagination" (pagination based on a unique column like an ID) for better efficiency.
+
+2. **Database-specific Optimizations**:
+    - MySQL: Use indexed columns with `LIMIT` for faster lookups.
+    - PostgreSQL: Leverage window functions or `CTEs` for performance in complex queries.
+    - SQL Server: Use indexed `ORDER BY` columns for better paging performance.
+
+By understanding the differences and best practices for each database system, you can implement efficient and effective paging mechanisms.
+
+Row locking and row-level data updates are essential for maintaining data consistency in concurrent environments. The way **MySQL**, **PostgreSQL**, and **SQL Server** handle these operations differs based on their respective syntax and locking mechanisms. Below is a detailed comparison.
+
+---
+
+## **1. MySQL**
+
+### **Row Locking with `FOR UPDATE`**
+MySQL uses the `FOR UPDATE` clause for row-level locking during a transaction. Rows selected by the query are locked until the transaction completes, ensuring no other transaction can modify or delete them.
+
+#### Syntax:
+```sql
+SELECT columns
+FROM table
+WHERE condition
+FOR UPDATE;
+```
+
+- **Locks behavior**:
+    - Acquires **exclusive locks** on the selected rows.
+    - Other transactions will be blocked if they attempt to update or delete the locked rows.
+    - Only works with tables using transactional storage engines like **InnoDB** (not supported in MyISAM).
+
+#### Example:
+```sql
+START TRANSACTION;
+SELECT id, name
+FROM users
+WHERE id = 1
+FOR UPDATE;
+/* Perform updates */
+UPDATE users
+SET name = 'John Doe'
+WHERE id = 1;
+COMMIT;
+```
+
+### **Lock Modes in MySQL**
+- **`FOR UPDATE`**: Blocks both reads and writes by other transactions.
+- **`LOCK IN SHARE MODE`**: Allows other transactions to read the rows but prevents modifications.
+
+---
+
+## **2. PostgreSQL**
+
+### **Row Locking with `FOR UPDATE`**
+PostgreSQL provides more granular locking mechanisms with `FOR UPDATE` and other row-level locking clauses. Rows selected by `FOR UPDATE` are locked for updates by the current transaction.
+
+#### Syntax:
+```sql
+SELECT columns
+FROM table
+WHERE condition
+FOR UPDATE;
+```
+
+- **Locks behavior**:
+    - Acquires **row-level exclusive locks**.
+    - Prevents other transactions from modifying or deleting the selected rows.
+    - Other transactions can still read the locked rows unless a higher lock mode (e.g., `FOR NO KEY UPDATE`) is used.
+
+#### Example:
+```sql
+BEGIN;
+SELECT id, name
+FROM users
+WHERE id = 1
+FOR UPDATE;
+/* Perform updates */
+UPDATE users
+SET name = 'Jane Doe'
+WHERE id = 1;
+COMMIT;
+```
+
+### **Additional Lock Modes in PostgreSQL**
+PostgreSQL offers multiple row-level lock modes:
+- **`FOR UPDATE`**: Locks rows for updates.
+- **`FOR NO KEY UPDATE`**: Similar to `FOR UPDATE` but does not block foreign key updates.
+- **`FOR SHARE`**: Allows other transactions to acquire shared locks (read-only locks).
+- **`FOR KEY SHARE`**: Prevents updates to the rows but allows reads.
+
+#### Example with `FOR SHARE`:
+```sql
+SELECT id, name
+FROM users
+WHERE id = 1
+FOR SHARE;
+```
+
+---
+
+## **3. SQL Server**
+
+### **Row Locking with `WITH (UPDLOCK)`**
+SQL Server uses locking hints like `UPDLOCK` to explicitly lock rows for update. You can apply these hints in `SELECT` statements to ensure the rows remain locked until the transaction completes.
+
+#### Syntax:
+```sql
+SELECT columns
+FROM table WITH (UPDLOCK)
+WHERE condition;
+```
+
+- **Locks behavior**:
+    - Acquires **update locks** on the selected rows.
+    - Prevents other transactions from modifying or deleting the rows.
+    - Other transactions can still read the rows unless a higher lock mode is applied.
+
+#### Example:
+```sql
+BEGIN TRANSACTION;
+SELECT id, name
+FROM users WITH (UPDLOCK)
+WHERE id = 1;
+/* Perform updates */
+UPDATE users
+SET name = 'Alice'
+WHERE id = 1;
+COMMIT;
+```
+
+### **Lock Modes in SQL Server**
+SQL Server provides various locking hints:
+- **`UPDLOCK`**: Places an update lock, preventing other transactions from modifying or deleting the rows.
+- **`HOLDLOCK`**: Keeps the lock until the transaction completes (similar to `Serializable` isolation).
+- **`ROWLOCK`**: Forces row-level locking instead of page/table-level locking.
+- **`XLOCK`**: Acquires an exclusive lock, preventing reads and writes by other transactions.
+
+#### Example with `HOLDLOCK`:
+```sql
+SELECT id, name
+FROM users WITH (UPDLOCK, HOLDLOCK)
+WHERE id = 1;
+```
+
+---
+
+## **Key Differences in Row Locking**
+
+| Feature                   | MySQL                            | PostgreSQL                           | SQL Server                       |
+|---------------------------|-----------------------------------|--------------------------------------|----------------------------------|
+| **Basic Syntax**          | `FOR UPDATE`                     | `FOR UPDATE`, `FOR SHARE`            | `WITH (UPDLOCK)`                 |
+| **Read Lock**             | `LOCK IN SHARE MODE`             | `FOR SHARE`, `FOR KEY SHARE`         | `WITH (HOLDLOCK)`                |
+| **Write Lock**            | `FOR UPDATE`                     | `FOR UPDATE`, `FOR NO KEY UPDATE`    | `WITH (UPDLOCK, XLOCK)`          |
+| **Granularity**           | Row-level (InnoDB only)          | Row-level                            | Row-level (using `ROWLOCK`)      |
+| **Default Locking**       | Requires explicit transaction    | Requires explicit transaction        | Lock hints are optional          |
+| **Additional Lock Modes** | Basic (`FOR UPDATE`, `SHARE`)    | Multiple modes (`UPDATE`, `SHARE`)   | Lock hints like `UPDLOCK`, `XLOCK` |
+
+---
+
+## **Performance and Considerations**
+1. **Deadlocks**:
+    - All three systems are prone to deadlocks if transactions lock rows in different orders.
+    - Use consistent ordering of operations across transactions to minimize deadlocks.
+
+2. **Transaction Isolation Levels**:
+    - The behavior of locks is affected by the isolation level used in the transaction. For example:
+        - **MySQL**: `REPEATABLE READ` is the default for InnoDB.
+        - **PostgreSQL**: `READ COMMITTED` is the default.
+        - **SQL Server**: `READ COMMITTED` is the default.
+
+3. **Concurrency**:
+    - Using row-level locking efficiently can help maintain high concurrency.
+    - Avoid locking too many rows unnecessarily to prevent contention.
+
+By understanding these differences, you can choose the appropriate row-locking mechanism for your database and use case.
