@@ -80,6 +80,7 @@ console.log("End");
 #### Output:
 ```
 Start
+promise call
 End
 Promise Callback
 Timeout Callback
