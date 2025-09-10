@@ -2,7 +2,7 @@
 
 ```shell
 # creat ca
-../1.18.0/consul tls ca create -domain=consul
+../1.18.0/consul tls ca create -domain=consul --days=7300
 
 # check expire day
 openssl x509 -in ./consul-agent-ca.pem -text -noout
@@ -17,7 +17,7 @@ mv ./consul-agent-ca-key.pem ./consul-agent-ca-key-20300403.pem
 
 ```shell
 
-../1.18.0/consul tls cert create -server -dc=prod-hkt -domain=consul \
+../1.18.0/consul tls cert create -server -dc=prod-hkt -domain=consul --days=7300 \
   -ca ./consul-agent-ca-20300403.pem \
   -key ./consul-agent-ca-key-20300403.pem \
   -additional-ipaddress=10.6.100.50 \
