@@ -41,3 +41,10 @@ first time deployed need to init ACL manually
 ./consul acl bootstrap
 # need to record the output 
 ```
+
+```shell
+
+openssl pkcs12 -export -nokeys -in certificate.cer -out pkcs12.p12
+
+keytool -import -alias *alias* -keystore cacerts -file *cert.pem*
+```

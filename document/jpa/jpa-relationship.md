@@ -42,6 +42,8 @@ public class B {
 In this example:
 - The foreign key (`b_id`) is stored in table **A** because the `@JoinColumn` annotation is on the `A` entity.
 - The `mappedBy = "b"` in `B` indicates that `B` is the inverse side of the relationship.
+- 如果你是很确定使用 root entity 模式 并且你的 one 端就是 root entity ，推荐 join column ，
+- 如果不是严格 root entity 模式， 则可能从 many 端单独存储， 推荐 mappedBy ， 单需要 PostPersist 和 postUpdate 两个annotation 来处理 mappedBy 的值
 
 #### **Example: Storing the FK in Table B**
 
