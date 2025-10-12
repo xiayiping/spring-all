@@ -528,9 +528,6 @@ WB is Waiting
 ```
 
 - 设计底线
-  - 需要有自己的设计底线，不能再一味附和别人的说法，形成自己的设计风格
-  - 我的设计风格就是以概念为根本，在此基础上叠加设计规范，概念是最高满足优先级
-    - 概念不符合，不可商量
 - RestAPI 设计规范
   - 微软azul rest api规范网址 https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
   - 按azul 推荐spec来

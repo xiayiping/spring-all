@@ -77,9 +77,9 @@ The journal entry would be:
 
 The accounting equation is the foundation of the double-entry accounting system and is expressed as:
 
-\[
+$$
 \text{Assets} = \text{Liabilities} + \text{Equity}
-\]
+$$
 
 Every debit and credit entry must maintain the balance of this equation. When you record a transaction, you ensure that for every debit, there is an equivalent credit, maintaining the integrity of the financial records.
 
