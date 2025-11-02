@@ -17,3 +17,7 @@ in September
 ### phases
 
 be surprised at sth
+
+Dont want to let go of
+<--> 
+can't bring my self to (do)
