@@ -219,6 +219,96 @@ Task-scoped variables won't be merged with the process instance variables.
 
 Let me know if you need further clarification! 🚀
 
+# Dynamic setup assignee
+
+In Flowable, you can dynamically set the assignee of a user task using expressions, process variables, or execution listeners. Here's how you can achieve this:
+
+---
+
+### **1. Using Expressions in the Assignee Field**
+You can use expressions to dynamically assign a user task to a user. For example:
+
+- In the Flowable Modeler, when defining a User Task, set the **Assignee** field to an expression like `${assignee}`.
+- Before the task is reached in the process, ensure that the process variable `assignee` is set to the appropriate value. For example:
+
+  ```java
+  runtimeService.setVariable(executionId, "assignee", "john.doe");
+  ```
+
+This will assign the task to the user with the ID `john.doe`.
+
+---
+
+### **2. Using Execution Listeners**
+You can use an **execution listener** to set the assignee dynamically when the task is created. Add an execution listener to the User Task with the following code:
+
+#### Java Example:
+```java
+taskService.setAssignee(taskId, "john.doe");
+```
+
+You can also use a script if you're using a scripting language like Groovy or JavaScript in your BPMN model.
+
+#### Groovy Example:
+```groovy
+task.assignee = execution.getVariable("assignee")
+```
+
+---
+
+### **3. Using Process Variables**
+You can set a process variable before the task is reached in the process. For example, in a service task (or any other task type), you can set the `assignee` variable:
+
+```java
+runtimeService.setVariable(executionId, "assignee", "john.doe");
+```
+
+Then, in the User Task, use `${assignee}` in the Assignee field as mentioned in **#1**.
+
+---
+
+### **4. Using Task Listeners**
+Task listeners can also be used to assign tasks dynamically when the task is created. You can add a task listener in Flowable Modeler or in your BPMN XML configuration.
+
+#### Example:
+```xml
+<taskListener event="create" class="com.example.AssignTaskListener" />
+```
+In the `AssignTaskListener` class:
+
+```java
+public class AssignTaskListener implements TaskListener {
+    @Override
+    public void notify(DelegateTask delegateTask) {
+        String assignee = (String) delegateTask.getVariable("assignee");
+        delegateTask.setAssignee(assignee);
+    }
+}
+```
+
+---
+
+### **5. Using Flowable Identity Service**
+If the assignee is based on some dynamic logic, such as roles or groups, you can use Flowable's Identity Service to fetch users dynamically and assign them to tasks.
+
+For example:
+```java
+List<User> users = identityService.createUserQuery().memberOfGroup("managers").list();
+if (!users.isEmpty()) {
+    taskService.setAssignee(taskId, users.get(0).getId());
+}
+```
+
+---
+
+### **Summary**
+- Use `${variableName}` in the Assignee field to dynamically assign based on a process variable.
+- Use execution or task listeners for more complex logic.
+- Ensure that the required process variables are set before the task is reached.
+- Optionally, use the Flowable Identity Service to fetch users dynamically based on roles or groups.
+
+By combining these approaches, you can dynamically assign tasks in Flowable to meet your application's requirements.
+
 # Useful documents
 
 https://www.flowable.com/open-source/docs/userguide-5/index.html
