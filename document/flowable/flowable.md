@@ -314,3 +314,140 @@ By combining these approaches, you can dynamically assign tasks in Flowable to m
 https://www.flowable.com/open-source/docs/userguide-5/index.html
 
 https://github.com/flowable/flowable-engine/blob/main/modules/flowable-dmn-engine-configurator/src/test/java/org/flowable/dmn/test/runtime/DmnTaskTest.java
+
+
+# spring bean
+
+To get a Spring bean from a Java delegate in a Flowable BPMN process within a Spring Boot application, you can use the `ApplicationContext` provided by Spring. Here is a step-by-step guide:
+
+---
+
+### 1. **Inject Spring Beans into Java Delegates:**
+If your Java delegate is a Spring-managed bean (annotated with `@Component`), you can directly inject other Spring beans into it using `@Autowired`.
+
+Example:
+
+```java
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.JavaDelegate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyDelegate implements JavaDelegate {
+
+    @Autowired
+    private MyService myService; // Inject your Spring bean here
+
+    @Override
+    public void execute(DelegateExecution execution) {
+        // Use the injected service
+        myService.performTask();
+    }
+}
+```
+
+---
+
+### 2. **Manually Retrieve a Bean from ApplicationContext:**
+If your delegate is not a Spring-managed bean, you can get the `ApplicationContext` and retrieve the bean manually.
+
+#### Option 1: Use `@Autowired` to Inject `ApplicationContext`
+
+You can inject `ApplicationContext` into the class and retrieve beans from it.
+
+```java
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.JavaDelegate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyDelegate implements JavaDelegate {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void execute(DelegateExecution execution) {
+        // Retrieve the Spring bean dynamically
+        MyService myService = applicationContext.getBean(MyService.class);
+        myService.performTask();
+    }
+}
+```
+
+#### Option 2: Use `ContextAware` Classes to Get `ApplicationContext`
+
+If you cannot inject `ApplicationContext` directly, you can implement a utility class to hold the context.
+
+```java
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SpringContextHolder implements ApplicationContextAware {
+
+    private static ApplicationContext context;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        SpringContextHolder.context = applicationContext;
+    }
+
+    public static <T> T getBean(Class<T> beanClass) {
+        return context.getBean(beanClass);
+    }
+}
+```
+
+Now, retrieve beans in your delegate:
+
+```java
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.JavaDelegate;
+
+public class MyDelegate implements JavaDelegate {
+
+    @Override
+    public void execute(DelegateExecution execution) {
+        // Use SpringContextHolder to get the bean
+        MyService myService = SpringContextHolder.getBean(MyService.class);
+        myService.performTask();
+    }
+}
+```
+
+---
+
+### 3. **Register Java Delegates as Spring Beans in Flowable:**
+To ensure your Java delegate is properly managed by Spring, you can register it in the Flowable process by using the `@Component` annotation or explicitly in the BPMN XML.
+
+#### Option 1: Use `@Component`
+Annotate your delegate with `@Component` and reference it in the BPMN process using its Spring bean name.
+
+```java
+@Component("myDelegate")
+public class MyDelegate implements JavaDelegate {
+    // Implementation
+}
+```
+
+In your BPMN XML:
+
+```xml
+<serviceTask id="myTask" name="My Task" flowable:delegateExpression="${myDelegate}" />
+```
+
+#### Option 2: Explicitly Define Beans in BPMN
+If you’re not using `@Component`, you can reference the delegate as a bean in the BPMN file using the `delegateExpression` attribute.
+
+---
+
+### Summary
+- **Preferred Option**: Annotate your delegate with `@Component` and inject dependencies using `@Autowired`.
+- **Fallback Option**: Use `ApplicationContext` to retrieve beans manually when the delegate is not Spring-managed.
+  
+Using Spring's dependency injection ensures your Flowable delegates integrate seamlessly with Spring Boot.
