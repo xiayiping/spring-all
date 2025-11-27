@@ -21,3 +21,5 @@ be surprised at sth
 Dont want to let go of
 <--> 
 can't bring my self to (do)
+
+get the hang of it  掌握要领
