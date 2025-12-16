@@ -169,3 +169,157 @@ tar -czvf myproject.tar.gz . --exclude="*.pyc" --exclude="__pycache__"
 
 Tar is actually better than zip for this use case since it preserves file permissions and is standard on all Unix-like systems.
 
+
+# venv
+
+
+Good point! Here's how to package the entire venv so the target system can use it directly without internet:
+
+## 1. Package your project WITH venv (source machine)
+
+```bash
+# Make sure your venv is activated and all dependencies installed
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Deactivate before packaging
+deactivate
+
+# Create tar including the venv
+tar -czf myproject.tar.gz . \
+  --exclude="*.pyc" \
+  --exclude="__pycache__" \
+  --exclude=".git" \
+  --exclude="*.egg-info"
+```
+
+## 2. Upload to Nexus
+
+```bash
+curl -u username:password \
+  --upload-file myproject.tar.gz \
+  "http://your-nexus-server:8081/repository/raw-hosted/myproject/myproject-1.0.0.tar.gz"
+```
+
+## 3. Setup on target system
+
+```bash
+# Create app directory
+sudo mkdir -p /opt/myproject
+cd /opt/myproject
+
+# Download from Nexus
+curl -u username:password \
+  -o myproject.tar.gz \
+  "http://your-nexus-server:8081/repository/raw-hosted/myproject/myproject-1.0.0.tar.gz"
+
+# Extract
+tar -xzf myproject.tar.gz
+rm myproject.tar.gz
+
+# Fix venv paths (IMPORTANT - venv has hardcoded paths)
+find venv -type f -name "*.pyc" -delete
+sed -i "s|$(pwd)/venv|/opt/myproject/venv|g" venv/bin/activate
+sed -i "s|$(pwd)/venv|/opt/myproject/venv|g" venv/bin/pip*
+sed -i "s|$(pwd)/venv|/opt/myproject/venv|g" venv/bin/python*
+
+# Or better: recreate the venv symlinks
+python3 -m venv venv --clear --without-pip
+# This keeps installed packages but fixes paths
+
+# Set ownership
+sudo chown -R appuser:appuser /opt/myproject
+```
+
+## 4. Create systemd service
+
+```bash
+sudo nano /etc/systemd/system/myproject.service
+```
+
+```ini
+[Unit]
+Description=My Python Project
+After=network.target
+
+[Service]
+Type=simple
+User=appuser
+Group=appuser
+WorkingDirectory=/opt/myproject
+Environment="PATH=/opt/myproject/venv/bin"
+Environment="VIRTUAL_ENV=/opt/myproject/venv"
+ExecStart=/opt/myproject/venv/bin/python /opt/myproject/main.py
+
+Restart=on-failure
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=myproject
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## 5. Start the service
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable myproject
+sudo systemctl start myproject
+sudo systemctl status myproject
+```
+
+## Better Alternative: Use relocatable venv
+
+**On source machine**, create a more portable package:
+
+```bash
+#!/bin/bash
+# build.sh
+
+# Create fresh venv
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create relocatable venv script
+cat > setup_venv.sh << 'EOF'
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Fix venv paths
+python3 -m venv venv --upgrade-deps --clear --copies
+source venv/bin/activate
+pip install --no-index --find-links=./wheels -r requirements.txt
+EOF
+
+# Download all wheels locally
+pip download -r requirements.txt -d wheels
+
+deactivate
+
+# Package everything
+tar -czf myproject.tar.gz . \
+  --exclude="*.pyc" \
+  --exclude="__pycache__" \
+  --exclude=".git" \
+  --exclude="venv"
+```
+
+**On target machine:**
+
+```bash
+cd /opt/myproject
+tar -xzf myproject.tar.gz
+chmod +x setup_venv.sh
+./setup_venv.sh
+```
+
+This approach packages the wheel files separately and rebuilds the venv on the target, which is more reliable across different systems.
+
+**Which approach do you prefer?** Packaging the full venv (simpler but can have path issues) or packaging wheels separately (more reliable)?
