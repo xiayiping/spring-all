@@ -1770,3 +1770,7 @@ When Spring Boot directly accepts requests:
 7. **Be aware** the Host header is set by the client and can be spoofed
 
 The key difference from the proxy scenario is that **all information comes directly from the HTTP request**, not from forwarded headers.
+
+
+尝试打印中文
+this is English
