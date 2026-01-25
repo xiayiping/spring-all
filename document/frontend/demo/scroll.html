@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户初始化</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f0e8 0%, #e8dfd0 50%, #f0e8dc 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(128, 0, 32, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            background: linear-gradient(to bottom, #ffffff 0%, #fefdfb 100%);
+            border-radius: 8px;
+            padding: 56px;
+            box-shadow: 
+                0 20px 60px rgba(128, 0, 32, 0.15),
+                0 0 1px rgba(139, 69, 19, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            position: relative;
+            border: 1px solid rgba(139, 69, 19, 0.08);
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8b4513 0%, #a0522d 25%, #cd853f 50%, #a0522d 75%, #8b4513 100%);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .notification-area {
+            background: linear-gradient(135deg, #800020 0%, #6b001a 100%);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 
+                0 10px 30px rgba(128, 0, 32, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(205, 133, 63, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #cd853f, #daa520, #cd853f);
+        }
+
+        .notification-area strong {
+            color: #f4d03f;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .notification-area p {
+            color: #f5e6d3;
+            font-size: 13px;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .info-area {
+            background: linear-gradient(135deg, #d2b48c 0%, #c19a6b 100%);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 
+                0 10px 30px rgba(139, 69, 19, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(139, 69, 19, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #8b4513, #a0522d, #8b4513);
+        }
+
+        .info-area strong {
+            color: #5c3317;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .info-area div {
+            color: #4a2c0f;
+            font-size: 13px;
+            line-height: 1.9;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .info-area div::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #8b4513;
+        }
+
+        .help-area {
+            background: linear-gradient(to bottom, #ffffff 0%, #fefdfb 100%);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 
+                0 10px 30px rgba(128, 0, 32, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .help-area h3 {
+            font-size: 15px;
+            color: #5c3317;
+            margin-bottom: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .help-area ul {
+            list-style: none;
+        }
+
+        .help-area li {
+            font-size: 13px;
+            color: #6b4423;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(139, 69, 19, 0.08);
+            transition: all 0.2s;
+        }
+
+        .help-area li:last-child {
+            border-bottom: none;
+        }
+
+        .help-area li:hover {
+            color: #800020;
+            padding-left: 8px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #5c3317;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #8b6f47;
+            margin-bottom: 36px;
+            padding-bottom: 28px;
+            border-bottom: 2px solid #e8dfd0;
+            position: relative;
+        }
+
+        .subtitle::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #8b4513, #cd853f);
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timer-bar {
+            background: linear-gradient(135deg, #800020 0%, #6b001a 100%);
+            border-radius: 6px;
+            padding: 18px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 
+                0 4px 12px rgba(128, 0, 32, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(205, 133, 63, 0.2);
+        }
+
+        .timer-label {
+            color: #f5e6d3;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .timer-value {
+            font-weight: 600;
+            color: #f4d03f;
+            font-variant-numeric: tabular-nums;
+            font-size: 16px;
+            text-shadow: 0 0 10px rgba(244, 208, 63, 0.3);
+        }
+
+        .email-info {
+            background: linear-gradient(to right, #fef9f3 0%, #fdf5eb 100%);
+            border-left: 3px solid #cd853f;
+            border-radius: 6px;
+            padding: 18px 24px;
+            margin-bottom: 28px;
+            font-size: 14px;
+            color: #5c3317;
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.08);
+        }
+
+        .email-info strong {
+            color: #4a2c0f;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #5c3317;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        label .required {
+            color: #c0392b;
+            margin-right: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e8dfd0;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #4a2c0f;
+            transition: all 0.3s;
+            background: white;
+            box-shadow: 0 1px 3px rgba(139, 69, 19, 0.05);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #cd853f;
+            box-shadow: 
+                0 0 0 3px rgba(205, 133, 63, 0.1),
+                0 1px 3px rgba(139, 69, 19, 0.05);
+        }
+
+        input:disabled {
+            background: #faf8f5;
+            color: #b8a68e;
+            cursor: not-allowed;
+            border-color: #e8dfd0;
+        }
+
+        .code-input {
+            text-align: center;
+            letter-spacing: 8px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #8b6f47;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #e8dfd0;
+            margin-top: 10px;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(139, 69, 19, 0.1);
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .strength-weak { width: 33%; background: linear-gradient(90deg, #e74c3c, #c0392b); }
+        .strength-medium { width: 66%; background: linear-gradient(90deg, #e67e22, #d35400); }
+        .strength-strong { width: 100%; background: linear-gradient(90deg, #27ae60, #229954); }
+
+        .error {
+            color: #c0392b;
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #800020 0%, #6b001a 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 12px;
+            box-shadow: 
+                0 4px 12px rgba(128, 0, 32, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #6b001a 0%, #800020 100%);
+            box-shadow: 
+                0 6px 20px rgba(128, 0, 32, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 
+                0 2px 8px rgba(128, 0, 32, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .btn:disabled {
+            background: linear-gradient(135deg, #b8a68e 0%, #d2c4b0 100%);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .success-content {
+            text-align: center;
+            padding: 48px 0;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 28px;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 
+                0 10px 30px rgba(39, 174, 96, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-title {
+            font-size: 24px;
+            color: #5c3317;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .success-text {
+            font-size: 14px;
+            color: #8b6f47;
+            margin-bottom: 36px;
+            line-height: 1.6;
+        }
+
+        .info-card {
+            background: linear-gradient(to right, #fef9f3 0%, #fdf5eb 100%);
+            border: 1px solid #e8dfd0;
+            border-left: 3px solid #cd853f;
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            font-size: 14px;
+            line-height: 2;
+            color: #5c3317;
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.08);
+        }
+
+        .info-card strong {
+            color: #4a2c0f;
+            font-weight: 600;
+        }
+
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+
+            .main-content {
+                padding: 40px 32px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .main-content {
+                padding: 32px 24px;
+            }
+
+            .sidebar {
+                gap: 16px;
+            }
+
+            .notification-area,
+            .info-area,
+            .help-area {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .timer-bar {
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 步骤1: 验证邀请码 -->
+            <div id="step1" class="step active">
+                <h1>账户初始化</h1>
+                <p class="subtitle">欢迎使用账户自助初始化服务，请按照以下步骤完成账户设置</p>
+
+                <div class="timer-bar">
+                    <span class="timer-label">验证码有效期</span>
+                    <span class="timer-value" id="countdown">30:00</span>
+                </div>
+
+                <div class="email-info">
+                    验证码已发送至您的邮箱：<strong id="maskedEmail">u***@example.com</strong>
+                </div>
+
+                <form id="codeForm">
+                    <div class="form-group">
+                        <label for="inviteCode">
+                            <span class="required">*</span>邀请码
+                        </label>
+                        <input 
+                            type="text" 
+                            id="inviteCode" 
+                            class="code-input" 
+                            maxlength="6" 
+                            placeholder="请输入6位邀请码"
+                            autocomplete="off"
+                        >
+                        <p class="helper-text">请输入邮箱中收到的6位数字验证码</p>
+                        <div id="codeError" class="error">验证码错误，请检查后重新输入</div>
+                    </div>
+
+                    <button type="submit" class="btn">验证并继续</button>
+                </form>
+            </div>
+
+            <!-- 步骤2: 设置账户 -->
+            <div id="step2" class="step">
+                <h1>设置登录凭证</h1>
+                <p class="subtitle">请设置您的用户名和密码，用于后续登录系统</p>
+
+                <form id="accountForm">
+                    <div class="form-group">
+                        <label for="username">
+                            <span class="required">*</span>用户名
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            placeholder="请输入用户名"
+                            autocomplete="off"
+                        >
+                        <p class="helper-text">4-20个字符，支持字母、数字和下划线，字母开头</p>
+                        <div id="usernameError" class="error">用户名格式不符合要求</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <span class="required">*</span>密码
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="请输入密码"
+                            autocomplete="new-password"
+                        >
+                        <div class="password-strength">
+                            <div id="strengthBar" class="password-strength-bar"></div>
+                        </div>
+                        <p class="helper-text">至少8位，必须包含大写字母、小写字母和数字</p>
+                        <div id="passwordError" class="error">密码不符合安全要求</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            <span class="required">*</span>确认密码
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            placeholder="请再次输入密码"
+                            autocomplete="new-password"
+                        >
+                        <div id="confirmError" class="error">两次输入的密码不一致</div>
+                    </div>
+
+                    <button type="submit" class="btn">提交注册</button>
+                </form>
+            </div>
+
+            <!-- 步骤3: 完成 -->
+            <div id="step3" class="step">
+                <div class="success-content">
+                    <div class="success-icon">✓</div>
+                    <h2 class="success-title">账户创建成功</h2>
+                    <p class="success-text">您的账户已成功创建，现在可以使用用户名和密码登录系统</p>
+
+                    <div class="info-card">
+                        <div>用户名：<strong id="displayUsername">-</strong></div>
+                        <div style="margin-top: 8px;">创建时间：<strong id="createTime">-</strong></div>
+                    </div>
+
+                    <button class="btn" onclick="goToLogin()">前往登录</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="notification-area">
+                <strong>重要提示</strong>
+                <p>请在30分钟内完成账户初始化，超时后需重新获取验证码。为保障账户安全，请妥善保管您的登录凭证。</p>
+            </div>
+
+            <div class="info-area">
+                <strong>安全建议</strong>
+                <div>密码长度建议10位以上</div>
+                <div>定期更换密码</div>
+                <div>不要在多个系统使用相同密码</div>
+            </div>
+
+            <div class="help-area">
+                <h3>常见问题</h3>
+                <ul>
+                    <li>未收到验证码？请检查垃圾邮件文件夹</li>
+                    <li>验证码已过期？请联系管理员重新发送</li>
+                    <li>忘记用户名？请联系系统管理员</li>
+                    <li>技术支持：support@example.com</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 倒计时
+        let timeLeft = 30 * 60;
+        const countdownElement = document.getElementById('countdown');
+
+        function updateCountdown() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                alert('验证时间已过期，请联系管理员重新获取验证码');
+                return;
+            }
+            timeLeft--;
+        }
+
+        setInterval(updateCountdown, 1000);
+
+        // 邮箱掩码
+        const email = 'user@example.com';
+        const maskedEmail = email.replace(/(.{1})(.*)(@.*)/, (_, p1, p2, p3) => {
+            return p1 + '*'.repeat(Math.min(p2.length, 3)) + p3;
+        });
+        document.getElementById('maskedEmail').textContent = maskedEmail;
+
+        // 验证邀请码
+        document.getElementById('codeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('inviteCode').value;
+            const errorElement = document.getElementById('codeError');
+            
+            if (code.length === 6 && /^\d{6}$/.test(code)) {
+                errorElement.classList.remove('show');
+                showStep(2);
+            } else {
+                errorElement.classList.add('show');
+            }
+        });
+
+        // 密码强度
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('strengthBar');
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            strengthBar.className = 'password-strength-bar';
+            if (strength >= 1) strengthBar.classList.add('strength-weak');
+            if (strength >= 2) {
+                strengthBar.classList.remove('strength-weak');
+                strengthBar.classList.add('strength-medium');
+            }
+            if (strength >= 3) {
+                strengthBar.classList.remove('strength-medium');
+                strengthBar.classList.add('strength-strong');
+            }
+        });
+
+        // 提交账户信息
+        document.getElementById('accountForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            let hasError = false;
+            
+            if (!/^[a-zA-Z][a-zA-Z0-9_]{3,19}$/.test(username)) {
+                document.getElementById('usernameError').classList.add('show');
+                hasError = true;
+            } else {
+                document.getElementById('usernameError').classList.remove('show');
+            }
+            
+            if (password.length < 8 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+                document.getElementById('passwordError').classList.add('show');
+                hasError = true;
+            } else {
+                document.getElementById('passwordError').classList.remove('show');
+            }
+            
+            if (password !== confirmPassword) {
+                document.getElementById('confirmError').classList.add('show');
+                hasError = true;
+            } else {
+                document.getElementById('confirmError').classList.remove('show');
+            }
+            
+            if (!hasError) {
+                document.getElementById('displayUsername').textContent = username;
+                document.getElementById('createTime').textContent = new Date().toLocaleString('zh-CN');
+                showStep(3);
+            }
+        });
+
+        function showStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById('step' + stepNumber).classList.add('active');
+        }
+
+        function goToLogin() {
+            window.location.href = '/login';
+        }
+
+        document.getElementById('inviteCode').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^\d]/g, '');
+        });
+    </script>
+</body>
+</html>
