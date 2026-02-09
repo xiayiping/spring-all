@@ -189,3 +189,179 @@ This pattern allows you to:
 - ✅ Nest layouts within each other
 - ✅ Keep navigation consistent
 - ✅ Avoid code duplication
+
+# Active Link Styling with React Router
+
+## Solution: Use `NavLink` Instead of `Link`
+
+React Router provides `NavLink` which automatically handles active states.
+
+## Basic Usage
+
+```jsx
+import { NavLink } from 'react-router-dom';
+
+function Navbar() {
+  return (
+    <nav>
+      <NavLink 
+        to="/" 
+        className={({ isActive }) => isActive ? 'current-url' : ''}
+      >
+        Home
+      </NavLink>
+      
+      <NavLink 
+        to="/about" 
+        className={({ isActive }) => isActive ? 'current-url' : ''}
+      >
+        About
+      </NavLink>
+      
+      <NavLink 
+        to="/dashboard" 
+        className={({ isActive }) => isActive ? 'current-url' : ''}
+      >
+        Dashboard
+      </NavLink>
+    </nav>
+  );
+}
+```
+
+## Cleaner Approach with Helper Function
+
+```jsx
+import { NavLink } from 'react-router-dom';
+
+// Helper function
+const getNavClass = ({ isActive }) => 
+  isActive ? 'nav-link current-url' : 'nav-link';
+
+function Navbar() {
+  return (
+    <nav>
+      <NavLink to="/" className={getNavClass}>Home</NavLink>
+      <NavLink to="/about" className={getNavClass}>About</NavLink>
+      <NavLink to="/dashboard" className={getNavClass}>Dashboard</NavLink>
+    </nav>
+  );
+}
+```
+
+## Reusable Custom NavLink Component
+
+```jsx
+// components/AppNavLink.jsx
+import { NavLink } from 'react-router-dom';
+
+function AppNavLink({ to, children, className = '', ...props }) {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) => 
+        `${className} ${isActive ? 'current-url' : ''}`.trim()
+      }
+      {...props}
+    >
+      {children}
+    </NavLink>
+  );
+}
+
+export default AppNavLink;
+```
+
+```jsx
+// Usage
+import AppNavLink from './components/AppNavLink';
+
+function Navbar() {
+  return (
+    <nav>
+      <AppNavLink to="/" className="nav-link">Home</AppNavLink>
+      <AppNavLink to="/about" className="nav-link">About</AppNavLink>
+      <AppNavLink to="/dashboard" className="nav-link">Dashboard</AppNavLink>
+    </nav>
+  );
+}
+```
+
+## Handle Nested Routes with `end` Prop
+
+```jsx
+<NavLink 
+  to="/" 
+  end  // Only active when EXACTLY at "/"
+  className={({ isActive }) => isActive ? 'current-url' : ''}
+>
+  Home
+</NavLink>
+
+<NavLink 
+  to="/dashboard"  // Active for /dashboard, /dashboard/settings, etc.
+  className={({ isActive }) => isActive ? 'current-url' : ''}
+>
+  Dashboard
+</NavLink>
+```
+
+## With Tailwind CSS
+
+```jsx
+import { NavLink } from 'react-router-dom';
+
+function Navbar() {
+  return (
+    <nav className="flex gap-4">
+      <NavLink
+        to="/"
+        end
+        className={({ isActive }) =>
+          `px-4 py-2 rounded ${
+            isActive 
+              ? 'bg-blue-500 text-white current-url' 
+              : 'text-gray-600 hover:bg-gray-100'
+          }`
+        }
+      >
+        Home
+      </NavLink>
+    </nav>
+  );
+}
+```
+
+## Using `style` Prop Instead
+
+```jsx
+<NavLink
+  to="/about"
+  style={({ isActive }) => ({
+    color: isActive ? 'red' : 'black',
+    fontWeight: isActive ? 'bold' : 'normal'
+  })}
+>
+  About
+</NavLink>
+```
+
+## Summary
+
+| Prop | Description |
+|------|-------------|
+| `className` | Function receiving `{ isActive, isPending }` |
+| `style` | Function receiving `{ isActive, isPending }` |
+| `end` | Only match exact path (not children) |
+
+```jsx
+// Quick reference
+<NavLink 
+  to="/path"
+  end
+  className={({ isActive }) => isActive ? 'current-url' : ''}
+>
+  Link Text
+</NavLink>
+```
+
