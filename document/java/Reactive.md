@@ -203,3 +203,199 @@ flux2-thread : Flux2 -> 10
 ### When to Use:
 - **Schedulers.single()**: Use when all tasks can share the same thread and must run sequentially.
 - **Schedulers.newSingle()**: Use when each `Flux` (or task group) requires a **dedicated thread**.
+
+
+In **Project Reactor**:
+
+- **`subscribeOn(...)`** affects **where the subscription starts** upstream.
+- **`publishOn(...)`** affects **where downstream signals continue** from that point onward.
+
+## Short answer
+
+For:
+
+```java
+Mono.just(1)
+    .publishOn(...)
+    .subscribeOn(...)
+```
+
+**Both can take effect**, but in **different parts** of the chain:
+
+- `subscribeOn(...)` decides the thread/scheduler used to **subscribe to the source** (`Mono.just(1)` and upstream work).
+- `publishOn(...)` switches the execution context for **operators after it**.
+
+So if you have both, the flow is roughly:
+
+1. subscription starts on `subscribeOn` scheduler
+2. once signals pass through `publishOn`, downstream continues on `publishOn` scheduler
+
+---
+
+## Difference
+
+### `subscribeOn`
+- Impacts the **source and upstream**
+- Usually only the **first `subscribeOn`** in the chain matters
+- Used when you want to control where the pipeline is **initiated**, especially for blocking sources or source creation
+
+Example:
+
+```java
+Mono.fromCallable(() -> {
+    System.out.println("source: " + Thread.currentThread().getName());
+    return 1;
+})
+.subscribeOn(Schedulers.boundedElastic())
+.map(i -> {
+    System.out.println("map: " + Thread.currentThread().getName());
+    return i + 1;
+})
+.subscribe();
+```
+
+Here, source execution starts on `boundedElastic`.
+
+---
+
+### `publishOn`
+- Impacts **downstream operators after it**
+- You can use multiple `publishOn`s to switch threads multiple times
+- Used when you want to change execution context at a specific point in the chain
+
+Example:
+
+```java
+Mono.just(1)
+    .map(i -> {
+        System.out.println("map1: " + Thread.currentThread().getName());
+        return i + 1;
+    })
+    .publishOn(Schedulers.parallel())
+    .map(i -> {
+        System.out.println("map2: " + Thread.currentThread().getName());
+        return i + 1;
+    })
+    .subscribe();
+```
+
+- `map1` runs on current/upstream thread
+- `map2` runs on `parallel`
+
+---
+
+## Your exact case
+
+```java
+Mono.just(1)
+    .publishOn(pubScheduler)
+    .subscribeOn(subScheduler)
+```
+
+### What happens?
+- `Mono.just(1)` subscription happens on **`subScheduler`**
+- after `publishOn(pubScheduler)`, downstream signals run on **`pubScheduler`**
+
+So if you add:
+
+```java
+Mono.just(1)
+    .doOnNext(i -> System.out.println("before? " + Thread.currentThread().getName()))
+    .publishOn(pubScheduler)
+    .doOnNext(i -> System.out.println("after publishOn " + Thread.currentThread().getName()))
+    .subscribeOn(subScheduler)
+    .block();
+```
+
+Then:
+- the first `doOnNext` is affected by `subscribeOn`
+- the second `doOnNext` is affected by `publishOn`
+
+---
+
+## Important rule
+
+## `subscribeOn` affects upstream, `publishOn` affects downstream
+
+Think of it like:
+
+- **`subscribeOn`** = “start the whole pipeline on this scheduler”
+- **`publishOn`** = “from here onward, continue on this scheduler”
+
+---
+
+## Multiple occurrences
+
+### Multiple `subscribeOn`
+Only the **closest to the source / first effective one** matters in practice.
+
+```java
+Mono.just(1)
+    .subscribeOn(Schedulers.single())
+    .subscribeOn(Schedulers.parallel())
+```
+
+Usually the **first one encountered from the source side** wins.
+
+---
+
+### Multiple `publishOn`
+Each one switches context for the operators after it.
+
+```java
+Mono.just(1)
+    .publishOn(Schedulers.single())
+    .map(i -> ...)
+    .publishOn(Schedulers.parallel())
+    .map(i -> ...)
+```
+
+First `map` runs on `single`, second `map` runs on `parallel`.
+
+---
+
+## Practical guidance
+
+### Use `subscribeOn` when:
+- wrapping blocking call with `fromCallable`
+- controlling source execution thread
+
+```java
+Mono.fromCallable(() -> jdbcCall())
+    .subscribeOn(Schedulers.boundedElastic());
+```
+
+### Use `publishOn` when:
+- you want to shift execution mid-stream
+- e.g. CPU work on `parallel`, then another phase elsewhere
+
+```java
+Mono.fromCallable(this::load)
+    .subscribeOn(Schedulers.boundedElastic())
+    .publishOn(Schedulers.parallel())
+    .map(this::compute);
+```
+
+---
+
+## One subtle point with `Mono.just(1)`
+
+`Mono.just(1)` is already an immediate, non-blocking source. So `subscribeOn` is less “important” here than with `fromCallable`, but it still affects the subscription/upstream context.
+
+---
+
+## Final summary
+
+For:
+
+```java
+Mono.just(1)
+    .publishOn(pubScheduler)
+    .subscribeOn(subScheduler)
+```
+
+- **`subscribeOn(subScheduler)`** controls the **upstream/source subscription**
+- **`publishOn(pubScheduler)`** controls the **downstream execution after that point**
+- so **both take effect**, not one replacing the other
+
+If you want, I can also show this with a **thread-name printing example** and explain **which operator runs on which thread line by line**.
