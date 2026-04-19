@@ -59,3 +59,7 @@ For example:
 - "I committed to being honest" means you’ve promised to uphold honesty in your actions.
 
 It reflects a sense of responsibility and determination to honor your decision.
+
+#### rare earths 
+
+稀土
