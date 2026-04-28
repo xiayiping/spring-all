@@ -16,3 +16,7 @@ The world is done betting its future on China's goodwill.
 世界不再将未来押注在中国政府的善意上。
 
 ---
+
+AI can feel disruptive, but it also brings immense potential
+
+人工智能可能会让人感到颠覆性，但它也带来了巨大的潜力。
