@@ -1747,3 +1747,8 @@ public class AuthorSpecifications {
   }
 }
 ```
+
+
+# Naming strategy
+
+quarkus.hibernate-orm.physical-naming-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl

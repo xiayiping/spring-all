@@ -11,7 +11,9 @@ CREATE TABLE example_table (
 
 ## special in postgre for timezone
 
-The SQL standard differentiates timestamp without time zone and timestamp with time zone literals by the presence of a “+” or “-” symbol and time zone offset after the time. Hence, according to the standard,
+The SQL standard differentiates timestamp without time zone and timestamp 
+with time zone literals by the presence of a “+” or “-” symbol 
+and time zone offset after the time. Hence, according to the standard,
 
 TIMESTAMP '2004-10-19 10:23:54'
 is a timestamp without time zone, while
@@ -19,7 +21,9 @@ is a timestamp without time zone, while
 TIMESTAMP '2004-10-19 10:23:54+02'
 is a timestamp with time zone. 
 
-PostgreSQL never examines the content of a literal string before determining its type, and therefore will treat both of the above as timestamp without time zone. To ensure that a literal is treated as timestamp with time zone, give it the correct explicit type:
+PostgreSQL never examines the content of a literal string before determining its type, 
+and therefore will treat both of the above as timestamp without time zone. 
+To ensure that a literal is treated as timestamp with time zone, give it the correct explicit type:
 
 TIMESTAMP WITH TIME ZONE '2004-10-19 10:23:54+02'
 

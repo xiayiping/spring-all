@@ -494,7 +494,9 @@ In Kotlin, `by lazy` and `lateinit` are two different ways to handle non-null pr
 ---
 
 ### **2. `lateinit`**
-- **Definition**: `lateinit` is a keyword that allows you to declare a **non-null `var` property** without initializing it at the time of declaration. The property must be initialized before it is accessed, otherwise, it will throw an exception.
+- **Definition**: `lateinit` is a keyword that allows you to declare a **non-null `var` property** 
+  without initializing it at the time of declaration. 
+  The property must be initialized before it is accessed, otherwise, it will throw an exception.
 - **Key Characteristics**:
     - The property is **mutable** (`var`).
     - You must manually initialize it before accessing it.

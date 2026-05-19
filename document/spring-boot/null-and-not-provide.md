@@ -683,3 +683,207 @@ public class Cmd {
 | `isEmpty()` method | Tells Jackson when to omit the field |
 
 Now your `OptionalField` works both ways - deserializing from JSON and serializing back to JSON! 🎯
+
+
+# Practice
+
+## kotlin
+
+### kotlin serialize
+
+```kotlin
+
+import kotlinx.serialization.Serializable
+
+@Serializable(with = OptFieldSerializer::class)
+data class OptionalField<T>(
+    val value: T? = null,
+    val present: Boolean
+) {
+    companion object {
+        fun <T> unpresent(): OptionalField<T> = OptionalField(null, false)
+        fun <T> ofNull(): OptionalField<T> = OptionalField(null, true)
+        fun <T> of(value: T?): OptionalField<T> = OptionalField(value = value, present = true)
+    }
+
+    constructor(v: T) : this(v, true)
+
+    fun ifPresent(consumer: (T?) -> Unit) {
+        if (present) {
+            consumer.invoke(value)
+        }
+    }
+
+}
+
+```
+
+```kotlin
+
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.Serializable
+
+data class UserDto(
+    val name: String,
+    val address: Address?,
+
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    val aliasName: OptionalField<String> = OptionalField.unpresent(),
+)
+
+```
+
+```kotlin
+
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonNull
+import org.slf4j.LoggerFactory
+
+class OptFieldSerializer<T>(private val valueSerializer: KSerializer<T>)
+    : KSerializer<OptionalField<T?>> {
+    companion object {
+        val logger = LoggerFactory.getLogger(OptFieldSerializer::class.java)!!
+    }
+
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("OptField") {}
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun serialize(encoder: Encoder, value: OptionalField<T?>) {
+        if (value.present) {
+            if (value.value == null) encoder.encodeNull()
+            else encoder.encodeSerializableValue(valueSerializer, value.value)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): OptionalField<T?> {
+        require(decoder is JsonDecoder)
+        logger.trace("Decoding Json ...")
+        val element = decoder.decodeJsonElement()
+
+        return when {
+            element is JsonNull -> OptionalField.of(null)
+            else -> OptionalField.of(
+                decoder.json.decodeFromJsonElement(valueSerializer, element)
+            )
+        }
+    }
+}
+
+```
+
+
+### jackson serialize
+
+```kotlin
+
+data class OptionalField<T>(
+    val value: T? = null,
+    val present: Boolean
+) {
+    companion object {
+        fun <T> unpresent(): OptionalField<T> = OptionalField(null, false)
+        fun <T> ofNull(): OptionalField<T> = OptionalField(null, true)
+        fun <T> of(value: T?): OptionalField<T> = OptionalField(value = value, present = true)
+    }
+
+    constructor(v: T) : this(v, true)
+
+    fun ifPresent(consumer: (T?) -> Unit) {
+        if (present) {
+            consumer.invoke(value)
+        }
+    }
+
+}
+
+
+
+class OptFieldJsonDeserializer() : JsonDeserializer<OptionalField<*>>(), ContextualDeserializer {
+    lateinit var valueType: JavaType
+
+    constructor(vtype: JavaType) : this() {
+        this.valueType = vtype
+    }
+
+    override fun createContextual(
+        ctxt: DeserializationContext?,
+        property: BeanProperty?
+    ): JsonDeserializer<*> {
+        val wrapperType = property!!.type
+        val valueType = wrapperType.containedType(0)
+        return OptFieldJsonDeserializer(valueType)
+    }
+
+    override fun deserialize(
+        p: JsonParser?,
+        ctxt: DeserializationContext?
+    ): OptionalField<*> {
+        val value = ctxt!!.readValue<Any>(p, valueType)
+        return OptionalField.of(value)
+    }
+
+    override fun getNullValue(ctxt: DeserializationContext?): OptionalField<*> {
+        return OptionalField(null, true)
+    }
+
+    override fun getAbsentValue(ctxt: DeserializationContext?): OptionalField<*> {
+        return OptionalField(null, false)
+    }
+
+}
+
+
+class OptFieldJsonSerializer : JsonSerializer<OptionalField<*>>() {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(OptFieldJsonSerializer::class.java)
+    }
+
+    override fun serialize(
+        value: OptionalField<*>?,
+        gen: JsonGenerator,
+        serializers: SerializerProvider
+    ) {
+        if (value?.present ?: false) {
+            gen.writeObject(value.value)
+        } else {
+            logger.warn("serializer hit absent field, which is an impossible case!!")
+            gen.writeNull()
+        }
+    }
+
+    override fun isEmpty(provider: SerializerProvider?, value: OptionalField<*>?): Boolean {
+        return value?.present ?: false
+    }
+}
+
+
+
+@Singleton
+class ObjectMapperConfig : ObjectMapperCustomizer {
+    companion object {
+        var logger: Logger = LoggerFactory.getLogger(ObjectMapperConfig::class.java)
+    }
+
+    init {
+        logger.info("ObjectMapper Config initialized ... ...")
+    }
+
+    override fun customize(objectMapper: ObjectMapper) {
+        val module = SimpleModule().apply {
+            addDeserializer(OptionalField::class.java, OptFieldJsonDeserializer())
+            addSerializer(OptionalField::class.java, OptFieldJsonSerializer())
+        }
+        objectMapper.apply {
+            setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
+            registerModule(module)
+        }
+    }
+}
+
+```
