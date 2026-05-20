@@ -169,3 +169,27 @@ v．指责，控告：指责某人犯了错误或犯罪，通常涉及法律诉�
 英 / əˈbiːdiənt / 美 / əˈbiːdiənt /
 
 adj. 服从的，顺从的
+
+
+### Skin
+
+apple skin / grap skin
+
+banana peel
+
+watermelon rind
+
+
+### niche
+
+英 / niːʃ / 美 / niːʃ /
+
+- n. 合适（称心）的工作（活动）（one's niche）；壁龛；（产品的）商机；生态位（一个生物所占生境的最小单位）
+- v. 把……放在壁龛中
+- adj. （产品）针对特定小群体的
+
+- 复数 niches
+- 第三人称单数niches
+- 现在分词 niching
+- 过去式 niched
+- 过去分词 niched
