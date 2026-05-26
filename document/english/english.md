@@ -48,18 +48,3 @@ For example:
 It's about standing firm in your journey and purpose.
 
 
-#### "I committed" 
-
-means that you made a firm decision or promise to dedicate yourself to something, such as a goal, task, relationship, or responsibility. It implies taking deliberate action to follow through and invest your time, energy, or effort into what you've chosen.
-
-For example:
-
-- "I committed to finishing this project by the deadline" means you promised to complete the task and are working toward it.
-- "I committed to my fitness journey" means you decided to stay dedicated to improving your health.
-- "I committed to being honest" means you’ve promised to uphold honesty in your actions.
-
-It reflects a sense of responsibility and determination to honor your decision.
-
-#### rare earths 
-
-稀土

@@ -193,3 +193,16 @@ watermelon rind
 - 现在分词 niching
 - 过去式 niched
 - 过去分词 niched
+
+### rare earths
+
+稀土
+
+### cadence
+
+英 / ˈkeɪd(ə)ns / 美 / ˈkeɪd(ə)ns /
+
+n. （说话时语调的）抑扬顿挫，起落；（乐曲的）收束，终止；节律，节拍
+
+
+
