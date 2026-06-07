@@ -19,12 +19,22 @@ Auditable Entity should be able to reflect:
 
 ### Auditable Entity
 
-- id // the main entity's id
 - auditId // the audit id
 - effectAt
 - effectiveEnd
 - createdAt
-- invalidatedAt
+- invalidedAt
+- optimisticVersion
+- eventExecutionId
+
+### The Main Entity
+
+- id // the id field
+- auditId // the audit id
+- effectAt
+- effectiveEnd
+- createdAt
+- updatedAt
 - optimisticVersion
 - eventExecutionId
 
@@ -51,12 +61,57 @@ A user or system operation (like page click, scheduler job, or another event)
 
 ### Event Execution
 
-represent a event update status movement.
+represent an event update status movement.
 
 - id
 - sourceId // event source id
 - executionStatus // INITIATED, EXECUTED, FAILED
 - executedAt // should be same as auditable's createdAt or invalidatedAt
+
+# Algorithm Units
+
+## Update Entity
+
+```plantuml
+
+@startuml
+skinparam defaultFontName JetBrains Mono
+scale 1.4
+
+start
+
+:new_event arrived;
+
+:let transaction_time;
+:let base_entity;
+
+if (base_entity.effectiveEnd ==\n new_event.effectiveAt) is (TRUE) then
+    :let updated_entity =\n new_event.update(base_entity);
+else
+    if (base_entity.effectiveNed >\n new_event.effectiveAt) is (TRUE) then
+        :let new_base_entity =\n base_entity.clone();
+        :new_base_entity.effectiveEnd =\n new_event.effectiveAt;
+        :new_base_entity.createdAt =\n transaction_time;
+        :repo.save(new_base_entity);
+        :base_entity.setInvalidedAt(transaction_time);
+        :let updated_entity =\n new_event.update(new_base_entity);
+    else
+        :throw exception;
+        end;
+    endif
+endif
+
+:repo.save(updated_entity);
+
+:return updated_entity;
+
+stop
+
+@enduml
+
+
+
+```
 
 # Bi-temporal
 
