@@ -19,6 +19,7 @@ Auditable Entity should be able to reflect:
 
 ### Auditable Entity
 
+- mainId // the main entity's id
 - auditId // the audit id
 - effectAt
 - effectiveEnd
@@ -26,6 +27,7 @@ Auditable Entity should be able to reflect:
 - invalidedAt
 - optimisticVersion
 - eventExecutionId
+- operationType:  CREATED, UPDATED, DELETED
 
 ### The Main Entity
 
@@ -38,14 +40,27 @@ Auditable Entity should be able to reflect:
 - optimisticVersion
 - eventExecutionId
 
+### Event Execution
+
+represent an event update status movement.
+
+- id
+- eventCategory // event category
+- eventId // event id
+- sourceId // event source id
+- executionStatus // INITIATED, EXECUTED, FAILED
+- executedAt // should be same as auditable's createdAt or invalidatedAt
+
 ### Event
 
 A Event is the trigger of Auditable state change. Auditable state can only be create/changed by Event.
 
+- category // category + id is the real id, each category can be an independent table.
 - id // event id
+- triggerCategory // in case this event is triggered by another event
+- triggerId // in case this event is triggered by another event
 - type // event type
 - detail // a json to record all information to update the auditable's status, should make the whole history be reply-able.
-- implements:  CreationEvent, UpdateEvent, DeletionEvent
 
 ### Event Source
 
@@ -59,36 +74,26 @@ A user or system operation (like page click, scheduler job, or another event)
 - triggeredAt
 - sourceKey (traceId for UI / or other keys)
 
-### Event Execution
-
-represent an event update status movement.
-
-- id
-- sourceId // event source id
-- executionStatus // INITIATED, EXECUTED, FAILED
-- executedAt // should be same as auditable's createdAt or invalidatedAt
-
 # Algorithm Units
 
 ## Update Entity
 
 ```plantuml
-
 @startuml
 skinparam defaultFontName JetBrains Mono
-scale 1.4
+scale 1.2
 
 start
 
 :new_event arrived;
 
 :let transaction_time;
-:let base_entity;
+:let base_entity by query\n  effectiveRang(new_event.effectiveAt]\n  transactionRange[transaction_time);
 
 if (base_entity.effectiveEnd ==\n new_event.effectiveAt) is (TRUE) then
     :let updated_entity =\n new_event.update(base_entity);
 else
-    if (base_entity.effectiveNed >\n new_event.effectiveAt) is (TRUE) then
+    if (base_entity.effectiveEnd >\n new_event.effectiveAt) is (TRUE) then
         :let new_base_entity =\n base_entity.clone();
         :new_base_entity.effectiveEnd =\n new_event.effectiveAt;
         :new_base_entity.createdAt =\n transaction_time;
@@ -109,7 +114,89 @@ stop
 
 @enduml
 
+```
 
+## Reconcile Entity
+
+```plantuml
+@startuml
+skinparam defaultFontName JetBrains Mono
+scale 1.2
+
+start
+
+:let transaction_time;
+:let updated_entity;
+:let next_entity,next_event = query by first \n updated_entity.effectiveRange[entity.effectiveAt]\n transactionRange[transaction_time);
+
+if (next_entity.effectiveAt ==\n updated_entity.effectiveAt) is (TRUE) then
+    :next_entity.invalidateAt = transaction_time;
+    :updated_entity = updated_entity;
+else
+    :updated_entity.effectiveEnd = next_event.effectiveAt;
+    :repository.save(updated_entity);
+    :;
+    :next_updated_entity = next_event.update(updated_entity);
+    :next_updated_entity.createdAt = transaction_time;
+    :repository.save(next_updated_entity);
+    :;
+    :next_entity.invalidateAt = transaction_time;
+    :;
+    :updated_entity = next_updated_entity;
+endif
+
+:@tailRecursive \nreconcile_entity(updated_entity, transaction_time);
+
+stop
+@enduml
+```
+
+## Delete Entity
+
+delete is deleting current one, not like update which is based on previouse version
+
+```plantuml
+@startuml
+skinparam defaultFontName JetBrains Mono
+scale 1.2
+
+start
+
+:new_event arrived;
+
+
+:let transaction_time;
+:let base_entity by query\n  by effectiveRange[new_event.effectiveAt) \n && transactionRange[transaction_time);
+
+if (base_entity.effectiveAt ==\n new_event.effectiveAt) is (TRUE) then
+    :let deleted_entity = base_entity.clone();
+    :deleted_entity.operation = DELETED;
+    :repo.save(deleted_entity);
+    :base_entity.invalidatedAt = transaction_time;
+else
+    if (base_entity.effectiveEnd >\n new_event.effectiveAt) is (TRUE) then
+        :let new_base_entity =\n base_entity.clone();
+        :new_base_entity.effectiveEnd =\n new_event.effectiveAt;
+        :new_base_entity.createdAt =\n transaction_time;
+        :repo.save(new_base_entity);
+        :;
+        :base_entity.setInvalidedAt(transaction_time);
+        :;
+        :let deleted_entity =\n base_entity.clone();
+        :deleted_entity.operation = DELETED;
+        :repo.save(deleted_entity);
+    else
+        :throw exception;
+        end;
+    endif
+endif
+
+:find all by deleted_entity.effectiveRange(all.effectiveAt] && all.transactionRange[transaction_time);
+:all.invalidateAt = transaction_time;
+
+stop
+
+@enduml
 
 ```
 
