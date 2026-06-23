@@ -116,3 +116,11 @@ This news highlights a financial agreement between **Triple Flag Precious Metals
 - **For Evolution Mining**: The funding helps finance the development of the E44 deposit without raising debt or diluting shareholder equity.
 
 In essence, this agreement reflects a collaboration to advance the development of a gold mining project, benefiting both companies strategically and financially.
+
+
+---
+That missile definitely will send a cold chill down their spine.
+
+spine 英 / spaɪn / 美 / spaɪn /
+
+那枚导弹肯定会让他们脊背发凉。
