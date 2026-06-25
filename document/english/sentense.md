@@ -124,3 +124,38 @@ That missile definitely will send a cold chill down their spine.
 spine 英 / spaɪn / 美 / spaɪn /
 
 那枚导弹肯定会让他们脊背发凉。
+
+---
+
+rip off the bandage
+
+The phrase **"rip off the bandage"** (or "rip the band-aid off" in some variations) is an idiom that means to **deal with something difficult or unpleasant right away, quickly, or decisively**, rather than prolonging it or delaying the inevitable.
+
+---
+
+### **Context of the Expression**
+The idea comes from the experience of physically removing a bandage from the skin. Doing it slowly can be unnecessarily painful, while ripping it off quickly minimizes the duration of the pain, even if it's intense for a moment.
+
+---
+
+### **When It's Used**
+It is commonly used when:
+- You're facing something you don’t want to do but must, and delaying will only make it worse (e.g., delivering bad news, ending a relationship, quitting a job).
+- It's better to take immediate, uncomfortable action rather than dragging it out.
+
+---
+
+### **Examples**
+1. **Personal Life**:  
+   "I know the breakup will hurt, but it's better to just rip off the bandage than to keep stringing them along."
+
+2. **At Work**:  
+   "The layoffs are difficult, but we need to rip off the bandage and announce them to the team."
+
+3. **Everyday Decisions**:  
+   "I’ve been afraid to look at my exam results, but it’s time to rip off the bandage and just check."
+
+---
+
+### **Key Takeaway**
+"Rip off the bandage" emphasizes taking decisive action to get through something painful or difficult because dragging it out will only prolong discomfort.
