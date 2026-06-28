@@ -131,19 +131,13 @@ rip off the bandage
 
 The phrase **"rip off the bandage"** (or "rip the band-aid off" in some variations) is an idiom that means to **deal with something difficult or unpleasant right away, quickly, or decisively**, rather than prolonging it or delaying the inevitable.
 
----
-
 ### **Context of the Expression**
 The idea comes from the experience of physically removing a bandage from the skin. Doing it slowly can be unnecessarily painful, while ripping it off quickly minimizes the duration of the pain, even if it's intense for a moment.
-
----
 
 ### **When It's Used**
 It is commonly used when:
 - You're facing something you don’t want to do but must, and delaying will only make it worse (e.g., delivering bad news, ending a relationship, quitting a job).
 - It's better to take immediate, uncomfortable action rather than dragging it out.
-
----
 
 ### **Examples**
 1. **Personal Life**:  
@@ -155,7 +149,14 @@ It is commonly used when:
 3. **Everyday Decisions**:  
    "I’ve been afraid to look at my exam results, but it’s time to rip off the bandage and just check."
 
----
-
 ### **Key Takeaway**
 "Rip off the bandage" emphasizes taking decisive action to get through something painful or difficult because dragging it out will only prolong discomfort.
+
+
+---
+
+Steve Crook squints through the sun, scanning his surroundings with precision.
+
+史蒂夫·克鲁克眯着眼睛，透过阳光，精准地扫视着周围的环境。
+
+
