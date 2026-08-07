@@ -459,3 +459,28 @@ v. 摇摆
 - 现在分词evaporating
 - 过去式evaporated
 - 过去分词evaporated
+
+
+### consensus
+
+- 英 / kənˈsensəs / 
+- 美 / kənˈsensəs /
+
+- n. 一致看法，共识
+
+1. reach a consensus 达成共识
+
+
+### vibrant
+
+英 / ˈvaɪbrənt / 美 / ˈvaɪbrənt /
+
+- adj. 充满活力的，充满生机的，生气勃勃的；鲜艳的，醒目的；洪亮的，强劲的；颤抖的，震动的
+
+双语例句
+1. The room was decorated in vibrant blues and greens.
+那房间以鲜艳的蓝绿两色装饰。
+2. Tom felt himself being drawn toward her vibrant personality.
+汤姆感到自己正被她充满活力的个性所吸引。
+3. A vibrant and growing economy does not improve everyone's quality of life.
+一个生机勃发的经济体并不能提升每个人的生活质量。
