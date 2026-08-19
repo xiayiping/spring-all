@@ -34,12 +34,12 @@ $$
 
 where:
 
-\[
+$$
 \text{NRV}
 =
 \text{Expected selling price}
 -\text{Completion and disposal costs}
-\]
+$$
 
 For example:
 
