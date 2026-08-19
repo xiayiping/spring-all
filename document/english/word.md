@@ -703,3 +703,28 @@ adj. 不屈不挠的；不服输的；不气馁的
 私人利益不得置于公众利益之上。
 3. In older age groups women predominate because men tend to die younger.
 在年龄较大的人群中，女性占多数，因为男性的寿命倾向于短些。
+
+### acquisition
+
+英 / ˌækwɪˈzɪʃ(ə)n / 美 / ˌækwɪˈzɪʃ(ə)n /
+
+- n. 学得，习得；（金钱、财物等的）获取；购买，添置，增添物；收购，购置的产业
+
+短语
+
+1. data acquisition
+计 数据收集 ; 计 数据采集 ; 资料收集 ; 计 数据获取
+
+2. knowledge acquisition
+知识获取 ; 知识获得 ; 知识撷取
+
+3. language acquisition
+语言习得 ; 语言获得 ; 第十章 ; 语言习得机制
+
+双语例句
+1. Indeed, ease of acquisition is the problem.
+事实上，容易获得是个问题。
+2. He devotes his time to the acquisition of knowledge.
+他把时间用在获取知识上。
+3. The first hypothesis is the acquisition and learning distinction hypothesis.
+第一个假设是习得和学习差异的假设。
