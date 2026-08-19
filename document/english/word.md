@@ -484,3 +484,222 @@ v. 摇摆
 汤姆感到自己正被她充满活力的个性所吸引。
 3. A vibrant and growing economy does not improve everyone's quality of life.
 一个生机勃发的经济体并不能提升每个人的生活质量。
+
+
+### spoof
+
+英 / spuːf / 美 / spuːf /
+
+- n. 滑稽模仿；行骗；戏弄；讽刺性文章或节目
+- v. 滑稽地模仿；哄骗；戏弄；讽刺
+
+短语
+1. spoof site 或者有些仿冒网站 ; 大概有些仿冒网站 ; 恐怕有些仿冒网站 ; 可能有些仿冒网站
+2. Spoof Attack 防仿冒攻击 ; 支持
+3. video spoof 恶搞 ; 恶搞视频
+
+双语例句
+1. It's a spoof on horror movies.
+这是对恐怖片的滑稽模仿。
+2. Dar Dour (The Iraqi TV show spoof).
+Dar Dour(伊拉克恶搞模仿秀节目)。
+3. The letter is a spoof, penned by Andy Borowitz, a comedian.
+这封信是一位名叫安迪的喜剧演员开的一个玩笑
+
+
+### mitigate
+
+英 / ˈmɪtɪɡeɪt / 美 / ˈmɪtɪɡeɪt /
+
+v. <正式>减轻，缓和
+
+短语
+1. mitigate the risks
+减轻风险
+2. to mitigate systematic risks
+化解系统性风险
+3. mitigate pain
+减轻疼痛
+
+双语例句
+1. One future possibility is that improved monitoring can help predict where and when bleaching will occur, which might potentially enable us to mitigate its effects.
+未来的一种可能是，升级后的监测有助于预测漂白现象发生的时间和地点，这也许能让我们减轻漂白现象的影响。
+2. It doesn't really mitigate against the confinement he has perpetrated on Lolita.
+它没能减少他对洛丽塔的限制。
+3. The leases come with painstaking stipulations to mitigate any possible environmental harm to species like the polar bear.
+这些租约附带了细致的条款，以减轻对北极熊等物种的任何可能的环境伤害。
+
+   
+### impair
+
+英 / ɪmˈpeə(r) / 美 / ɪmˈper /
+
+v. 损害，削弱
+
+短语
+1. impair
+削弱 ; 损害 ; 伤害 ; 危害
+2. Impair competition
+损害竞争
+3. severely impair
+严重危害
+
+双语例句
+1. It may impair the digestive system.
+它可能会损害消化系统。
+2. Their inability to scowl seemed to impair their ability to see why pushy telemarketers or a lack of birthday wishes might make one's face fall.
+他们无法动怒似乎削弱了他们的能力，让他们明白为什么咄咄逼人的电话推销员或没得到生日祝愿可能会让一个人沉下脸来。
+3. Even one drink can impair driving performance.
+即使一杯酒也可能影响驾驶操作
+
+
+### scam
+
+英 / skæm / 美 / skæm /
+
+- n. <非正式>欺诈，骗局
+- v. 欺诈，诓骗（钱财）
+
+短语
+1. The Scam
+片 ; 豪门奇骗 ; 作战 ; 金钱作战
+2. Great Ruble Scam
+伟大的卢布骗局
+3. Nigerian Scam
+尼日利亚骗局 ; 尼日利亚诈骗案 ; 尼日利亚诈骗 ; 诈骗案
+
+双语例句
+1. They believed they were participating in an insurance scam, not a murder.
+他们认为他们只是在参与保险骗局，而不是谋杀。
+2. What first put the police onto the scam?
+警方当初怎么得知这个骗局的？
+3. Beware of paid survey scam websites.
+谨防付费调查诈骗网站。
+
+
+### incentive
+
+英 / ɪnˈsentɪv / 美 / ɪnˈsentɪv /
+
+n. 激励，刺激
+
+短语
+1. Incentive compatibility
+激励相容 ; 激励兼容 ; 激励相容性
+2. variable incentive
+可变激励措施 ; 可变鼓励办法
+3. incentive compensation
+奖金 ; 诱因报酬 ; 诱因报偿 ; 联系计划和激励因素
+
+双语例句原声例句权威例句
+1. There will be a strong incentive to enter into a process of negotiation.
+将会有一个强烈的刺激来进入谈判的过程。
+《柯林斯英汉双解大词典》
+2. Neither side would have a real incentive to start a war. Ergo, peace would reign.
+双方都没有发动战争的真实动机。因此，和平将会到来。
+3. They have an incentive to keep us hooked.
+他们有动机让我们上钩。
+
+
+### thigh
+
+英 / θaɪ / 美 / θaɪ /
+
+n. 大腿，股；（禽类的）腿
+
+
+### calf
+
+英 / kɑːf / 美 / kæf /
+
+n. 小牛，牛犊；腓肠，小腿肚；（象、鲸等的）崽，幼兽；浮冰，幼冰
+
+
+### discretionary
+
+英 / dɪˈskreʃənəri / 美 / dɪˈskreʃəneri /
+
+adj. 自由决定的，酌情决定的；代表委托人全权进行投资的
+
+短语
+1. Discretionary Account
+委托帐户 ; 全权代客买卖账户 ; 全权委托户口 ; 委托账户
+2. discretionary power
+酌情权 ; 自由裁量权 ; 裁量权 ; 斟酌决定权
+3. Discretionary Access Control
+自主访问控制 ; 分立式访问控制 ; 控制 ; 自主存取控制
+4. discretionary power
+[法]自由裁量权；酌处权
+5. discretionary spending
+可自由支配的个人开支
+6. discretionary income
+可随意支配的收入
+
+双语例句
+1. Magistrates were given wider discretionary powers.
+地方法官们被赋予了更广泛的酌情决定权。
+2. You may be eligible for a discretionary grant for your university course.
+读大学课程可能会有资格获得学校自行决定是否发放的助学金。
+3. Of course, I have discretionary income.
+当然，我有可自由支配的收入。
+
+### indomitable
+
+英 / ɪnˈdɒmɪtəb(ə)l / 美 / ɪnˈdɑːmɪtəb(ə)l /
+
+adj. 不屈不挠的；不服输的；不气馁的
+
+短语
+1. of indomitable spirit
+顶天立地 ; 顶天登时 ; 顶天破地
+2. Indomitable Fighting Spirit
+不屈的斗志
+3. Indomitable Will
+不屈的意志 ; 大无畏精神
+
+双语例句
+1. They are truly indomitable. But what a blot there is on history.
+他们是真的毫不气馁。但这是历史上的一个污点。
+2. They overcame all kinds of difficulties by dint of an indomitable spirit.
+他们凭仗着顽强不屈的精神克服了重重困难。
+3. He is endowed with indomitable will.
+他有不屈不挠的意志。
+
+
+### delicate
+
+英 / ˈdelɪkət / 美 / ˈdelɪkət /
+
+- adj. 柔和的，清淡的；虚弱的，纤弱的；脆弱的，易碎的；小巧玲珑的，纤细的；微妙的，棘手的；精致的，精巧的；灵巧的，熟练的；（仪器）灵敏的
+- n. 精美的衣物
+
+短语
+1. A Delicate Balance
+人海万花筒 ; 脆弱的羊群 ; 微妙的平衡 ; 纤细的平衡
+2. Delicate color
+娇色 ; 娇嫩色泽
+3. delicate colors
+色泽素雅 ; 柔和的颜色 ; 光彩素雅
+
+双语例句
+1. The name Latifah, by the way, means "delicate."
+顺便提一下，Latifah这个名字有“精致”之意。
+2. Babies have very delicate skin.
+婴儿的皮肤非常娇嫩。
+3. The skin is much too delicate.
+皮肤太过娇嫩了。
+
+### predominate
+
+英 / prɪˈdɒmɪneɪt / 美 / prɪˈdɑːmɪneɪt /
+
+- v. （数量上）占优势，占大多数；占主导地位，占支配地位； <罕>支配，主宰
+- adj. 主要的，占支配地位的
+
+双语例句
+1. Very little light filters through the canopy of leaves and branches in a rain forest to reach ground level—or close to the ground—and at those levels the yellow-to-green wavelengths predominate.
+在雨林中，很少有光透过树叶和树枝形成的树荫到达地面——或者接近地面——在这些高度上，黄色到绿色的波长占主导地位。
+2. Private interest was not allowed to predominate over the public good.
+私人利益不得置于公众利益之上。
+3. In older age groups women predominate because men tend to die younger.
+在年龄较大的人群中，女性占多数，因为男性的寿命倾向于短些。
